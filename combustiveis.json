@@ -1,0 +1,14 @@
+{
+  "atualizado": "2026-07-02",
+  "semanaInicio": "2026-07-06",
+  "semanaFim": "2026-07-12",
+  "gasoleo": { "atual": 1.767, "variacao": 0.030 },
+  "gasolina": { "atual": 1.876, "variacao": 0.035 },
+  "historico": [
+    { "semana": "08/06", "gasolina": 1.920, "gasoleo": 1.899, "aprox": true },
+    { "semana": "15/06", "gasolina": 1.925, "gasoleo": 1.864, "aprox": true },
+    { "semana": "22/06", "gasolina": 1.882, "gasoleo": 1.779 },
+    { "semana": "29/06", "gasolina": 1.876, "gasoleo": 1.767 },
+    { "semana": "06/07", "gasolina": 1.911, "gasoleo": 1.797, "previsto": true }
+  ]
+}
