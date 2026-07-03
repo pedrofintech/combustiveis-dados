@@ -54,6 +54,7 @@ function toText(h) {
     .replace(/<style[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
     .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#8364;|&euro;/g, '€')
+    .replace(/&#x?[0-9a-f]+;/gi, ' ')
     .replace(/\|/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -87,7 +88,7 @@ async function previsaoPoupaPilim() {
 }
 
 function parseVar(texto, nomeRe) {
-  const re = new RegExp(nomeRe + '([^\\d+\\-]{0,14})([+\\-]?)(\\d+(?:[.,]\\d+)?)\\s*c[êe]ntimo', 'i');
+  const re = new RegExp(nomeRe + '([^\\d+\\-]{0,24})([+\\-]?)(\\d+(?:[.,]\\d+)?)\\s*c[êe]ntimo', 'i');
   const m = texto.match(re);
   if (!m) return null;
   let val = parseFloat(m[3].replace(',', '.'));
