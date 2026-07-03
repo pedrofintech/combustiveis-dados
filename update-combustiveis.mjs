@@ -19,7 +19,11 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const FICHEIRO = new URL('./combustiveis.json', import.meta.url);
-const UA = { headers: { 'user-agent': 'Mozilla/5.0 (compatible; LiteraciaFinanceiraBot/1.0; +https://www.literaciafinanceira.pt)' } };
+const UA = { headers: {
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+  'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'accept-language': 'pt-PT,pt;q=0.9,en;q=0.8',
+} };
 const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 
 /* ── Utilitários ── */
@@ -57,11 +61,20 @@ function toText(h) {
 
 /* ── Poupa Pilim: artigo de previsão + variação ── */
 async function previsaoPoupaPilim() {
-  const lista = await html('https://www.poupapilim.com/combustiveis-noticias-e-previsoes/');
-  const m = lista.match(/https:\/\/www\.poupapilim\.com\/preco-dos-combustiveis-na-proxima-semana-[a-z0-9-]+\//i);
+  const listaRaw = await html('https://www.poupapilim.com/combustiveis-noticias-e-previsoes/');
+  console.log('[diag] listagem bytes:', listaRaw.length, '| bloqueio?', /just a moment|cloudflare|cf-browser|challenge|enable javascript/i.test(listaRaw));
+  const m = listaRaw.match(/https:\/\/www\.poupapilim\.com\/preco-dos-combustiveis-na-proxima-semana-[a-z0-9-]+\//i);
   if (!m) throw new Error('Poupa Pilim: artigo de previsão não encontrado na listagem');
   const url = m[0];
-  const texto = toText(await html(url));
+  const raw = await html(url);
+  const texto = toText(raw);
+  console.log('[diag] artigo url:', url);
+  console.log('[diag] artigo bytes raw:', raw.length, '| texto:', texto.length, '| bloqueio?', /just a moment|cloudflare|cf-browser|challenge|enable javascript/i.test(raw));
+  const iG = texto.indexOf('Gasolina');
+  console.log('[diag] idx Gasolina:', iG, '| contexto:', JSON.stringify(iG >= 0 ? texto.slice(iG, iG + 60) : texto.slice(0, 120)));
+  const iD = texto.search(/Gas[oó]leo/);
+  console.log('[diag] idx Gasoleo:', iD, '| contexto:', JSON.stringify(iD >= 0 ? texto.slice(iD, iD + 60) : ''));
+  console.log('[diag] tem "cêntimo"?', /c[êe]ntimo/i.test(texto));
 
   const gasolina = parseVar(texto, 'Gasolina\\s*95');
   const gasoleo = parseVar(texto, 'Gas[oó]leo');
