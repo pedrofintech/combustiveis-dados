@@ -43,10 +43,16 @@ function segundaDestaSemana(d) {
   return r;
 }
 
-async function html(url) {
-  const r = await fetch(url, UA);
-  if (!r.ok) throw new Error(`HTTP ${r.status} em ${url}`);
-  return r.text();
+async function html(url, ms = 25000) {
+  const c = new AbortController();
+  const t = setTimeout(() => c.abort(), ms);
+  try {
+    const r = await fetch(url, { ...UA, signal: c.signal });
+    if (!r.ok) throw new Error(`HTTP ${r.status} em ${url}`);
+    return await r.text();
+  } finally {
+    clearTimeout(t);
+  }
 }
 function toText(h) {
   return h
@@ -82,22 +88,45 @@ function parseSemana(texto) {
   return null;
 }
 
-/* ── FONTE PRINCIPAL: precocombustiveis.pt (variação com ISP + preço + semana) ── */
+/* ── FONTE PRINCIPAL: precocombustiveis.pt (variação COM ISP + preço + semana) ──
+   O IP do GitHub Actions está num datacenter e é por vezes bloqueado (403).
+   Por isso tenta-se, por ordem: (1) direto, (2) leitor r.jina.ai, (3) proxy
+   allorigins. As três devolvem o MESMO conteúdo da página, do qual se extrai a
+   variação líquida (a que o condutor paga, já com o efeito do ISP). Só se as
+   três falharem é que se cai para o Poupa Pilim (valor bruto, sem ISP). */
 async function fontePrecoCombustiveis() {
-  const texto = toText(await html('https://precocombustiveis.pt/proxima-semana/'));
-  const vg = parseVarEuroL(texto, 'gas[oó]leo');
-  const va = parseVarEuroL(texto, 'gasolina');
-  const semana = parseSemana(texto);
-  if (vg === null || va === null || !semana) return null;
-  return {
-    variacaoGasoleo: vg,
-    variacaoGasolina: va,
-    precoGasoleo: parsePreco(texto, 'gas[oó]leo'),
-    precoGasolina: parsePreco(texto, 'gasolina'),
-    semanaInicio: semana.inicio,
-    semanaFim: semana.fim,
-    fonte: 'https://precocombustiveis.pt/proxima-semana/ (com ISP)',
-  };
+  const alvo = 'https://precocombustiveis.pt/proxima-semana/';
+  const vias = [
+    { nome: 'direto', url: alvo },
+    { nome: 'r.jina.ai', url: 'https://r.jina.ai/' + alvo },
+    { nome: 'allorigins', url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(alvo) },
+  ];
+  for (const via of vias) {
+    let texto;
+    try {
+      texto = toText(await html(via.url));
+    } catch (e) {
+      console.log(`  precocombustiveis via ${via.nome}: ${e.message}`);
+      continue;
+    }
+    const vg = parseVarEuroL(texto, 'gas[oó]leo');
+    const va = parseVarEuroL(texto, 'gasolina');
+    const semana = parseSemana(texto);
+    if (vg === null || va === null || !semana) {
+      console.log(`  precocombustiveis via ${via.nome}: lida mas sem dados extraíveis`);
+      continue;
+    }
+    return {
+      variacaoGasoleo: vg,
+      variacaoGasolina: va,
+      precoGasoleo: parsePreco(texto, 'gas[oó]leo'),
+      precoGasolina: parsePreco(texto, 'gasolina'),
+      semanaInicio: semana.inicio,
+      semanaFim: semana.fim,
+      fonte: `precocombustiveis.pt via ${via.nome} (com ISP)`,
+    };
+  }
+  return null;
 }
 /* Valor parentetizado tipo "(+0,03 €/L)" a seguir ao nome do combustível */
 function parseVarEuroL(texto, nomeRe) {
@@ -139,7 +168,7 @@ function parseVarCent(texto, nomeRe) {
 /* ── Validações ── */
 const precoOk = (v) => typeof v === 'number' && v > 1.0 && v < 3.0;
 const varOk = (v) => typeof v === 'number' && Math.abs(v) <= 0.15;
-function abortar(msg) { console.log(`SEM ALTERAÇÕES: ${msg}`); process.exit(0); }
+fonction abortar(msg) { console.log(`SEM ALTERAÇÕES: ${msg}`); process.exit(0); }
 
 /* ── Principal ── */
 const dados = JSON.parse(readFileSync(FICHEIRO, 'utf8'));
@@ -149,7 +178,7 @@ console.log(`Execução: ${iso(hoje)}`);
 let d = null;
 try {
   d = await fontePrecoCombustiveis();
-  if (d) console.log('Fonte usada: precocombustiveis.pt (variação com ISP)');
+  if (d) console.log('Fonte usada: ' + d.fonte);
 } catch (e) {
   console.log('precocombustiveis indisponível:', e.message);
 }
