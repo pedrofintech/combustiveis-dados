@@ -168,7 +168,7 @@ function parseVarCent(texto, nomeRe) {
 /* ── Validações ── */
 const precoOk = (v) => typeof v === 'number' && v > 1.0 && v < 3.0;
 const varOk = (v) => typeof v === 'number' && Math.abs(v) <= 0.15;
-fonction abortar(msg) { console.log(`SEM ALTERAÇÕES: ${msg}`); process.exit(0); }
+function abortar(msg) { console.log(`SEM ALTERAÇÕES: ${msg}`); process.exit(0); }
 
 /* ── Principal ── */
 const dados = JSON.parse(readFileSync(FICHEIRO, 'utf8'));
