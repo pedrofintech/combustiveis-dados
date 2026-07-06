@@ -1,17 +1,18 @@
 /**
  * Atualização automática dos dados de combustíveis - literaciafinanceira.pt
- * Corre no GitHub Actions (2ª e 6ª feira). Sem dependências (Node 20+).
+ * Corre no GitHub Actions (diariamente). Sem dependências (Node 20+).
  *
- * Desenho (v2, robusto):
- *  - Lê o TEXTO das páginas (tags removidas), não a estrutura HTML -> resistente
- *    a mudanças de marcação.
- *  - Cada fonte para o que serve, SEM cruzamento (o antigo cruzamento causava
- *    falsos conflitos e abortava):
- *      · Poupa Pilim (base ENSE) -> VARIAÇÃO prevista (cêntimos).
- *      · precocombustiveis.pt (base DGEG) -> PREÇO médio de referência (atual).
- *  - A semana vem do próprio artigo de previsão (título), não é adivinhada.
- *  - Se a variação não for extraível, NÃO escreve nada (mantém o último bom).
- *    Se o preço não for extraível, mantém o preço anterior e aplica só a variação.
+ * Desenho (v3):
+ *  - Lê o TEXTO das páginas (tags removidas), não a estrutura HTML.
+ *  - Fonte PRINCIPAL: precocombustiveis.pt (base DGEG) -> dá a variação JÁ COM
+ *    o efeito do ISP (o valor que o condutor paga), o preço de referência e a
+ *    semana, tudo numa página. É o número "líquido", certo.
+ *  - Fonte de RESERVA: Poupa Pilim (base ENSE) -> só se a principal falhar.
+ *    Atenção: os números do Poupa Pilim são "brutos", ANTES das medidas de ISP,
+ *    por isso podem exagerar a subida em semanas de intervenção do Governo.
+ *  - A semana vem sempre da fonte usada.
+ *  - Se nenhuma fonte der a variação, NÃO escreve nada (mantém o último bom).
+ *    Se só o preço faltar, mantém o preço anterior e aplica só a variação.
  *
  * Nunca usa a API da DGEG (só cita estatísticas públicas reportadas).
  */
@@ -23,6 +24,10 @@ const UA = { headers: {
   'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
   'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
   'accept-language': 'pt-PT,pt;q=0.9,en;q=0.8',
+  'sec-ch-ua': '"Chromium";v="126", "Not-A.Brand";v="24", "Google Chrome";v="126"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"Windows"',
+  'upgrade-insecure-requests': '1',
 } };
 const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 
@@ -36,11 +41,6 @@ function segundaDestaSemana(d) {
   const r = new Date(d);
   r.setDate(r.getDate() - ((r.getDay() + 6) % 7));
   return r;
-}
-function maisDias(isoStr, n) {
-  const d = new Date(isoStr + 'T12:00:00Z');
-  d.setUTCDate(d.getUTCDate() + n);
-  return iso(d);
 }
 
 async function html(url) {
@@ -60,34 +60,72 @@ function toText(h) {
     .trim();
 }
 
-/* ── Poupa Pilim: artigo de previsão + variação ── */
-async function previsaoPoupaPilim() {
-  const listaRaw = await html('https://www.poupapilim.com/combustiveis-noticias-e-previsoes/');
-  console.log('[diag] listagem bytes:', listaRaw.length, '| bloqueio?', /just a moment|cloudflare|cf-browser|challenge|enable javascript/i.test(listaRaw));
-  const m = listaRaw.match(/https:\/\/www\.poupapilim\.com\/preco-dos-combustiveis-na-proxima-semana-[a-z0-9-]+\//i);
-  if (!m) throw new Error('Poupa Pilim: artigo de previsão não encontrado na listagem');
-  const url = m[0];
-  const raw = await html(url);
-  const texto = toText(raw);
-  console.log('[diag] artigo url:', url);
-  console.log('[diag] artigo bytes raw:', raw.length, '| texto:', texto.length, '| bloqueio?', /just a moment|cloudflare|cf-browser|challenge|enable javascript/i.test(raw));
-  const iG = texto.indexOf('Gasolina');
-  console.log('[diag] idx Gasolina:', iG, '| contexto:', JSON.stringify(iG >= 0 ? texto.slice(iG, iG + 60) : texto.slice(0, 120)));
-  const iD = texto.search(/Gas[oó]leo/);
-  console.log('[diag] idx Gasoleo:', iD, '| contexto:', JSON.stringify(iD >= 0 ? texto.slice(iD, iD + 60) : ''));
-  console.log('[diag] tem "cêntimo"?', /c[êe]ntimo/i.test(texto));
-
-  const gasolina = parseVar(texto, 'Gasolina\\s*95');
-  const gasoleo = parseVar(texto, 'Gas[oó]leo');
-  if (gasolina === null || gasoleo === null) throw new Error('Poupa Pilim: variações não extraídas');
-
-  const semana = parseSemana(texto) || parseSemanaUrl(url);
-  if (!semana) throw new Error('Poupa Pilim: semana não extraída');
-
-  return { url, gasolina, gasoleo, semanaInicio: semana.inicio, semanaFim: semana.fim };
+/* Semana a partir de "(6 a 12 julho)" | "semana de 6 a 12 julho" | "entre 6 e 12 julho" */
+function parseSemana(texto) {
+  const pats = [
+    /\((\d{1,2})\s*(?:de\s+)?([a-zç]+)?\s*a\s*(\d{1,2})\s*(?:de\s+)?([a-zç]+)\)/i,
+    /semana de\s+(\d{1,2})\s*(?:de\s+)?([a-zç]+)?\s*a\s*(\d{1,2})\s*(?:de\s+)?([a-zç]+)/i,
+    /entre\s+(\d{1,2})\s*(?:de\s+)?([a-zç]+)?\s*e\s*(\d{1,2})\s*(?:de\s+)?([a-zç]+)/i,
+  ];
+  for (const re of pats) {
+    const m = texto.match(re);
+    if (!m) continue;
+    const d1 = parseInt(m[1], 10), d2 = parseInt(m[3], 10);
+    const mes2 = MESES.indexOf(m[4].toLowerCase());
+    const mes1 = m[2] ? MESES.indexOf(m[2].toLowerCase()) : mes2;
+    if (mes1 < 0 || mes2 < 0) continue;
+    const ano = hojeLisboa().getFullYear();
+    const anoFim = (mes2 < mes1) ? ano + 1 : ano; // dezembro -> janeiro
+    const pad = (n) => String(n).padStart(2, '0');
+    return { inicio: `${ano}-${pad(mes1 + 1)}-${pad(d1)}`, fim: `${anoFim}-${pad(mes2 + 1)}-${pad(d2)}` };
+  }
+  return null;
 }
 
-function parseVar(texto, nomeRe) {
+/* ── FONTE PRINCIPAL: precocombustiveis.pt (variação com ISP + preço + semana) ── */
+async function fontePrecoCombustiveis() {
+  const texto = toText(await html('https://precocombustiveis.pt/proxima-semana/'));
+  const vg = parseVarEuroL(texto, 'gas[oó]leo');
+  const va = parseVarEuroL(texto, 'gasolina');
+  const semana = parseSemana(texto);
+  if (vg === null || va === null || !semana) return null;
+  return {
+    variacaoGasoleo: vg,
+    variacaoGasolina: va,
+    precoGasoleo: parsePreco(texto, 'gas[oó]leo'),
+    precoGasolina: parsePreco(texto, 'gasolina'),
+    semanaInicio: semana.inicio,
+    semanaFim: semana.fim,
+    fonte: 'https://precocombustiveis.pt/proxima-semana/ (com ISP)',
+  };
+}
+/* Valor parentetizado tipo "(+0,03 €/L)" a seguir ao nome do combustível */
+function parseVarEuroL(texto, nomeRe) {
+  const re = new RegExp(nomeRe + '[^()]{0,90}?\\(([+\\-]?\\d(?:[.,]\\d+)?)\\s*€\\/?\\s*L?\\)', 'i');
+  const m = texto.match(re);
+  return m ? round3(parseFloat(m[1].replace(',', '.'))) : null;
+}
+function parsePreco(texto, nomeRe) {
+  const re = new RegExp('([12][.,]\\d{3})\\s*€\\/?\\s*L?\\s*para\\s*' + nomeRe, 'i');
+  const m = texto.match(re);
+  return m ? parseFloat(m[1].replace(',', '.')) : null;
+}
+
+/* ── FONTE DE RESERVA: Poupa Pilim (variação bruta, base ENSE) ── */
+async function fontePoupaPilim() {
+  const lista = await html('https://www.poupapilim.com/combustiveis-noticias-e-previsoes/');
+  const m = lista.match(/https:\/\/www\.poupapilim\.com\/preco-dos-combustiveis-na-proxima-semana-[a-z0-9-]+\//i);
+  if (!m) throw new Error('artigo de previsão não encontrado');
+  const url = m[0];
+  const texto = toText(await html(url));
+  const vg = parseVarCent(texto, 'Gas[oó]leo');
+  const va = parseVarCent(texto, 'Gasolina\\s*95');
+  const semana = parseSemana(texto);
+  if (vg === null || va === null || !semana) throw new Error('dados não extraídos');
+  return { variacaoGasoleo: vg, variacaoGasolina: va, precoGasoleo: null, precoGasolina: null, semanaInicio: semana.inicio, semanaFim: semana.fim, fonte: url + ' (sem ISP)' };
+}
+/* Valor em cêntimos "+3,5 cêntimos" a seguir ao nome */
+function parseVarCent(texto, nomeRe) {
   const re = new RegExp(nomeRe + '([^\\d+\\-]{0,24})([+\\-]?)(\\d+(?:[.,]\\d+)?)\\s*c[êe]ntimo', 'i');
   const m = texto.match(re);
   if (!m) return null;
@@ -98,47 +136,6 @@ function parseVar(texto, nomeRe) {
   return round3(val / 100);
 }
 
-/* Semana a partir do título "(6 a 12 julho)" ou "(29 junho a 5 julho)" */
-function parseSemana(texto) {
-  const re = /\((\d{1,2})\s*(?:de\s+)?([a-zç]+)?\s*a\s*(\d{1,2})\s*(?:de\s+)?([a-zç]+)\)/i;
-  const m = texto.match(re);
-  if (!m) return null;
-  const d1 = parseInt(m[1], 10), d2 = parseInt(m[3], 10);
-  const mes2 = MESES.indexOf(m[4].toLowerCase());
-  const mes1 = m[2] ? MESES.indexOf(m[2].toLowerCase()) : mes2;
-  if (mes1 < 0 || mes2 < 0) return null;
-  const ano = hojeLisboa().getFullYear();
-  const anoFim = (mes2 < mes1) ? ano + 1 : ano; // dezembro -> janeiro
-  const pad = (n) => String(n).padStart(2, '0');
-  return {
-    inicio: `${ano}-${pad(mes1 + 1)}-${pad(d1)}`,
-    fim: `${anoFim}-${pad(mes2 + 1)}-${pad(d2)}`,
-  };
-}
-function parseSemanaUrl(url) {
-  const m = url.match(/proxima-semana-(\d{1,2})-a-(\d{1,2})-([a-zç]+)/i);
-  if (!m) return null;
-  const mes = MESES.indexOf(m[3].toLowerCase());
-  if (mes < 0) return null;
-  const ano = hojeLisboa().getFullYear();
-  const pad = (n) => String(n).padStart(2, '0');
-  return { inicio: `${ano}-${pad(mes + 1)}-${pad(+m[1])}`, fim: `${ano}-${pad(mes + 1)}-${pad(+m[2])}` };
-}
-
-/* ── precocombustiveis.pt: preço médio de referência (base DGEG) ── */
-async function precoReferencia() {
-  const texto = toText(await html('https://precocombustiveis.pt/proxima-semana/'));
-  return {
-    gasoleo: parsePreco(texto, 'gas[oó]leo'),
-    gasolina: parsePreco(texto, 'gasolina'),
-  };
-}
-function parsePreco(texto, nomeRe) {
-  const re = new RegExp('([12][.,]\\d{3})\\s*€\\/?L?\\s*para\\s*' + nomeRe, 'i');
-  const m = texto.match(re);
-  return m ? parseFloat(m[1].replace(',', '.')) : null;
-}
-
 /* ── Validações ── */
 const precoOk = (v) => typeof v === 'number' && v > 1.0 && v < 3.0;
 const varOk = (v) => typeof v === 'number' && Math.abs(v) <= 0.15;
@@ -147,28 +144,33 @@ function abortar(msg) { console.log(`SEM ALTERAÇÕES: ${msg}`); process.exit(0)
 /* ── Principal ── */
 const dados = JSON.parse(readFileSync(FICHEIRO, 'utf8'));
 const hoje = hojeLisboa();
-console.log(`Execução: ${iso(hoje)} (${['dom','2ª','3ª','4ª','5ª','6ª','sáb'][hoje.getDay()]})`);
+console.log(`Execução: ${iso(hoje)}`);
 
-let prev;
+let d = null;
 try {
-  prev = await previsaoPoupaPilim();
+  d = await fontePrecoCombustiveis();
+  if (d) console.log('Fonte usada: precocombustiveis.pt (variação com ISP)');
 } catch (e) {
-  abortar('previsão indisponível: ' + e.message);
+  console.log('precocombustiveis indisponível:', e.message);
 }
-if (!varOk(prev.gasoleo) || !varOk(prev.gasolina)) abortar('variações implausíveis');
+if (!d) {
+  try {
+    d = await fontePoupaPilim();
+    console.log('Fonte usada: Poupa Pilim (RESERVA - variação bruta, sem ISP)');
+  } catch (e) {
+    abortar('nenhuma fonte disponível: ' + e.message);
+  }
+}
+if (!varOk(d.variacaoGasoleo) || !varOk(d.variacaoGasolina)) abortar('variações implausíveis');
 
-/* Preço de referência (opcional; se falhar, mantém o atual) */
-let ref = { gasoleo: null, gasolina: null };
-try { ref = await precoReferencia(); } catch (e) { console.log('precoReferencia falhou (mantém atual):', e.message); }
-if (precoOk(ref.gasoleo)) dados.gasoleo.atual = round3(ref.gasoleo);
-if (precoOk(ref.gasolina)) dados.gasolina.atual = round3(ref.gasolina);
+if (precoOk(d.precoGasoleo)) dados.gasoleo.atual = round3(d.precoGasoleo);
+if (precoOk(d.precoGasolina)) dados.gasolina.atual = round3(d.precoGasolina);
 
-/* Aplicar */
 dados.atualizado = iso(hoje);
-dados.semanaInicio = prev.semanaInicio;
-dados.semanaFim = prev.semanaFim;
-dados.gasoleo.variacao = prev.gasoleo;
-dados.gasolina.variacao = prev.gasolina;
+dados.semanaInicio = d.semanaInicio;
+dados.semanaFim = d.semanaFim;
+dados.gasoleo.variacao = d.variacaoGasoleo;
+dados.gasolina.variacao = d.variacaoGasolina;
 
 /* Histórico: semana atual (realizado) + semana prevista */
 function upsert(label, gasolina, gasoleo, previsto) {
@@ -179,18 +181,17 @@ function upsert(label, gasolina, gasoleo, previsto) {
   if (i >= 0) dados.historico[i] = row; else dados.historico.push(row);
 }
 const labelAtual = ddmm(iso(segundaDestaSemana(hoje)));
-const labelPrev = ddmm(prev.semanaInicio);
+const labelPrev = ddmm(d.semanaInicio);
 if (labelAtual !== labelPrev) {
   upsert(labelAtual, dados.gasolina.atual, dados.gasoleo.atual, false);
 }
 upsert(labelPrev, dados.gasolina.atual + dados.gasolina.variacao, dados.gasoleo.atual + dados.gasoleo.variacao, true);
 
-/* manter no máximo 12 semanas */
 dados.historico = dados.historico.slice(-12);
 
 writeFileSync(FICHEIRO, JSON.stringify(dados, null, 2) + '\n');
 console.log('OK combustiveis.json atualizado:');
-console.log(`  semana ${prev.semanaInicio} a ${prev.semanaFim}`);
+console.log(`  semana ${d.semanaInicio} a ${d.semanaFim}`);
 console.log(`  gasóleo  atual ${dados.gasoleo.atual}  variação ${dados.gasoleo.variacao}`);
 console.log(`  gasolina atual ${dados.gasolina.atual}  variação ${dados.gasolina.variacao}`);
-console.log(`  fonte previsão: ${prev.url}`);
+console.log(`  fonte: ${d.fonte}`);
