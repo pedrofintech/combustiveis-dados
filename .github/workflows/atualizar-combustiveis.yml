@@ -1,10 +1,14 @@
+# Colocar em .github/workflows/atualizar-combustiveis.yml
 name: Atualizar combustíveis
 
 on:
   schedule:
-    - cron: '0 13 * * 5'  # 6ª feira ~14h de Lisboa: previsão da semana seguinte
-    - cron: '0 13 * * 1'  # 2ª feira ~14h de Lisboa: confirmação dos preços reais
-  workflow_dispatch:
+    # Todos os dias às ~14h de Lisboa (13h UTC). Correr diariamente torna o
+    # sistema fiável: se o GitHub atrasar ou saltar um dia (limitação conhecida
+    # do cron do Actions), o dia seguinte apanha. Só faz commit quando os dados
+    # mudam de facto, por isso correr todos os dias é barato.
+    - cron: '0 13 * * *'
+  workflow_dispatch:       # permite correr manualmente no separador Actions
 
 permissions:
   contents: write
@@ -27,5 +31,5 @@ jobs:
           git config user.name "combustiveis-bot"
           git config user.email "bot@users.noreply.github.com"
           git add combustiveis.json
-          git diff --cached --quiet || git commit -m "Atualiza dados dos combustiveis"
+          git diff --cached --quiet || git commit -m "Atualiza dados dos combustiveis [skip ci]"
           git push
