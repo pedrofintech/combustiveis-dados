@@ -8,7 +8,7 @@
   },
   "gasolina": {
     "atual": 1.876,
-    "variacao": 0.035
+    "variacao": 0.02
   },
   "historico": [
     {
@@ -35,7 +35,7 @@
     },
     {
       "semana": "06/07",
-      "gasolina": 1.911,
+      "gasolina": 1.896,
       "gasoleo": 1.797,
       "previsto": true
     }
