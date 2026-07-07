@@ -214,7 +214,11 @@ const labelPrev = ddmm(d.semanaInicio);
 if (labelAtual !== labelPrev) {
   upsert(labelAtual, dados.gasolina.atual, dados.gasoleo.atual, false);
 }
-upsert(labelPrev, dados.gasolina.atual + dados.gasolina.variacao, dados.gasoleo.atual + dados.gasoleo.variacao, true);
+/* "previsto" so faz sentido enquanto a semana ainda nao comecou (5a a domingo).
+   Assim que ja estamos dentro dela (2a em diante), a linha deixa de levar o
+   rotulo "(previsto)" no grafico e na tabela - passa a ser a semana em vigor. */
+const semanaJaComecou = iso(hoje) >= d.semanaInicio;
+upsert(labelPrev, dados.gasolina.atual + dados.gasolina.variacao, dados.gasoleo.atual + dados.gasoleo.variacao, !semanaJaComecou);
 
 dados.historico = dados.historico.slice(-12);
 
