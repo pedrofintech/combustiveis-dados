@@ -3,11 +3,11 @@
   "semanaInicio": "2026-07-20",
   "semanaFim": "2026-07-26",
   "gasoleo": {
-    "atual": 1.767,
+    "atual": 1.848,
     "variacao": 0.135
   },
   "gasolina": {
-    "atual": 1.876,
+    "atual": 1.913,
     "variacao": 0.065
   },
   "historico": [
@@ -40,13 +40,13 @@
     },
     {
       "semana": "13/07",
-      "gasolina": 1.876,
-      "gasoleo": 1.767
+      "gasolina": 1.913,
+      "gasoleo": 1.848
     },
     {
       "semana": "20/07",
-      "gasolina": 1.941,
-      "gasoleo": 1.902,
+      "gasolina": 1.978,
+      "gasoleo": 1.983,
       "previsto": true
     }
   ]
