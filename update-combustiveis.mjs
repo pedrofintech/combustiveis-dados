@@ -62,6 +62,7 @@ function toText(h) {
     .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#8364;|&euro;/g, '€')
     .replace(/&#x?[0-9a-f]+;/gi, ' ')
     .replace(/\|/g, ' ')
+    .replace(/\*+/g, ' ') /* o leitor r.jina.ai devolve markdown; os ** de negrito partiam o parse do preço */
     .replace(/\s+/g, ' ')
     .trim();
 }
