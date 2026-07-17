@@ -3,11 +3,12 @@ name: Atualizar combustíveis
 
 on:
   schedule:
-    # Todos os dias às ~14h de Lisboa (13h UTC). Correr diariamente torna o
-    # sistema fiável: se o GitHub atrasar ou saltar um dia (limitação conhecida
-    # do cron do Actions), o dia seguinte apanha. Só faz commit quando os dados
-    # mudam de facto, por isso correr todos os dias é barato.
-    - cron: '0 13 * * *'
+    # De hora a hora entre as 7h e as 21h de Lisboa (6-20 UTC). Assim a página
+    # apanha a previsão de sexta-feira ~1h depois de a fonte publicar, em vez
+    # de esperar pelo dia seguinte. É barato: só faz commit quando os dados
+    # mudam; os runs sem novidade terminam em segundos. Se o GitHub atrasar ou
+    # saltar um run (limitação conhecida do cron), o da hora seguinte apanha.
+    - cron: '0 6-20 * * *'
   workflow_dispatch:       # permite correr manualmente no separador Actions
 
 permissions:
