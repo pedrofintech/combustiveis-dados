@@ -151,7 +151,7 @@ async function fontePoupaPilim() {
   const va = parseVarCent(texto, 'Gasolina\\s*95');
   const semana = parseSemana(texto);
   if (vg === null || va === null || !semana) throw new Error('dados não extraídos');
-  return { variacaoGasoleo: vg, variacaoGasolina: va, precoGasoleo: null, precoGasolina: null, semanaInicio: semana.inicio, semanaFim: semana.fim, fonte: url + ' (sem ISP)' };
+  return { variacaoGasoleo: vg, variacaoGasolina: va, precoGasoleo: null, precoGasolina: null, semanaInicio: semana.inicio, semanaFim: semana.fim, reserva: true, fonte: url + ' (sem ISP)' };
 }
 /* Valor em cêntimos "+3,5 cêntimos" a seguir ao nome */
 function parseVarCent(texto, nomeRe) {
@@ -190,6 +190,13 @@ if (!d) {
     abortar('nenhuma fonte disponível: ' + e.message);
   }
 }
+/* Guardas anti-estrago (importantes com execução horária):
+   1) Nunca recuar: se a fonte mostrar uma semana mais antiga do que a que já
+      está guardada, não se escreve nada.
+   2) A reserva (Poupa Pilim, valores brutos sem ISP) só entra quando traz uma
+      semana NOVA; na mesma semana, mantém-se o valor com ISP que já lá está. */
+if (dados.semanaInicio && d.semanaInicio < dados.semanaInicio) abortar(`fonte com semana antiga (${d.semanaInicio} < ${dados.semanaInicio})`);
+if (d.reserva && dados.semanaInicio && d.semanaInicio <= dados.semanaInicio) abortar('reserva sem semana nova - mantém-se o valor com ISP já guardado');
 if (!varOk(d.variacaoGasoleo) || !varOk(d.variacaoGasolina)) abortar('variações implausíveis');
 
 if (precoOk(d.precoGasoleo)) dados.gasoleo.atual = round3(d.precoGasoleo);
