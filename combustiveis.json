@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-07-19",
+  "atualizado": "2026-07-20",
   "semanaInicio": "2026-07-20",
   "semanaFim": "2026-07-26",
   "gasoleo": {
@@ -46,8 +46,7 @@
     {
       "semana": "20/07",
       "gasolina": 1.978,
-      "gasoleo": 1.983,
-      "previsto": true
+      "gasoleo": 1.983
     }
   ]
 }
