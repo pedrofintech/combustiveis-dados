@@ -3,16 +3,16 @@
  * Corre no GitHub Actions (diariamente). Sem dependências (Node 20+).
  *
  * Desenho (v3):
- *  - Lê o TEXTO das páginas (tags removidas), não a estrutura HTML.
- *  - Fonte PRINCIPAL: precocombustiveis.pt (base DGEG) -> dá a variação JÁ COM
- *    o efeito do ISP (o valor que o condutor paga), o preço de referência e a
- *    semana, tudo numa página. É o número "líquido", certo.
- *  - Fonte de RESERVA: Poupa Pilim (base ENSE) -> só se a principal falhar.
- *    Atenção: os números do Poupa Pilim são "brutos", ANTES das medidas de ISP,
- *    por isso podem exagerar a subida em semanas de intervenção do Governo.
- *  - A semana vem sempre da fonte usada.
- *  - Se nenhuma fonte der a variação, NÃO escreve nada (mantém o último bom).
- *    Se só o preço faltar, mantém o preço anterior e aplica só a variação.
+ * - Lê o TEXTO das páginas (tags removidas), não a estrutura HTML.
+ * - Fonte PRINCIPAL: precocombustiveis.pt (base DGEG) -> dá a variação JÁ COM
+ *   o efeito do ISP (o valor que o condutor paga), o preço de referência e a
+ *   semana, tudo numa página. É o número "líquido", certo.
+ * - Fonte de RESERVA: Poupa Pilim (base ENSE) -> só se a principal falhar.
+ *   Atenção: os números do Poupa Pilim são "brutos", ANTES das medidas de ISP,
+ *   por isso podem exagerar a subida em semanas de intervenção do Governo.
+ * - A semana vem sempre da fonte usada.
+ * - Se nenhuma fonte der a variação, NÃO escreve nada (mantém o último bom).
+ *   Se só o preço faltar, mantém o preço anterior e aplica só a variação.
  *
  * Nunca usa a API da DGEG (só cita estatísticas públicas reportadas).
  */
@@ -63,6 +63,9 @@ function toText(h) {
     .replace(/&#x?[0-9a-f]+;/gi, ' ')
     .replace(/\|/g, ' ')
     .replace(/\*+/g, ' ') /* o leitor r.jina.ai devolve markdown; os ** de negrito partiam o parse do preço */
+    .replace(/[−–—]/g, '-') /* FIX 2026-08-02: normaliza sinal "menos" matemático (U+2212) e travessões
+                                para hífen normal - a precocombustiveis.pt passou a usar "−" nas variações
+                                negativas, o que partia o parseVarEuroL (só reconhecia "+"/"-" ASCII) */
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -154,8 +157,13 @@ async function fontePoupaPilim() {
   if (vg === null || va === null || !semana) throw new Error('dados não extraídos');
   return { variacaoGasoleo: vg, variacaoGasolina: va, precoGasoleo: null, precoGasolina: null, semanaInicio: semana.inicio, semanaFim: semana.fim, reserva: true, fonte: url + ' (sem ISP)' };
 }
-/* Valor em cêntimos "+3,5 cêntimos" a seguir ao nome */
+/* Valor em cêntimos "+3,5 cêntimos" a seguir ao nome. */
 function parseVarCent(texto, nomeRe) {
+  /* FIX 2026-08-02: o Poupa Pilim às vezes não dá número nenhum quando a
+     previsão é de preço inalterado ("🟰 Fica igual") - sem isto, vg/va
+     ficava null e o script abortava mesmo com a fonte de reserva disponível. */
+  const reIgual = new RegExp(nomeRe + '[^\\d]{0,40}?(fica igual|sem varia|🟰)', 'i');
+  if (reIgual.test(texto)) return 0;
   const re = new RegExp(nomeRe + '([^\\d+\\-]{0,24})([+\\-]?)(\\d+(?:[.,]\\d+)?)\\s*c[êe]ntimo', 'i');
   const m = texto.match(re);
   if (!m) return null;
@@ -233,6 +241,6 @@ dados.historico = dados.historico.slice(-12);
 writeFileSync(FICHEIRO, JSON.stringify(dados, null, 2) + '\n');
 console.log('OK combustiveis.json atualizado:');
 console.log(`  semana ${d.semanaInicio} a ${d.semanaFim}`);
-console.log(`  gasóleo  atual ${dados.gasoleo.atual}  variação ${dados.gasoleo.variacao}`);
-console.log(`  gasolina atual ${dados.gasolina.atual}  variação ${dados.gasolina.variacao}`);
+console.log(`  gasóleo atual ${dados.gasoleo.atual} variação ${dados.gasoleo.variacao}`);
+console.log(`  gasolina atual ${dados.gasolina.atual} variação ${dados.gasolina.variacao}`);
 console.log(`  fonte: ${d.fonte}`);
