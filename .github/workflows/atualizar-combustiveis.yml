@@ -25,7 +25,7 @@ jobs:
           node-version: 20
 
       - name: Atualizar dados
-        run: node update-combustiveis.mjs
+        run: node update-combustiveis.mjs && node posprocessar-isp.mjs
 
       - name: Commit e push (só se houver alterações)
         run: |
