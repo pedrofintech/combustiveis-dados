@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-17",
+  "atualizado": "2026-08-18",
   "semanaInicio": "2026-08-17",
   "semanaFim": "2026-08-23",
   "gasoleo": {
@@ -71,9 +71,8 @@
     },
     {
       "semana": "17/08",
-      "gasolina": 1.972,
-      "gasoleo": 2.054,
-      "previsto": true
+      "gasolina": 1.986,
+      "gasoleo": 2.075
     }
   ]
 }
