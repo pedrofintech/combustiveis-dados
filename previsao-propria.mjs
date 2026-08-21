@@ -75,6 +75,21 @@ function mediaJanela(serie, ini, fim) {
 function arred(n, casas = 1) { return Number(n.toFixed(casas)); }
 function meioCentimo(n) { return Math.round(n * 2) / 2; }
 
+async function yahooChart(simbolo) {
+    const url = "https://query1.finance.yahoo.com/v8/finance/chart/" + encodeURIComponent(simbolo) + "?range=1mo&interval=1d";
+    const r = await fetch(url, UA);
+    if (!r.ok) throw new Error("yahoo " + simbolo + " http " + r.status);
+    const j = await r.json();
+    const res = j && j.chart && j.chart.result && j.chart.result[0];
+    if (!res) throw new Error("yahoo " + simbolo + " sem resultado");
+    const ts = res.timestamp || [];
+    const fechos = (res.indicators && res.indicators.quote && res.indicators.quote[0] && res.indicators.quote[0].close) || [];
+    const out = {};
+    for (let i = 0; i < ts.length; i++) { const v = Number(fechos[i]); if (Number.isFinite(v) && v > 0) out[new Date(ts[i] * 1000).toISOString().slice(0, 10)] = v; }
+    if (!Object.keys(out).length) throw new Error("yahoo " + simbolo + " sem dados");
+    return out;
+}
+
 async function principal() {
   const segAtual = segundaDaSemana(hoje);
   const alvoSegunda = somaDias(segAtual, 7);           // proxima segunda-feira
@@ -82,11 +97,15 @@ async function principal() {
   const antIni = somaDias(segAtual, -7), antFim = somaDias(segAtual, -3); // semana anterior
 
   const desde = somaDias(segAtual, -21);
-  const [gasoil, rbob, fx] = await Promise.all([
-    csvStooq("lf.f", desde, hoje),
-    csvStooq("rb.f", desde, hoje),
-    cambioBce()
-  ]);
+    const obter = async (stooqSim, yahooSim, litrosStooq) => {
+          try { return { serie: await csvStooq(stooqSim, desde, hoje), litros: litrosStooq }; }
+          catch (e) { console.log(stooqSim + " via stooq falhou (" + (e && e.message ? e.message : e) + ") - fallback Yahoo " + yahooSim); return { serie: await yahooChart(yahooSim), litros: LITROS_GALAO }; }
+    };
+    const [gasoil, rbob, fx] = await Promise.all([
+          obter("lf.f", "HO=F", LITROS_TONELADA_GASOIL),
+          obter("rb.f", "RB=F", LITROS_GALAO),
+          cambioBce()
+        ]);
 
   const eurL = (bruto, fxm, litros) => bruto / litros / fxm;
   const calc = (serie, litros) => {
@@ -97,8 +116,8 @@ async function principal() {
     return { delta: (eurL(cur.media, fxCur, litros) - eurL(ant.media, fxAnt, litros)) * 100, diasComDados: cur.diasComDados };
   };
 
-  const dG = calc(gasoil, LITROS_TONELADA_GASOIL);
-  const dGas = calc(rbob, LITROS_GALAO);
+    const dG = calc(gasoil.serie, gasoil.litros);
+    const dGas = calc(rbob.serie, rbob.litros);
   const janelaCompleta = hoje.getDay() === 6 || hoje.getDay() === 0 || (hoje.getDay() === 5 && hoje.getHours() >= 22);
 
   // Fiscal: assume manutencao do desconto ISP ate haver portaria nova (le isp-estado.json so para referencia).
