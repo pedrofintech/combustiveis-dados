@@ -1,14 +1,14 @@
 {
-  "atualizado": "2026-08-19",
+  "atualizado": "2026-08-21",
   "semanaInicio": "2026-08-24",
   "semanaFim": "2026-08-30",
   "gasoleo": {
-    "atual": 1.975,
-    "variacao": 0.03
+    "atual": 2.026,
+    "variacao": 0.035
   },
   "gasolina": {
-    "atual": 1.896,
-    "variacao": 0.05
+    "atual": 1.954,
+    "variacao": 0.025
   },
   "notaIsp": "Subida amortecida pelo reforço do desconto no ISP (Portaria n.º 345-C/2026/1, de 14 de agosto): sem o ajuste, o gasóleo subiria cerca de 10 cêntimos e a gasolina 9.",
   "isp": {
@@ -71,13 +71,13 @@
     },
     {
       "semana": "17/08",
-      "gasolina": 1.896,
-      "gasoleo": 1.975
+      "gasolina": 1.954,
+      "gasoleo": 2.026
     },
     {
       "semana": "24/08",
-      "gasolina": 1.946,
-      "gasoleo": 2.005,
+      "gasolina": 1.979,
+      "gasoleo": 2.061,
       "previsto": true
     }
   ]
