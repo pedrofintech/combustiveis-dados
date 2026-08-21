@@ -17,7 +17,7 @@ const K = { gasoleo: 0.60, gasolina: 1.04 };
 const LITROS_TONELADA_GASOIL = 1183; // densidade 0.845
 const LITROS_GALAO = 3.78541;
 const IVA = 1.23;
-const UA = { headers: { "user-agent": "literaciafinanceira-combustiveis/1.0" } };
+const UA = { headers: { "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36", "accept": "text/csv,text/plain,*/*" } };
 
 const hoje = new Date();
 const d0 = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
