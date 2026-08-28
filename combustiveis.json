@@ -1,14 +1,14 @@
 {
-  "atualizado": "2026-08-27",
-  "semanaInicio": "2026-08-24",
-  "semanaFim": "2026-08-30",
+  "atualizado": "2026-08-28",
+  "semanaInicio": "2026-08-31",
+  "semanaFim": "2026-09-06",
   "gasoleo": {
     "atual": 2.026,
-    "variacao": 0.035
+    "variacao": -0.06
   },
   "gasolina": {
     "atual": 1.954,
-    "variacao": 0.025
+    "variacao": -0.02
   },
   "notaIsp": "Preços de partida confirmados pelas médias oficiais da DGEG (2,026€ no gasóleo e 1,954€ na gasolina, a 17 de agosto).",
   "isp": {
@@ -17,12 +17,6 @@
     "gasolina": 49.61
   },
   "historico": [
-    {
-      "semana": "08/06",
-      "gasolina": 1.92,
-      "gasoleo": 1.899,
-      "aprox": true
-    },
     {
       "semana": "15/06",
       "gasolina": 1.925,
@@ -76,8 +70,14 @@
     },
     {
       "semana": "24/08",
-      "gasolina": 1.979,
-      "gasoleo": 2.061
+      "gasolina": 1.954,
+      "gasoleo": 2.026
+    },
+    {
+      "semana": "31/08",
+      "gasolina": 1.934,
+      "gasoleo": 1.966,
+      "previsto": true
     }
   ]
 }
