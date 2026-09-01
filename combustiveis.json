@@ -4,13 +4,13 @@
   "semanaFim": "2026-09-06",
   "gasoleo": {
     "atual": 2.066,
-    "variacao": -0.075
+    "variacao": -0.037
   },
   "gasolina": {
     "atual": 1.986,
-    "variacao": 0.015
+    "variacao": 0.027
   },
-  "notaIsp": "Preços de partida confirmados pelas médias oficiais da DGEG (2,026€ no gasóleo e 1,954€ na gasolina, a 17 de agosto).",
+  "notaIsp": "Valores confirmados com as médias oficiais da DGEG de segunda-feira, 31 de agosto.",
   "isp": {
     "portaria": "Portaria n.º 345-C/2026/1, de 14 de agosto",
     "gasoleo": 80.52,
