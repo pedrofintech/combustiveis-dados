@@ -1,14 +1,14 @@
 {
-  "atualizado": "2026-09-01",
-  "semanaInicio": "2026-08-31",
-  "semanaFim": "2026-09-06",
+  "atualizado": "2026-09-03",
+  "semanaInicio": "2026-09-07",
+  "semanaFim": "2026-09-13",
   "gasoleo": {
     "atual": 2.066,
-    "variacao": -0.037
+    "variacao": 0.12
   },
   "gasolina": {
     "atual": 1.986,
-    "variacao": 0.027
+    "variacao": 0.06
   },
   "notaIsp": "Valores confirmados com as médias oficiais da DGEG de segunda-feira, 31 de agosto.",
   "isp": {
@@ -17,12 +17,6 @@
     "gasolina": 49.61
   },
   "historico": [
-    {
-      "semana": "15/06",
-      "gasolina": 1.925,
-      "gasoleo": 1.864,
-      "aprox": true
-    },
     {
       "semana": "22/06",
       "gasolina": 1.882,
@@ -75,8 +69,14 @@
     },
     {
       "semana": "31/08",
-      "gasolina": 2.001,
-      "gasoleo": 1.991
+      "gasolina": 1.986,
+      "gasoleo": 2.066
+    },
+    {
+      "semana": "07/09",
+      "gasolina": 2.046,
+      "gasoleo": 2.186,
+      "previsto": true
     }
   ]
 }
