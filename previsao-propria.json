@@ -1,0 +1,39 @@
+{
+  "geradoEm": "2026-09-08T10:51:29.892Z",
+  "semanaAlvo": "2026-09-07",
+  "modo": "em-vigor",
+  "gasoleo": {
+    "variacao": 8,
+    "min": 6,
+    "max": 10
+  },
+  "gasolina": {
+    "variacao": -2.9,
+    "min": -4,
+    "max": -2
+  },
+  "janelaCompleta": true,
+  "kUsado": {
+    "gasoleo": 1.04,
+    "gasolina": 1.04
+  },
+  "diasDeCotacoes": 5,
+  "deltaCotacoesCts": {
+    "gasoleo": 7.68,
+    "gasolina": -2.79
+  },
+  "k": {
+    "gasoleo": 1.04,
+    "gasolina": 1.04
+  },
+  "fontes": {
+    "gasoleo": "yahoo HO=F",
+    "gasolina": "yahoo RB=F",
+    "cambio": "frankfurter"
+  },
+  "mirror": {
+    "gasoleo": 7.5,
+    "gasolina": 8,
+    "semanaInicio": "2026-09-07"
+  }
+}

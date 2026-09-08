@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-09-06",
+  "atualizado": "2026-09-08",
   "semanaInicio": "2026-09-07",
   "semanaFim": "2026-09-13",
   "gasoleo": {
@@ -78,5 +78,6 @@
       "gasoleo": 2.104,
       "previsto": true
     }
-  ]
+  ],
+  "fonte": "dgeg-confirmado"
 }
