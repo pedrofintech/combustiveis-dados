@@ -3,14 +3,14 @@
   "semanaInicio": "2026-09-07",
   "semanaFim": "2026-09-13",
   "gasoleo": {
-    "atual": 2.066,
-    "variacao": 0.15
+    "atual": 2.029,
+    "variacao": 0.075
   },
   "gasolina": {
-    "atual": 1.986,
-    "variacao": 0.12
+    "atual": 2.013,
+    "variacao": 0.08
   },
-  "notaIsp": "Valores confirmados com as médias oficiais da DGEG de segunda-feira, 31 de agosto.",
+  "notaIsp": "Valores confirmados com as médias oficiais da DGEG de segunda-feira, 7 de setembro.",
   "isp": {
     "portaria": "Portaria n.º 345-C/2026/1, de 14 de agosto",
     "gasoleo": 80.52,
@@ -74,8 +74,8 @@
     },
     {
       "semana": "07/09",
-      "gasolina": 2.106,
-      "gasoleo": 2.216,
+      "gasolina": 2.093,
+      "gasoleo": 2.104,
       "previsto": true
     }
   ]
