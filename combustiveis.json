@@ -18,41 +18,6 @@
   },
   "historico": [
     {
-      "semana": "22/06",
-      "gasolina": 1.882,
-      "gasoleo": 1.779
-    },
-    {
-      "semana": "29/06",
-      "gasolina": 1.876,
-      "gasoleo": 1.767
-    },
-    {
-      "semana": "06/07",
-      "gasolina": 1.876,
-      "gasoleo": 1.767
-    },
-    {
-      "semana": "13/07",
-      "gasolina": 1.913,
-      "gasoleo": 1.848
-    },
-    {
-      "semana": "20/07",
-      "gasolina": 1.972,
-      "gasoleo": 1.848
-    },
-    {
-      "semana": "27/07",
-      "gasolina": 1.972,
-      "gasoleo": 2.026
-    },
-    {
-      "semana": "03/08",
-      "gasolina": 1.982,
-      "gasoleo": 2.049
-    },
-    {
       "semana": "10/08",
       "gasolina": 1.896,
       "gasoleo": 1.975
@@ -69,14 +34,13 @@
     },
     {
       "semana": "31/08",
-      "gasolina": 1.986,
-      "gasoleo": 2.066
+      "gasolina": 2.013,
+      "gasoleo": 2.029
     },
     {
       "semana": "07/09",
       "gasolina": 2.093,
-      "gasoleo": 2.104,
-      "previsto": true
+      "gasoleo": 2.104
     }
   ],
   "fonte": "dgeg-confirmado"
