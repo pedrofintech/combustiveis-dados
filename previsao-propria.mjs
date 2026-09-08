@@ -1,4 +1,4 @@
-// previsao-propria.mjs v2 - o modelo proprio ALIMENTA a pagina (combustiveis.json).
+// previsao-propria.mjs v2.1 - o modelo proprio ALIMENTA a pagina (combustiveis.json).
 // Corre a seguir ao update-combustiveis.mjs (espelho) e antes do posprocessar-isp.mjs (override manual).
 // Se o modelo falhar por qualquer razao, nao toca no combustiveis.json: a pagina fica com os dados do espelho.
 //
@@ -19,6 +19,7 @@ const K = { gasoleo: 0.60, gasolina: 1.04 };
 const LITROS_TONELADA_GASOIL = 1183;
 const LITROS_GALAO = 3.78541;
 const LIMITE_SANIDADE_CTS = 25;
+const PROXY = "https://lf-proxy.SUBSTITUIR.workers.dev/?u=";   // Worker Cloudflare (ver worker-proxy.js) - os runners do GitHub sao bloqueados pelas fontes
 const UA = { headers: { "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36", "accept": "text/csv,application/json,text/plain,*/*" } };
 
 const hoje = new Date();
@@ -32,7 +33,7 @@ function meioCentimo(n) { return Math.round(n * 2) / 2; }
 
 // --- transporte: tenta direto, depois dois proxies publicos ---
 async function buscar(url) {
-  const rotas = [url, "https://r.jina.ai/" + url, "https://api.allorigins.win/raw?url=" + encodeURIComponent(url)];
+  const rotas = PROXY.indexOf("SUBSTITUIR") === -1 ? [PROXY + encodeURIComponent(url), url] : [url];
   let ultimoErro = null;
   for (const rota of rotas) {
     try {
@@ -65,6 +66,14 @@ function parseYahoo(texto) {
   const fechos = (res.indicators && res.indicators.quote && res.indicators.quote[0] && res.indicators.quote[0].close) || [];
   const out = {};
   for (let k = 0; k < ts.length; k++) { const v = Number(fechos[k]); if (Number.isFinite(v) && v > 0) out[new Date(ts[k] * 1000).toISOString().slice(0, 10)] = v; }
+  return out;
+}
+function parseFrankfurter(texto) {
+  const i = texto.indexOf("{"), j = texto.lastIndexOf("}");
+  if (i < 0 || j < 0) return {};
+  const jn = JSON.parse(texto.slice(i, j + 1));
+  const out = {};
+  for (const d of Object.keys(jn.rates || {})) { const v = Number(jn.rates[d] && jn.rates[d].USD); if (Number.isFinite(v) && v > 0) out[d] = v; }
   return out;
 }
 function parseBce(xml) {
@@ -150,7 +159,10 @@ async function principal() {
       { id: "yahoo RB=F", url: yahooUrl("RB=F", "query2"), parse: parseYahoo, litros: LITROS_GALAO },
       { id: "yahoo RB=F q1", url: yahooUrl("RB=F", "query1"), parse: parseYahoo, litros: LITROS_GALAO }
     ]),
-    serie("cambio", [{ id: "BCE", url: "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml", parse: parseBce, litros: 1 }])
+    serie("cambio", [
+      { id: "frankfurter", url: "https://api.frankfurter.app/" + iso(desde) + ".." + iso(hoje) + "?from=EUR&to=USD", parse: parseFrankfurter, litros: 1 },
+      { id: "BCE", url: "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml", parse: parseBce, litros: 1 }
+    ])
   ]);
 
   const p = calcular(gasoil, rbob, fxObj.serie, janIni, janFim, antIni, antFim, hoje);
