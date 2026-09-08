@@ -1,4 +1,4 @@
-// previsao-propria.mjs v2.2 - o modelo proprio ALIMENTA a pagina (combustiveis.json).
+// previsao-propria.mjs v2.3 - o modelo proprio ALIMENTA a pagina (combustiveis.json).
 // Corre a seguir ao update-combustiveis.mjs (espelho) e antes do posprocessar-isp.mjs (override manual).
 // Se o modelo falhar por qualquer razao, nao toca no combustiveis.json: a pagina fica com os dados do espelho.
 //
@@ -31,6 +31,14 @@ const iso = (d) => d.toISOString().slice(0, 10);
 const compacta = (d) => iso(d).replace(/-/g, "");
 function segundaDaSemana(d) { const x = d0(d); const dia = (x.getDay() + 6) % 7; x.setDate(x.getDate() - dia); return x; }
 function somaDias(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+// Contrato NYMEX que esta "front" num dia d: o contrato do mes seguinte (o de M expira no ultimo dia util de M-1).
+// Usar o MESMO contrato nas duas semanas evita o salto artificial do roll (ex.: RBOB set->out, gasolina de inverno).
+const CODIGOS_MES = "FGHJKMNQUVXZ";
+function contratoFront(d) { const m = (d.getMonth() + 1) % 12; const ano = d.getFullYear() + (d.getMonth() === 11 ? 1 : 0); return CODIGOS_MES[m] + String(ano).slice(2); }
+function valorAntes(s, dia) { let v = null; for (const k of Object.keys(s).sort()) { if (k <= iso(dia)) v = s[k]; else break; } return v; }
+function valorDesde(s, dia) { for (const k of Object.keys(s).sort()) { if (k >= iso(dia)) return s[k]; } return null; }
+function saltoSuspeito(s, antFim, janIni) { const a = valorAntes(s, antFim), b = valorDesde(s, janIni); if (!a || !b) return 0; return Math.abs(b / a - 1); }
+
 function arred(n, casas = 1) { return Number(n.toFixed(casas)); }
 function meioCentimo(n) { return Math.round(n * 2) / 2; }
 
@@ -153,14 +161,18 @@ async function principal() {
 
   const stooqUrl = (s) => "https://stooq.com/q/d/l/?s=" + s + "&d1=" + compacta(desde) + "&d2=" + compacta(hoje) + "&i=d";
   const yahooUrl = (s, host) => "https://" + host + ".finance.yahoo.com/v8/finance/chart/" + encodeURIComponent(s) + "?range=1mo&interval=1d";
+  const contrato = contratoFront(janFim);   // mesmo contrato nas duas semanas comparadas
+  console.log("  contrato NYMEX de referencia: " + contrato + " (front a " + iso(janFim) + ")");
   const [gasoil, rbob, fxObj] = await Promise.all([
     serie("gasoleo", [
       { id: "stooq lf.f", url: stooqUrl("lf.f"), parse: parseStooq, litros: LITROS_TONELADA_GASOIL },
+      { id: "yahoo HO" + contrato + ".NYM", url: yahooUrl("HO" + contrato + ".NYM", "query2"), parse: parseYahoo, litros: LITROS_GALAO },
       { id: "yahoo HO=F", url: yahooUrl("HO=F", "query2"), parse: parseYahoo, litros: LITROS_GALAO },
       { id: "yahoo HO=F q1", url: yahooUrl("HO=F", "query1"), parse: parseYahoo, litros: LITROS_GALAO }
     ]),
     serie("gasolina", [
       { id: "stooq rb.f", url: stooqUrl("rb.f"), parse: parseStooq, litros: LITROS_GALAO },
+      { id: "yahoo RB" + contrato + ".NYM", url: yahooUrl("RB" + contrato + ".NYM", "query2"), parse: parseYahoo, litros: LITROS_GALAO },
       { id: "yahoo RB=F", url: yahooUrl("RB=F", "query2"), parse: parseYahoo, litros: LITROS_GALAO },
       { id: "yahoo RB=F q1", url: yahooUrl("RB=F", "query1"), parse: parseYahoo, litros: LITROS_GALAO }
     ]),
@@ -173,6 +185,12 @@ async function principal() {
   const kG = K_POR_FONTE.gasoleo[gasoil.id] || K.gasoleo, kGas = K_POR_FONTE.gasolina[rbob.id] || K.gasolina;
   const p = calcular(gasoil, rbob, fxObj.serie, janIni, janFim, antIni, antFim, hoje, kG, kGas);
   console.log("  k usado: gasoleo " + kG + " (" + gasoil.id + "), gasolina " + kGas + " (" + rbob.id + ")");
+  for (const par of [["gasoleo", gasoil, p.gasoleo], ["gasolina", rbob, p.gasolina]]) {
+    if (par[1].id.indexOf("=F") > -1) {
+      const salto = saltoSuspeito(par[1].serie, antFim, janIni);
+      if (salto > 0.07) { console.log("  AVISO " + par[0] + ": salto de " + arred(salto * 100) + "% entre as semanas na serie continua " + par[1].id + " - provavel roll de contrato; margem alargada"); par[2].min = meioCentimo(par[2].min - 2); par[2].max = meioCentimo(par[2].max + 2); }
+    }
+  }
   console.log("  modelo: gasoleo " + p.gasoleo.variacao + " [" + p.gasoleo.min + ".." + p.gasoleo.max + "] gasolina " + p.gasolina.variacao + " [" + p.gasolina.min + ".." + p.gasolina.max + "] (janela " + (p.janelaCompleta ? "completa" : "parcial, " + p.diasDeCotacoes + " dias") + ")");
   if (Math.abs(p.gasoleo.variacao) > LIMITE_SANIDADE_CTS || Math.abs(p.gasolina.variacao) > LIMITE_SANIDADE_CTS) throw new Error("variacao fora do limite de sanidade - pagina fica com o espelho");
 
