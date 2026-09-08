@@ -1,4 +1,4 @@
-// previsao-propria.mjs v2.1 - o modelo proprio ALIMENTA a pagina (combustiveis.json).
+// previsao-propria.mjs v2.2 - o modelo proprio ALIMENTA a pagina (combustiveis.json).
 // Corre a seguir ao update-combustiveis.mjs (espelho) e antes do posprocessar-isp.mjs (override manual).
 // Se o modelo falhar por qualquer razao, nao toca no combustiveis.json: a pagina fica com os dados do espelho.
 //
@@ -15,11 +15,14 @@
 
 import { readFile, writeFile, appendFile } from "node:fs/promises";
 
-const K = { gasoleo: 0.60, gasolina: 1.04 };
+const K = { gasoleo: 1.04, gasolina: 1.04 };   // valores por defeito (fontes Yahoo)
+// Multiplicador por fonte: o gasoil ICE (stooq) foi calibrado a 0.60 no backtest de agosto; o ULSD NY (Yahoo)
+// calibrou a 1.04 nas semanas 24 ago-7 set (k implicito 0.92 / 1.19 / 1.04, erros 0.6 / 0.6 / 0.0 cts).
+const K_POR_FONTE = { gasoleo: { "stooq lf.f": 0.60, "yahoo HO=F": 1.04, "yahoo HO=F q1": 1.04 }, gasolina: { "stooq rb.f": 1.04, "yahoo RB=F": 1.04, "yahoo RB=F q1": 1.04 } };
 const LITROS_TONELADA_GASOIL = 1183;
 const LITROS_GALAO = 3.78541;
 const LIMITE_SANIDADE_CTS = 25;
-const PROXY = "https://lf-proxy.SUBSTITUIR.workers.dev/?u=";   // Worker Cloudflare (ver worker-proxy.js) - os runners do GitHub sao bloqueados pelas fontes
+const PROXY = "https://lf-proxy.success-f03.workers.dev/?u=";   // Worker Cloudflare (ver worker-proxy.js) - os runners do GitHub sao bloqueados pelas fontes
 const UA = { headers: { "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36", "accept": "text/csv,application/json,text/plain,*/*" } };
 
 const hoje = new Date();
@@ -115,7 +118,9 @@ function mediaJanela(s, ini, fim) {
 }
 
 // Nucleo puro (testavel sem rede): recebe as series e devolve a previsao
-export function calcular(gasoil, rbob, fx, janIni, janFim, antIni, antFim, hojeRef) {
+export function calcular(gasoil, rbob, fx, janIni, janFim, antIni, antFim, hojeRef, kG, kGas) {
+  if (!Number.isFinite(kG)) kG = K.gasoleo;
+  if (!Number.isFinite(kGas)) kGas = K.gasolina;
   const fimEfetivo = hojeRef < janFim ? hojeRef : janFim;
   const eurL = (bruto, fxm, litros) => bruto / litros / fxm;
   const fxAnt = mediaJanela(fx, antIni, antFim).media;
@@ -132,7 +137,7 @@ export function calcular(gasoil, rbob, fx, janIni, janFim, antIni, antFim, hojeR
     if (!janelaCompleta) folga += 0.5;
     return { variacao: arred(central), min: meioCentimo(central - folga), max: meioCentimo(central + folga) };
   };
-  return { gasoleo: prever(dG.delta, K.gasoleo, 0.5), gasolina: prever(dGas.delta, K.gasolina, 1.0), janelaCompleta,
+  return { gasoleo: prever(dG.delta, kG, 0.5), gasolina: prever(dGas.delta, kGas, 1.0), janelaCompleta, kUsado: { gasoleo: kG, gasolina: kGas },
     diasDeCotacoes: Math.min(dG.diasComDados, dGas.diasComDados), deltaCotacoesCts: { gasoleo: arred(dG.delta, 2), gasolina: arred(dGas.delta, 2) } };
 }
 
@@ -165,7 +170,9 @@ async function principal() {
     ])
   ]);
 
-  const p = calcular(gasoil, rbob, fxObj.serie, janIni, janFim, antIni, antFim, hoje);
+  const kG = K_POR_FONTE.gasoleo[gasoil.id] || K.gasoleo, kGas = K_POR_FONTE.gasolina[rbob.id] || K.gasolina;
+  const p = calcular(gasoil, rbob, fxObj.serie, janIni, janFim, antIni, antFim, hoje, kG, kGas);
+  console.log("  k usado: gasoleo " + kG + " (" + gasoil.id + "), gasolina " + kGas + " (" + rbob.id + ")");
   console.log("  modelo: gasoleo " + p.gasoleo.variacao + " [" + p.gasoleo.min + ".." + p.gasoleo.max + "] gasolina " + p.gasolina.variacao + " [" + p.gasolina.min + ".." + p.gasolina.max + "] (janela " + (p.janelaCompleta ? "completa" : "parcial, " + p.diasDeCotacoes + " dias") + ")");
   if (Math.abs(p.gasoleo.variacao) > LIMITE_SANIDADE_CTS || Math.abs(p.gasolina.variacao) > LIMITE_SANIDADE_CTS) throw new Error("variacao fora do limite de sanidade - pagina fica com o espelho");
 
@@ -179,7 +186,7 @@ async function principal() {
     try { await readFile("precisao-log.csv", "utf8"); } catch { await writeFile("precisao-log.csv", "data;semanaAlvo;propria_gasoleo;intervalo_gasoleo;propria_gasolina;intervalo_gasolina;mirror_gasoleo;mirror_gasolina;real_gasoleo;real_gasolina\n"); }
     await appendFile("precisao-log.csv", linha);
   }
-  await writeFile("previsao-propria.json", JSON.stringify({ geradoEm: new Date().toISOString(), semanaAlvo: iso(alvo), modo: modoPrevisao ? "previsao" : "em-vigor", ...p, k: K, fontes: { gasoleo: gasoil.id, gasolina: rbob.id, cambio: fxObj.id }, mirror }, null, 2) + "\n");
+  await writeFile("previsao-propria.json", JSON.stringify({ geradoEm: new Date().toISOString(), semanaAlvo: iso(alvo), modo: modoPrevisao ? "previsao" : "em-vigor", ...p, k: p.kUsado, fontes: { gasoleo: gasoil.id, gasolina: rbob.id, cambio: fxObj.id }, mirror }, null, 2) + "\n");
 
   // Base de partida: a semana em vigor confirmada pelo override (revisao de terca) e a fonte mais fiavel
   let override = null;
@@ -202,7 +209,7 @@ async function principal() {
     dados.gasolina.intervalo = { min: p.gasolina.min, max: p.gasolina.max };
     dados.semanaInicio = iso(alvo); dados.semanaFim = iso(somaDias(alvo, 6));
     dados.fonte = "modelo-proprio";
-    dados.modelo = { janelaCompleta: p.janelaCompleta, diasDeCotacoes: p.diasDeCotacoes, k: K, fontes: { gasoleo: gasoil.id, gasolina: rbob.id, cambio: fxObj.id } };
+    dados.modelo = { janelaCompleta: p.janelaCompleta, diasDeCotacoes: p.diasDeCotacoes, k: p.kUsado, fontes: { gasoleo: gasoil.id, gasolina: rbob.id, cambio: fxObj.id } };
     if (dados.notaIsp && (!override || override.semanaInicio !== dados.semanaInicio)) delete dados.notaIsp;   // nota orfa de outra semana
     const h = dados.historico;
     if (Array.isArray(h) && h.length && h[h.length - 1].previsto) {
