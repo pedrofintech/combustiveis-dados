@@ -4,18 +4,18 @@
   "semanaFim": "2026-09-20",
   "gasoleo": {
     "atual": 2.104,
-    "variacao": 0.032,
+    "variacao": 0.037,
     "intervalo": {
-      "min": 2,
-      "max": 4.5
+      "min": 2.5,
+      "max": 5
     }
   },
   "gasolina": {
     "atual": 2.093,
-    "variacao": 0.029,
+    "variacao": 0.033,
     "intervalo": {
-      "min": 1.5,
-      "max": 4.5
+      "min": 2,
+      "max": 5
     }
   },
   "isp": {
@@ -46,8 +46,8 @@
     },
     {
       "semana": "14/09",
-      "gasolina": 2.122,
-      "gasoleo": 2.136,
+      "gasolina": 2.126,
+      "gasoleo": 2.141,
       "previsto": true
     }
   ],
