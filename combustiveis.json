@@ -4,15 +4,15 @@
   "semanaFim": "2026-09-20",
   "gasoleo": {
     "atual": 2.104,
-    "variacao": 0.017,
+    "variacao": 0.004,
     "intervalo": {
-      "min": 0.5,
-      "max": 2.5
+      "min": -0.5,
+      "max": 1.5
     }
   },
   "gasolina": {
     "atual": 2.093,
-    "variacao": 0.02,
+    "variacao": 0.021,
     "intervalo": {
       "min": 0.5,
       "max": 3.5
@@ -24,11 +24,6 @@
     "gasolina": 49.61
   },
   "historico": [
-    {
-      "semana": "10/08",
-      "gasolina": 1.896,
-      "gasoleo": 1.975
-    },
     {
       "semana": "17/08",
       "gasolina": 1.954,
@@ -46,8 +41,14 @@
     },
     {
       "semana": "07/09",
-      "gasolina": 2.133,
-      "gasoleo": 2.179
+      "gasolina": 2.093,
+      "gasoleo": 2.104
+    },
+    {
+      "semana": "14/09",
+      "gasolina": 2.114,
+      "gasoleo": 2.108,
+      "previsto": true
     }
   ],
   "fonte": "modelo-proprio",
@@ -60,9 +61,37 @@
       "gasolina": 1.04
     },
     "fontes": {
-      "gasoleo": "yahoo HOV26.NYM",
+      "gasoleo": "yahoo HO=F",
       "gasolina": "yahoo RBV26.NYM",
       "cambio": "frankfurter"
     }
-  }
+  },
+  "baseData": "2026-09-07",
+  "historicoOficial": [
+    {
+      "data": "2026-08-10",
+      "gasolina": 1.896,
+      "gasoleo": 1.975
+    },
+    {
+      "data": "2026-08-17",
+      "gasolina": 1.954,
+      "gasoleo": 2.026
+    },
+    {
+      "data": "2026-08-24",
+      "gasolina": 1.986,
+      "gasoleo": 2.066
+    },
+    {
+      "data": "2026-08-31",
+      "gasolina": 2.013,
+      "gasoleo": 2.029
+    },
+    {
+      "data": "2026-09-07",
+      "gasolina": 2.093,
+      "gasoleo": 2.104
+    }
+  ]
 }
