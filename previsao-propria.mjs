@@ -1,4 +1,4 @@
-// previsao-propria.mjs v2.3 - o modelo proprio ALIMENTA a pagina (combustiveis.json).
+// previsao-propria.mjs v2.4 - o modelo proprio ALIMENTA a pagina (combustiveis.json).
 // Corre a seguir ao update-combustiveis.mjs (espelho) e antes do posprocessar-isp.mjs (override manual).
 // Se o modelo falhar por qualquer razao, nao toca no combustiveis.json: a pagina fica com os dados do espelho.
 //
@@ -22,6 +22,15 @@ const K_POR_FONTE = { gasoleo: { "stooq lf.f": 0.60, "yahoo HO=F": 1.04, "yahoo 
 const LITROS_TONELADA_GASOIL = 1183;
 const LITROS_GALAO = 3.78541;
 const LIMITE_SANIDADE_CTS = 25;
+// Leituras oficiais da DGEG (segunda-feira) ja confirmadas - semente; a partir daqui vivem em override.historicoOficial
+const SEMENTE_OFICIAL = [
+  { data: "2026-08-10", gasolina: 1.896, gasoleo: 1.975 },
+  { data: "2026-08-17", gasolina: 1.954, gasoleo: 2.026 },
+  { data: "2026-08-24", gasolina: 1.986, gasoleo: 2.066 },
+  { data: "2026-08-31", gasolina: 2.013, gasoleo: 2.029 },
+  { data: "2026-09-07", gasolina: 2.093, gasoleo: 2.104 }
+];
+const ddmm = (isoData) => isoData.slice(8, 10) + "/" + isoData.slice(5, 7);
 const PROXY = "https://lf-proxy.success-f03.workers.dev/?u=";   // Worker Cloudflare (ver worker-proxy.js) - os runners do GitHub sao bloqueados pelas fontes
 const UA = { headers: { "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36", "accept": "text/csv,application/json,text/plain,*/*" } };
 
@@ -166,8 +175,8 @@ async function principal() {
   const [gasoil, rbob, fxObj] = await Promise.all([
     serie("gasoleo", [
       { id: "stooq lf.f", url: stooqUrl("lf.f"), parse: parseStooq, litros: LITROS_TONELADA_GASOIL },
-      { id: "yahoo HO" + contrato + ".NYM", url: yahooUrl("HO" + contrato + ".NYM", "query2"), parse: parseYahoo, litros: LITROS_GALAO },
       { id: "yahoo HO=F", url: yahooUrl("HO=F", "query2"), parse: parseYahoo, litros: LITROS_GALAO },
+      { id: "yahoo HO" + contrato + ".NYM", url: yahooUrl("HO" + contrato + ".NYM", "query2"), parse: parseYahoo, litros: LITROS_GALAO },
       { id: "yahoo HO=F q1", url: yahooUrl("HO=F", "query1"), parse: parseYahoo, litros: LITROS_GALAO }
     ]),
     serie("gasolina", [
@@ -206,21 +215,26 @@ async function principal() {
   }
   await writeFile("previsao-propria.json", JSON.stringify({ geradoEm: new Date().toISOString(), semanaAlvo: iso(alvo), modo: modoPrevisao ? "previsao" : "em-vigor", ...p, k: p.kUsado, fontes: { gasoleo: gasoil.id, gasolina: rbob.id, cambio: fxObj.id }, mirror }, null, 2) + "\n");
 
-  // Base de partida: a semana em vigor confirmada pelo override (revisao de terca) e a fonte mais fiavel
+  // Historico oficial proprio: semente + override.historicoOficial + confirmacao da semana em vigor (override com atual+variacao)
   let override = null;
   try { override = JSON.parse(await readFile("override.json", "utf8")); } catch {}
-  const overrideConfirmaSemanaAtual = override && override.semanaInicio === iso(segAtual) && override.gasoleo && Number.isFinite(override.gasoleo.atual) && Number.isFinite(override.gasoleo.variacao) && override.gasolina && Number.isFinite(override.gasolina.atual) && Number.isFinite(override.gasolina.variacao);
+  const oficiais = {};
+  for (const o of SEMENTE_OFICIAL) oficiais[o.data] = { gasolina: o.gasolina, gasoleo: o.gasoleo };
+  if (override && Array.isArray(override.historicoOficial)) for (const o of override.historicoOficial) { if (o && o.data && Number.isFinite(o.gasolina) && Number.isFinite(o.gasoleo)) oficiais[o.data] = { gasolina: o.gasolina, gasoleo: o.gasoleo }; }
+  const overrideConfirma = override && override.semanaInicio && override.gasoleo && Number.isFinite(override.gasoleo.atual) && Number.isFinite(override.gasoleo.variacao) && override.gasolina && Number.isFinite(override.gasolina.atual) && Number.isFinite(override.gasolina.variacao);
+  if (overrideConfirma) oficiais[override.semanaInicio] = { gasolina: +(override.gasolina.atual + override.gasolina.variacao).toFixed(3), gasoleo: +(override.gasoleo.atual + override.gasoleo.variacao).toFixed(3) };
+  const datasOficiais = Object.keys(oficiais).sort();
+  const alvoConfirmado = !!oficiais[iso(alvo)];
+  const baseData = datasOficiais.filter((d) => d < iso(alvo)).pop();   // ultima leitura oficial antes do alvo
+  const base = baseData ? oficiais[baseData] : null;
 
-  if (!modoPrevisao && overrideConfirmaSemanaAtual) {
-    // Semana em vigor ja confirmada pela DGEG: o posprocessar aplica o override; aqui so garantimos o calendario e o intervalo
-    dados.semanaInicio = iso(segAtual); dados.semanaFim = iso(somaDias(segAtual, 6));
+  if (alvoConfirmado) {
+    // Semana em vigor ja confirmada pela DGEG: o override manda nos valores; aqui so calendario, historico e estado
+    dados.semanaInicio = iso(alvo); dados.semanaFim = iso(somaDias(alvo, 6));
     dados.fonte = "dgeg-confirmado";
   } else {
-    if (modoPrevisao && overrideConfirmaSemanaAtual) {
-      dados.gasoleo.atual = +(override.gasoleo.atual + override.gasoleo.variacao).toFixed(3);
-      dados.gasolina.atual = +(override.gasolina.atual + override.gasolina.variacao).toFixed(3);
-      dados.baseConfirmada = true;
-    } else { dados.baseConfirmada = false; }
+    if (base) { dados.gasoleo.atual = base.gasoleo; dados.gasolina.atual = base.gasolina; dados.baseConfirmada = true; dados.baseData = baseData; }
+    else { dados.baseConfirmada = false; }
     dados.gasoleo.variacao = +(p.gasoleo.variacao / 100).toFixed(3);
     dados.gasolina.variacao = +(p.gasolina.variacao / 100).toFixed(3);
     dados.gasoleo.intervalo = { min: p.gasoleo.min, max: p.gasoleo.max };
@@ -229,12 +243,13 @@ async function principal() {
     dados.fonte = "modelo-proprio";
     dados.modelo = { janelaCompleta: p.janelaCompleta, diasDeCotacoes: p.diasDeCotacoes, k: p.kUsado, fontes: { gasoleo: gasoil.id, gasolina: rbob.id, cambio: fxObj.id } };
     if (dados.notaIsp && (!override || override.semanaInicio !== dados.semanaInicio)) delete dados.notaIsp;   // nota orfa de outra semana
-    const h = dados.historico;
-    if (Array.isArray(h) && h.length && h[h.length - 1].previsto) {
-      h[h.length - 1].gasoleo = +(dados.gasoleo.atual + dados.gasoleo.variacao).toFixed(3);
-      h[h.length - 1].gasolina = +(dados.gasolina.atual + dados.gasolina.variacao).toFixed(3);
-    }
   }
+  // Grafico: ultimas 4 leituras oficiais antes do alvo + o alvo (confirmado ou previsto)
+  const hist = datasOficiais.filter((d) => d < iso(alvo)).slice(-4).map((d) => ({ semana: ddmm(d), gasolina: oficiais[d].gasolina, gasoleo: oficiais[d].gasoleo }));
+  if (alvoConfirmado) hist.push({ semana: ddmm(iso(alvo)), gasolina: oficiais[iso(alvo)].gasolina, gasoleo: oficiais[iso(alvo)].gasoleo });
+  else hist.push({ semana: ddmm(iso(alvo)), gasolina: +(dados.gasolina.atual + dados.gasolina.variacao).toFixed(3), gasoleo: +(dados.gasoleo.atual + dados.gasoleo.variacao).toFixed(3), previsto: true });
+  dados.historico = hist;
+  dados.historicoOficial = datasOficiais.map((d) => ({ data: d, gasolina: oficiais[d].gasolina, gasoleo: oficiais[d].gasoleo }));
   dados.atualizado = iso(hoje);
   await writeFile("combustiveis.json", JSON.stringify(dados, null, 2) + "\n");
   console.log("  combustiveis.json escrito pelo modelo proprio (" + dados.fonte + ", semana " + dados.semanaInicio + ")");
