@@ -1,16 +1,23 @@
 {
-  "atualizado": "2026-09-09",
-  "semanaInicio": "2026-09-07",
-  "semanaFim": "2026-09-13",
+  "atualizado": "2026-09-10",
+  "semanaInicio": "2026-09-14",
+  "semanaFim": "2026-09-20",
   "gasoleo": {
-    "atual": 2.029,
-    "variacao": 0.075
+    "atual": 2.104,
+    "variacao": 0.017,
+    "intervalo": {
+      "min": 0.5,
+      "max": 2.5
+    }
   },
   "gasolina": {
-    "atual": 2.013,
-    "variacao": 0.08
+    "atual": 2.093,
+    "variacao": 0.02,
+    "intervalo": {
+      "min": 0.5,
+      "max": 3.5
+    }
   },
-  "notaIsp": "Valores confirmados com as médias oficiais da DGEG de segunda-feira, 7 de setembro.",
   "isp": {
     "portaria": "Portaria n.º 345-C/2026/1, de 14 de agosto",
     "gasoleo": 80.52,
@@ -39,9 +46,23 @@
     },
     {
       "semana": "07/09",
-      "gasolina": 2.093,
-      "gasoleo": 2.104
+      "gasolina": 2.133,
+      "gasoleo": 2.179
     }
   ],
-  "fonte": "dgeg-confirmado"
+  "fonte": "modelo-proprio",
+  "baseConfirmada": true,
+  "modelo": {
+    "janelaCompleta": false,
+    "diasDeCotacoes": 3,
+    "k": {
+      "gasoleo": 1.04,
+      "gasolina": 1.04
+    },
+    "fontes": {
+      "gasoleo": "yahoo HOV26.NYM",
+      "gasolina": "yahoo RBV26.NYM",
+      "cambio": "frankfurter"
+    }
+  }
 }
