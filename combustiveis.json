@@ -1,13 +1,13 @@
 {
-  "atualizado": "2026-09-10",
+  "atualizado": "2026-09-11",
   "semanaInicio": "2026-09-14",
   "semanaFim": "2026-09-20",
   "gasoleo": {
     "atual": 2.104,
-    "variacao": 0.037,
+    "variacao": 0.033,
     "intervalo": {
-      "min": 2.5,
-      "max": 5
+      "min": 2,
+      "max": 4.5
     }
   },
   "gasolina": {
@@ -47,7 +47,7 @@
     {
       "semana": "14/09",
       "gasolina": 2.126,
-      "gasoleo": 2.141,
+      "gasoleo": 2.137,
       "previsto": true
     }
   ],
@@ -55,7 +55,7 @@
   "baseConfirmada": true,
   "modelo": {
     "janelaCompleta": false,
-    "diasDeCotacoes": 3,
+    "diasDeCotacoes": 4,
     "k": {
       "gasoleo": 1.04,
       "gasolina": 1.04
