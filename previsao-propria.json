@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-09-12T13:55:37.204Z",
+  "geradoEm": "2026-09-12T16:51:15.839Z",
   "semanaAlvo": "2026-09-14",
   "modo": "previsao",
   "gasoleo": {
@@ -32,8 +32,8 @@
     "cambio": "frankfurter"
   },
   "mirror": {
-    "gasoleo": 4,
-    "gasolina": -6,
+    "gasoleo": 4.3,
+    "gasolina": 3.2,
     "semanaInicio": "2026-09-14"
   }
 }
