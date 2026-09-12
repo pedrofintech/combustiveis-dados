@@ -1,21 +1,21 @@
 {
-  "atualizado": "2026-09-11",
+  "atualizado": "2026-09-12",
   "semanaInicio": "2026-09-14",
   "semanaFim": "2026-09-20",
   "gasoleo": {
     "atual": 2.104,
-    "variacao": 0.034,
+    "variacao": 0.043,
     "intervalo": {
-      "min": 2,
-      "max": 5
+      "min": 2.5,
+      "max": 6
     }
   },
   "gasolina": {
     "atual": 2.093,
-    "variacao": 0.033,
+    "variacao": 0.032,
     "intervalo": {
-      "min": 2,
-      "max": 5
+      "min": 1.5,
+      "max": 4.5
     }
   },
   "isp": {
@@ -46,8 +46,8 @@
     },
     {
       "semana": "14/09",
-      "gasolina": 2.126,
-      "gasoleo": 2.138,
+      "gasolina": 2.125,
+      "gasoleo": 2.147,
       "previsto": true
     }
   ],
