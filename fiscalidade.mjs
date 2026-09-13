@@ -58,7 +58,7 @@ try {
     const isp = JSON.parse(await readFile("isp-estado.json", "utf8"));
     fiscalidade = {
       iva: IVA,
-      emVigor: isp.desde,
+      emVigor: isp.aproximado ? new Date(isp.desde + "T12:00:00Z").toLocaleDateString("pt-PT", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) + " (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)" : isp.desde,
       portaria: isp.portaria || "",
       gasolina: { ...TAXAS.gasolina, desconto: (isp.gasolina || 0) / 1000 },
       gasoleo:  { ...TAXAS.gasoleo,  desconto: (isp.gasoleo  || 0) / 1000 }
