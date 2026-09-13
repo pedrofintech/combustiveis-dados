@@ -93,5 +93,22 @@
       "gasolina": 2.093,
       "gasoleo": 2.104
     }
-  ]
+  ],
+  "fiscalidade": {
+    "iva": 0.23,
+    "emVigor": "2026-09-14",
+    "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
+    "gasolina": {
+      "ispBase": 0.49752,
+      "csr": 0.087,
+      "carbono": 0.15911,
+      "desconto": 0.06592
+    },
+    "gasoleo": {
+      "ispBase": 0.3616,
+      "csr": 0.111,
+      "carbono": 0.17334,
+      "desconto": 0.09758
+    }
+  }
 }
