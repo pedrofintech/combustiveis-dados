@@ -4,18 +4,18 @@
   "semanaFim": "2026-09-27",
   "gasoleo": {
     "atual": 2.104,
-    "variacao": 0.085,
+    "variacao": 0.081,
     "intervalo": {
-      "min": 6.5,
-      "max": 10.5
+      "min": 6,
+      "max": 10
     }
   },
   "gasolina": {
     "atual": 2.093,
-    "variacao": 0.049,
+    "variacao": 0.05,
     "intervalo": {
-      "min": 3.5,
-      "max": 6
+      "min": 4,
+      "max": 6.5
     }
   },
   "isp": {
@@ -46,8 +46,8 @@
     },
     {
       "semana": "21/09",
-      "gasolina": 2.142,
-      "gasoleo": 2.189,
+      "gasolina": 2.143,
+      "gasoleo": 2.185,
       "previsto": true
     }
   ],
@@ -96,19 +96,19 @@
   ],
   "fiscalidade": {
     "iva": 0.23,
-    "emVigor": "2026-09-14",
-    "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
+    "emVigor": "21 de setembro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
+    "portaria": "Portaria n.º 432-A/2026/1, de 2026-09-18",
     "gasolina": {
       "ispBase": 0.49752,
       "csr": 0.087,
       "carbono": 0.15911,
-      "desconto": 0.06592
+      "desconto": 0.06863
     },
     "gasoleo": {
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.09758
+      "desconto": 0.09494
     }
   }
 }
