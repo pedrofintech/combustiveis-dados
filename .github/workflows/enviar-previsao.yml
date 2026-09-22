@@ -1,0 +1,60 @@
+# Envio semanal da previsão às redações (Leak e quem mais aderir) - quinta-feira de manhã.
+# Sai do Gmail (SMTP com app password) definido nos secrets MAIL_USERNAME / MAIL_PASSWORD.
+# O remetente MAIL_FROM tem de ser um "enviar como" verificado nessa conta (geral@literaciafinanceira.pt).
+name: Enviar previsão às redações
+
+on:
+  schedule:
+    # 09:30 UTC à quinta = 10:30 em Lisboa no horário de verão (09:30 no de inverno). Corre depois dos runs horários das 6h, 7h, 8h e 9h UTC.
+    - cron: '30 9 * * 4'
+  workflow_dispatch: # para testar à mão (respeita as mesmas guardas)
+
+permissions:
+  contents: read
+
+jobs:
+  enviar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Compor o email a partir do combustiveis.json
+        id: compor
+        run: node enviar-previsao.mjs
+
+      - name: Enviar previsão
+        if: steps.compor.outputs.enviar == 'sim'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          from: ${{ vars.MAIL_FROM || 'Pedro Braz <geral@literaciafinanceira.pt>' }}
+          to: ${{ steps.compor.outputs.para }}
+          cc: ${{ steps.compor.outputs.cc }}
+          subject: ${{ steps.compor.outputs.assunto }}
+          body: file://email-corpo.txt
+
+      - name: Avisar que a previsão não estava em condições
+        if: steps.compor.outputs.enviar != 'sim'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          from: ${{ vars.MAIL_FROM || 'Pedro Braz <geral@literaciafinanceira.pt>' }}
+          to: geral@literaciafinanceira.pt
+          subject: "Combustíveis: a previsão de quinta NÃO foi enviada à Leak"
+          body: |
+            O envio automático desta quinta-feira foi travado pelas guardas do enviar-previsao.mjs.
+
+            Motivo: ${{ steps.compor.outputs.motivo }}
+
+            Vê o combustiveis.json e o último run do workflow "Atualizar combustíveis". Quando estiver corrigido, corre este workflow à mão (Actions > Enviar previsão às redações > Run workflow).
