@@ -9,7 +9,7 @@ on:
     # mudam; os runs sem novidade terminam em segundos. Se o GitHub atrasar ou
     # saltar um run (limitação conhecida do cron), o da hora seguinte apanha.
     - cron: '0 6-20 * * *'
-  workflow_dispatch:       # permite correr manualmente no separador Actions
+  workflow_dispatch: # permite correr manualmente no separador Actions
 
 permissions:
   contents: write
@@ -24,14 +24,23 @@ jobs:
         with:
           node-version: 20
 
+      # Ordem: espelho do setor -> modelo -> placar -> override/ISP -> fiscalidade.
+      # Cada passo opcional falha em silêncio (|| true) e deixa os ficheiros como estavam.
+      # As leituras oficiais da DGEG entram pelo override.json (workflow "Registar leitura DGEG").
       - name: Atualizar dados
-        run: node update-combustiveis.mjs && (node previsao-propria.mjs || true) && node posprocessar-isp.mjs && (node isp-overlay.mjs || true) && (node fiscalidade.mjs || true)
+        run: |
+          node update-combustiveis.mjs || true
+          node previsao-propria.mjs || true
+          node placar.mjs || true
+          node posprocessar-isp.mjs
+          node isp-overlay.mjs || true
+          node fiscalidade.mjs || true
 
       - name: Commit e push (só se houver alterações)
         run: |
           git config user.name "combustiveis-bot"
           git config user.email "bot@users.noreply.github.com"
-                    git add combustiveis.json
-                              for f in previsao-propria.json precisao-log.csv; do [ -f "$f" ] && git add "$f" || true; done
+          git add combustiveis.json
+          for f in previsao-propria.json precisao-log.csv; do [ -f "$f" ] && git add "$f" || true; done
           git diff --cached --quiet || git commit -m "Atualiza dados dos combustiveis [skip ci]"
           git push
