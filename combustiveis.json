@@ -4,19 +4,11 @@
   "semanaFim": "2026-09-27",
   "gasoleo": {
     "atual": 2.152,
-    "variacao": 0.092,
-    "intervalo": {
-      "min": 7,
-      "max": 11.5
-    }
+    "variacao": 0.058
   },
   "gasolina": {
     "atual": 2.072,
-    "variacao": 0.051,
-    "intervalo": {
-      "min": 4,
-      "max": 6.5
-    }
+    "variacao": 0.035
   },
   "isp": {
     "portaria": "Portaria n.º 345-C/2026/1, de 14 de agosto",
@@ -46,12 +38,11 @@
     },
     {
       "semana": "21/09",
-      "gasolina": 2.123,
-      "gasoleo": 2.244,
-      "previsto": true
+      "gasolina": 2.107,
+      "gasoleo": 2.21
     }
   ],
-  "fonte": "modelo-proprio",
+  "fonte": "dgeg-confirmado",
   "baseConfirmada": true,
   "modelo": {
     "janelaCompleta": true,
@@ -97,6 +88,11 @@
       "data": "2026-09-14",
       "gasolina": 2.072,
       "gasoleo": 2.152
+    },
+    {
+      "data": "2026-09-21",
+      "gasolina": 2.107,
+      "gasoleo": 2.21
     }
   ],
   "fiscalidade": {
@@ -174,5 +170,11 @@
         }
       }
     ]
+  },
+  "confirmacao": {
+    "data": "2026-09-21",
+    "gasoleo": 2.21,
+    "gasolina": 2.107,
+    "fonte": "override"
   }
 }
