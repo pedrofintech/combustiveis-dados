@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-09-22T11:12:58.324Z",
+  "geradoEm": "2026-09-22T16:34:50.823Z",
   "semanaAlvo": "2026-09-21",
   "modo": "em-vigor",
   "gasoleo": {
@@ -31,5 +31,10 @@
     "gasolina": "yahoo RBV26.NYM",
     "cambio": "frankfurter"
   },
-  "mirror": null
+  "mirror": {
+    "gasoleo": 8.5,
+    "gasolina": 6.5,
+    "semanaInicio": "2026-09-21",
+    "fonte": "precocombustiveis.pt via allorigins (com ISP)"
+  }
 }

@@ -189,5 +189,19 @@
     "gasoleo": 2.21,
     "gasolina": 2.107,
     "fonte": "override"
+  },
+  "espelho": {
+    "lidoEm": "2026-09-22",
+    "semanaInicio": "2026-09-21",
+    "semanaFim": "2026-09-27",
+    "fonte": "precocombustiveis.pt via allorigins (com ISP)",
+    "gasoleo": {
+      "variacao": 0.085,
+      "preco": null
+    },
+    "gasolina": {
+      "variacao": 0.065,
+      "preco": null
+    }
   }
 }
