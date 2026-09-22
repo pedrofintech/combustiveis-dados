@@ -1,4 +1,10 @@
 {
   "_nota": "historicoOficial = médias oficiais da DGEG de segunda-feira (gasóleo simples e gasolina simples 95). Ganha sempre sobre a semente do código. Preencher pelo workflow 'Registar leitura DGEG', não à mão. As semanas de 10/08 a 07/09 já estão na semente do previsao-propria.mjs.",
-  "historicoOficial": []
+  "historicoOficial": [
+    {
+      "data": "2026-09-14",
+      "gasolina": 2.072,
+      "gasoleo": 2.152
+    }
+  ]
 }

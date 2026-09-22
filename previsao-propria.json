@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-09-21T22:30:49.399Z",
+  "geradoEm": "2026-09-22T08:21:12.338Z",
   "semanaAlvo": "2026-09-21",
   "modo": "em-vigor",
   "gasoleo": {
@@ -31,9 +31,5 @@
     "gasolina": "yahoo RBV26.NYM",
     "cambio": "frankfurter"
   },
-  "mirror": {
-    "gasoleo": 9.2,
-    "gasolina": 5.1,
-    "semanaInicio": "2026-09-21"
-  }
+  "mirror": null
 }

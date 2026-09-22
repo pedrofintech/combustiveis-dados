@@ -1,9 +1,9 @@
 {
-  "atualizado": "2026-09-21",
+  "atualizado": "2026-09-22",
   "semanaInicio": "2026-09-21",
   "semanaFim": "2026-09-27",
   "gasoleo": {
-    "atual": 2.104,
+    "atual": 2.152,
     "variacao": 0.092,
     "intervalo": {
       "min": 7,
@@ -11,7 +11,7 @@
     }
   },
   "gasolina": {
-    "atual": 2.093,
+    "atual": 2.072,
     "variacao": 0.051,
     "intervalo": {
       "min": 4,
@@ -24,11 +24,6 @@
     "gasolina": 49.61
   },
   "historico": [
-    {
-      "semana": "17/08",
-      "gasolina": 1.954,
-      "gasoleo": 2.026
-    },
     {
       "semana": "24/08",
       "gasolina": 1.986,
@@ -45,9 +40,14 @@
       "gasoleo": 2.104
     },
     {
+      "semana": "14/09",
+      "gasolina": 2.072,
+      "gasoleo": 2.152
+    },
+    {
       "semana": "21/09",
-      "gasolina": 2.144,
-      "gasoleo": 2.196,
+      "gasolina": 2.123,
+      "gasoleo": 2.244,
       "previsto": true
     }
   ],
@@ -66,7 +66,7 @@
       "cambio": "frankfurter"
     }
   },
-  "baseData": "2026-09-07",
+  "baseData": "2026-09-14",
   "historicoOficial": [
     {
       "data": "2026-08-10",
@@ -92,23 +92,87 @@
       "data": "2026-09-07",
       "gasolina": 2.093,
       "gasoleo": 2.104
+    },
+    {
+      "data": "2026-09-14",
+      "gasolina": 2.072,
+      "gasoleo": 2.152
     }
   ],
   "fiscalidade": {
     "iva": 0.23,
-    "emVigor": "28 de setembro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
-    "portaria": "Portaria n.º 433-A/2026/1, de 2026-09-21",
+    "emVigor": "2026-09-14",
+    "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
     "gasolina": {
       "ispBase": 0.49752,
       "csr": 0.087,
       "carbono": 0.15911,
-      "desconto": 0.07063
+      "desconto": 0.06592
     },
     "gasoleo": {
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.09794
+      "desconto": 0.09758
     }
+  },
+  "placar": {
+    "atualizado": "2026-09-22",
+    "semanas": 3,
+    "semanasComSetor": 3,
+    "gasoleo": {
+      "erroMedioModelo": 0.2,
+      "erroMedioSetor": 4.4
+    },
+    "gasolina": {
+      "erroMedioModelo": 3.5,
+      "erroMedioSetor": 3.7
+    },
+    "vitorias": {
+      "modelo": 4,
+      "setor": 2,
+      "empates": 0
+    },
+    "ultimas": [
+      {
+        "semana": "2026-08-17",
+        "gasoleo": {
+          "modelo": 5.2,
+          "setor": 10,
+          "real": 5.1
+        },
+        "gasolina": {
+          "modelo": 6.6,
+          "setor": 9,
+          "real": 5.8
+        }
+      },
+      {
+        "semana": "2026-09-07",
+        "gasoleo": {
+          "modelo": 7.5,
+          "setor": 15,
+          "real": 7.5
+        },
+        "gasolina": {
+          "modelo": 3.6,
+          "setor": 12,
+          "real": 8
+        }
+      },
+      {
+        "semana": "2026-09-14",
+        "gasoleo": {
+          "modelo": 4.3,
+          "setor": 4,
+          "real": 4.8
+        },
+        "gasolina": {
+          "modelo": 3.2,
+          "setor": -6,
+          "real": -2.1
+        }
+      }
+    ]
   }
 }
