@@ -114,19 +114,19 @@
   },
   "placar": {
     "atualizado": "2026-09-22",
-    "semanas": 3,
-    "semanasComSetor": 3,
+    "semanas": 4,
+    "semanasComSetor": 4,
     "gasoleo": {
-      "erroMedioModelo": 0.2,
-      "erroMedioSetor": 4.4
+      "erroMedioModelo": 1,
+      "erroMedioSetor": 3.97
     },
     "gasolina": {
-      "erroMedioModelo": 3.5,
-      "erroMedioSetor": 3.7
+      "erroMedioModelo": 3.02,
+      "erroMedioSetor": 3.52
     },
     "vitorias": {
-      "modelo": 4,
-      "setor": 2,
+      "modelo": 5,
+      "setor": 3,
       "empates": 0
     },
     "ultimas": [
@@ -167,6 +167,19 @@
           "modelo": 3.2,
           "setor": -6,
           "real": -2.1
+        }
+      },
+      {
+        "semana": "2026-09-21",
+        "gasoleo": {
+          "modelo": 9.2,
+          "setor": 8.5,
+          "real": 5.8
+        },
+        "gasolina": {
+          "modelo": 5.1,
+          "setor": 6.5,
+          "real": 3.5
         }
       }
     ]
