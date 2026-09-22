@@ -1,0 +1,50 @@
+# Regista a média oficial da DGEG de segunda-feira (a "revisão de terça") sem editar JSON à mão:
+# Actions > Registar leitura DGEG > Run workflow > preencher data, gasóleo e gasolina > Run.
+# Escreve o override.json, corre o pipeline e faz commit: a página passa a "dgeg-confirmado" e o placar fecha a semana.
+name: Registar leitura DGEG
+
+on:
+  workflow_dispatch:
+    inputs:
+      data:
+        description: "Segunda-feira da leitura (AAAA-MM-DD)"
+        required: true
+      gasoleo:
+        description: "Gasóleo simples, preço médio diário da DGEG nesse dia (ex.: 2,230)"
+        required: true
+      gasolina:
+        description: "Gasolina simples 95, preço médio diário da DGEG nesse dia (ex.: 2,130)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  registar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Escrever a leitura no override.json
+        run: node registar-dgeg.mjs "${{ github.event.inputs.data }}" "${{ github.event.inputs.gasoleo }}" "${{ github.event.inputs.gasolina }}"
+
+      - name: Recalcular a página com a nova base
+        run: |
+          node update-combustiveis.mjs || true
+          node previsao-propria.mjs || true
+          node placar.mjs || true
+          node posprocessar-isp.mjs
+          node isp-overlay.mjs || true
+          node fiscalidade.mjs || true
+
+      - name: Commit e push
+        run: |
+          git config user.name "combustiveis-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add override.json combustiveis.json
+          for f in previsao-propria.json precisao-log.csv; do [ -f "$f" ] && git add "$f" || true; done
+          git diff --cached --quiet || git commit -m "Regista leitura DGEG de ${{ github.event.inputs.data }} [skip ci]"
+          git push
