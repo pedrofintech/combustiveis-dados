@@ -10,7 +10,7 @@ on:
   workflow_dispatch: # para testar à mão (respeita as mesmas guardas)
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   enviar:
@@ -20,6 +20,26 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      # O cron horário do "Atualizar combustíveis" é atrasado pelo GitHub (3-4 runs por dia em vez de 15),
+      # por isso este workflow recalcula a previsão antes de a enviar, para o email levar sempre os números do próprio dia.
+      - name: Atualizar a previsão antes de enviar
+        run: |
+          node update-combustiveis.mjs || true
+          node previsao-propria.mjs || true
+          node placar.mjs || true
+          node posprocessar-isp.mjs
+          node isp-overlay.mjs || true
+          node fiscalidade.mjs || true
+
+      - name: Commit e push (só se houver alterações)
+        run: |
+          git config user.name "combustiveis-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add combustiveis.json
+          for f in previsao-propria.json precisao-log.csv; do [ -f "$f" ] && git add "$f" || true; done
+          git diff --cached --quiet || git commit -m "Atualiza dados dos combustiveis [skip ci]"
+          git push || true
 
       - name: Compor o email a partir do combustiveis.json
         id: compor
