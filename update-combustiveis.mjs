@@ -14,6 +14,10 @@
  * - Se nenhuma fonte der a variação, NÃO escreve nada (mantém o último bom).
  *   Se só o preço faltar, mantém o preço anterior e aplica só a variação.
  *
+ * v3.1 (21 set 2026): guarda a previsão do setor em dados.espelho. É daí (e só daí) que o
+ * previsao-propria.mjs e o placar.mjs leem o "setor" - dados.gasoleo.variacao passa a ser do modelo
+ * a seguir a este script, e por isso já não serve de espelho.
+ *
  * Nunca usa a API da DGEG (só cita estatísticas públicas reportadas).
  */
 
@@ -64,8 +68,8 @@ function toText(h) {
     .replace(/\|/g, ' ')
     .replace(/\*+/g, ' ') /* o leitor r.jina.ai devolve markdown; os ** de negrito partiam o parse do preço */
     .replace(/[−–—]/g, '-') /* FIX 2026-08-02: normaliza sinal "menos" matemático (U+2212) e travessões
-                                para hífen normal - a precocombustiveis.pt passou a usar "−" nas variações
-                                negativas, o que partia o parseVarEuroL (só reconhecia "+"/"-" ASCII) */
+                               para hífen normal - a precocombustiveis.pt passou a usar "−" nas variações
+                               negativas, o que partia o parseVarEuroL (só reconhecia "+"/"-" ASCII) */
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -216,6 +220,16 @@ dados.semanaInicio = d.semanaInicio;
 dados.semanaFim = d.semanaFim;
 dados.gasoleo.variacao = d.variacaoGasoleo;
 dados.gasolina.variacao = d.variacaoGasolina;
+
+/* v3.1: fotografia da previsão do setor, para o modelo e o placar terem um espelho limpo */
+dados.espelho = {
+  lidoEm: iso(hoje),
+  semanaInicio: d.semanaInicio,
+  semanaFim: d.semanaFim,
+  fonte: d.fonte,
+  gasoleo: { variacao: d.variacaoGasoleo, preco: precoOk(d.precoGasoleo) ? round3(d.precoGasoleo) : null },
+  gasolina: { variacao: d.variacaoGasolina, preco: precoOk(d.precoGasolina) ? round3(d.precoGasolina) : null },
+};
 
 /* Histórico: semana atual (realizado) + semana prevista */
 function upsert(label, gasolina, gasoleo, previsto) {
