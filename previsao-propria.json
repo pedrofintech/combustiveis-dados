@@ -1,16 +1,16 @@
 {
-  "geradoEm": "2026-09-25T11:27:37.096Z",
+  "geradoEm": "2026-09-25T16:51:34.854Z",
   "semanaAlvo": "2026-09-28",
   "modo": "previsao",
   "gasoleo": {
-    "variacao": -7.6,
-    "min": -9.5,
-    "max": -5.5
+    "variacao": -8.1,
+    "min": -10,
+    "max": -6
   },
   "gasolina": {
-    "variacao": 1.9,
-    "min": 1,
-    "max": 3
+    "variacao": 1.5,
+    "min": 0.5,
+    "max": 2.5
   },
   "janelaCompleta": true,
   "kUsado": {
@@ -19,8 +19,8 @@
   },
   "diasDeCotacoes": 5,
   "deltaCotacoesCts": {
-    "gasoleo": -7.26,
-    "gasolina": 1.85
+    "gasoleo": -7.81,
+    "gasolina": 1.49
   },
   "k": {
     "gasoleo": 1.04,
@@ -32,9 +32,9 @@
     "cambio": "frankfurter"
   },
   "mirror": {
-    "gasoleo": 8.5,
-    "gasolina": 6.5,
-    "semanaInicio": "2026-09-21",
+    "gasoleo": -6,
+    "gasolina": -2,
+    "semanaInicio": "2026-09-28",
     "fonte": "precocombustiveis.pt via allorigins (com ISP)"
   }
 }
