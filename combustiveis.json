@@ -1,18 +1,18 @@
 {
-  "atualizado": "2026-09-25",
+  "atualizado": "2026-09-26",
   "semanaInicio": "2026-09-28",
   "semanaFim": "2026-10-04",
   "gasoleo": {
     "atual": 2.21,
-    "variacao": -0.073,
+    "variacao": -0.069,
     "intervalo": {
-      "min": -9,
-      "max": -5.5
+      "min": -8.5,
+      "max": -5
     }
   },
   "gasolina": {
     "atual": 2.107,
-    "variacao": 0.017,
+    "variacao": 0.016,
     "intervalo": {
       "min": 0.5,
       "max": 2.5
@@ -46,8 +46,8 @@
     },
     {
       "semana": "28/09",
-      "gasolina": 2.124,
-      "gasoleo": 2.137,
+      "gasolina": 2.123,
+      "gasoleo": 2.141,
       "previsto": true
     }
   ],
@@ -107,7 +107,7 @@
   "fiscalidade": {
     "iva": 0.23,
     "emVigor": "28 de setembro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
-    "portaria": "Portaria n.º 437-A/2026/1, de 2026-09-25",
+    "portaria": "Portaria n.º 437-B/2026/1, de 2026-09-25",
     "gasolina": {
       "ispBase": 0.49752,
       "csr": 0.087,
@@ -122,7 +122,7 @@
     }
   },
   "placar": {
-    "atualizado": "2026-09-25",
+    "atualizado": "2026-09-26",
     "semanas": 4,
     "semanasComSetor": 4,
     "gasoleo": {
