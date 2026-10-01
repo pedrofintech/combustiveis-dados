@@ -1,4 +1,4 @@
-// previsao-propria.mjs v2.5 - o modelo proprio ALIMENTA a pagina (combustiveis.json).
+// previsao-propria.mjs v2.6 - o modelo proprio ALIMENTA a pagina (combustiveis.json).
 // Corre a seguir ao update-combustiveis.mjs (espelho) e ao dgeg-oficial.mjs (leituras oficiais), antes do placar.mjs e do posprocessar-isp.mjs.
 // Se o modelo falhar por qualquer razao, nao toca no combustiveis.json: a pagina fica com os dados do espelho.
 //
@@ -11,6 +11,14 @@
 // os runners do GitHub e o Yahoo limita pedidos. Basta uma fonte responder.
 // Calendario: qui-dom = previsao para a proxima segunda (janela parcial que se completa ate sexta);
 // seg-qua = semana em vigor (estimativa a partir da semana anterior completa, ate a confirmacao DGEG entrar).
+//
+// v2.6 (1 out 2026) - BASE PROVISORIA: a leitura oficial de 28 set nao foi registada e a pagina ficou a mostrar como preco atual
+//    o de 21 set, com a previsao de 5 out somada a essa base de ha duas semanas. Agora, quando falta a leitura oficial da(s)
+//    segunda(s) entre a ultima oficial e o alvo (ate duas), a base passa a ser: ultima oficial + variacao que o modelo calcula
+//    para cada segunda em falta (janela completa de cotacoes). Fica marcada como provisoria: baseConfirmada false,
+//    baseProvisoria com o detalhe, ponto "aprox" no grafico e aviso na pagina (notaAcumulado). O baseData continua a ser a data
+//    da ultima leitura OFICIAL, e e por ele que o email as redacoes decide se envia (com base provisoria nao envia).
+//    Quando a leitura oficial e registada, tudo isto desaparece sozinho na execucao seguinte.
 //
 // v2.5 (21 set 2026) - o que mudou e porque:
 // 1) BASE OFICIAL: a base (dados.gasoleo.atual) vinha da semente + override.json. O override nao foi atualizado a 15 set,
@@ -43,6 +51,9 @@ const SEMENTE_OFICIAL = [
   { data: "2026-09-07", gasolina: 2.093, gasoleo: 2.104 }
 ];
 const ddmm = (isoData) => isoData.slice(8, 10) + "/" + isoData.slice(5, 7);
+const MESES_PT = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+const diaMes = (isoData) => Number(isoData.slice(8, 10)) + " de " + MESES_PT[Number(isoData.slice(5, 7)) - 1];
+const ctsTxt = (n) => (n > 0 ? "+" : n < 0 ? "-" : "") + String(Math.abs(n)).replace(".", ",");
 const PROXY = "https://lf-proxy.success-f03.workers.dev/?u="; // Worker Cloudflare (ver worker-proxy.js) - os runners do GitHub sao bloqueados pelas fontes
 const UA = { headers: { "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36", "accept": "text/csv,application/json,text/plain,*/*" } };
 
@@ -202,6 +213,37 @@ export async function carregarOficiais() {
   return { oficiais, override };
 }
 
+// --- base provisoria (v2.6): quando falta a leitura oficial de uma ou duas segundas-feiras antes do alvo ---
+// Devolve a lista das segundas em falta com o preco estimado em cada uma (ultima oficial + variacao do modelo, janela completa), ou null.
+export function baseProvisoria(gasoil, rbob, fx, alvo, baseData, base, hojeRef, kG, kGas) {
+  if (!baseData || !base) return null;
+  const emFalta = [];
+  for (let n = 1; n <= 3; n++) { const seg = somaDias(alvo, -7 * n); if (iso(seg) <= baseData) break; emFalta.unshift(seg); }
+  if (!emFalta.length) return null; // a base e a segunda-feira anterior ao alvo: nada a fazer
+  if (emFalta.length > 2 || iso(somaDias(emFalta[0], -7)) !== baseData) throw new Error("ultima leitura oficial (" + baseData + ") demasiado antiga para estimar a base");
+  let g = base.gasoleo, s = base.gasolina;
+  const passos = [];
+  for (const seg of emFalta) {
+    const q = calcular(gasoil, rbob, fx, somaDias(seg, -7), somaDias(seg, -3), somaDias(seg, -14), somaDias(seg, -10), hojeRef, kG, kGas);
+    if (q.diasDeCotacoes < 3) throw new Error("poucas cotacoes na semana anterior a " + iso(seg));
+    if (Math.abs(q.gasoleo.variacao) > LIMITE_SANIDADE_CTS || Math.abs(q.gasolina.variacao) > LIMITE_SANIDADE_CTS) throw new Error("variacao de " + iso(seg) + " fora do limite de sanidade");
+    g = +(g + q.gasoleo.variacao / 100).toFixed(3); s = +(s + q.gasolina.variacao / 100).toFixed(3);
+    passos.push({ data: iso(seg), gasoleo: g, gasolina: s, variacao: { gasoleo: q.gasoleo.variacao, gasolina: q.gasolina.variacao } });
+  }
+  return passos;
+}
+function notaProvisoria(passos, baseData) {
+  const datas = passos.map((x) => diaMes(x.data));
+  const tot = (c) => arred(passos.reduce((a, x) => a + x.variacao[c], 0));
+  return "Preço atual por confirmar: " + (datas.length > 1 ? "faltam as médias oficiais da DGEG das segundas-feiras " + datas.join(" e ") : "falta a média oficial da DGEG de segunda-feira, " + datas[0]) +
+    ". Usámos a última leitura oficial (" + diaMes(baseData) + ") e a variação que o nosso modelo calcula desde então: gasóleo " + ctsTxt(tot("gasoleo")) + " cêntimos e gasolina " + ctsTxt(tot("gasolina")) + ".";
+}
+// Notas escritas por este script (notaAuto) saem quando deixam de se aplicar; notas manuais do override nao sao tocadas.
+function limparProvisoria(dados) {
+  if (dados.notaAuto) { delete dados.notaAcumulado; delete dados.notaAuto; }
+  delete dados.baseProvisoria;
+}
+
 // --- log de precisao: uma linha por semana-alvo, com a previsao que estava publicada antes de segunda-feira ---
 const CABECALHO_LOG = "data;semanaAlvo;propria_gasoleo;intervalo_gasoleo;propria_gasolina;intervalo_gasolina;mirror_gasoleo;mirror_gasolina;real_gasoleo;real_gasolina\n";
 async function registarNoLog(snap) {
@@ -223,8 +265,8 @@ async function principal() {
   const alvo = modoPrevisao ? somaDias(segAtual, 7) : segAtual;
   const janIni = somaDias(alvo, -7), janFim = somaDias(alvo, -3); // semana de cotacoes que determina o alvo
   const antIni = somaDias(alvo, -14), antFim = somaDias(alvo, -10);
-  const desde = somaDias(alvo, -21);
-  console.log("previsao-propria v2.5: alvo " + iso(alvo) + " (" + (modoPrevisao ? "previsao" : "semana em vigor") + ")");
+  const desde = somaDias(alvo, -28); // quatro semanas: chega para estimar ate duas segundas-feiras sem leitura oficial
+  console.log("previsao-propria v2.6: alvo " + iso(alvo) + " (" + (modoPrevisao ? "previsao" : "semana em vigor") + ")");
 
   const stooqUrl = (s) => "https://stooq.com/q/d/l/?s=" + s + "&d1=" + compacta(desde) + "&d2=" + compacta(hoje) + "&i=d";
   const yahooUrl = (s, host) => "https://" + host + ".finance.yahoo.com/v8/finance/chart/" + encodeURIComponent(s) + "?range=1mo&interval=1d";
@@ -283,23 +325,41 @@ async function principal() {
   const alvoConfirmado = !!oficiais[iso(alvo)];
   const baseData = datasOficiais.filter((d) => d < iso(alvo)).pop(); // ultima leitura oficial antes do alvo
   const base = baseData ? oficiais[baseData] : null;
+  const baseAntiga = !!baseData && baseData !== iso(somaDias(alvo, -7)); // falta a leitura da segunda-feira anterior ao alvo
   if (baseData) console.log(" base oficial: " + baseData + " (" + oficiais[baseData].fonte + ") gasoleo " + base.gasoleo + " gasolina " + base.gasolina + (alvoConfirmado ? " | alvo " + iso(alvo) + " confirmado (" + oficiais[iso(alvo)].fonte + ")" : ""));
+
+  // Base provisoria: so quando o alvo ainda nao esta confirmado e falta a leitura da(s) segunda(s) anterior(es)
+  let provisoria = null;
+  if (baseAntiga && !alvoConfirmado) {
+    try { provisoria = baseProvisoria(gasoil, rbob, fxObj.serie, alvo, baseData, base, hoje, kG, kGas); }
+    catch (e) { console.log(" base provisoria nao calculada: " + (e && e.message ? e.message : e)); }
+    if (provisoria) console.log(" BASE PROVISORIA (falta leitura oficial): " + provisoria.map((x) => x.data + " gasoleo " + x.gasoleo + " (" + ctsTxt(x.variacao.gasoleo) + ") gasolina " + x.gasolina + " (" + ctsTxt(x.variacao.gasolina) + ")").join(" | "));
+  }
 
   if (alvoConfirmado) {
     // Semana em vigor ja confirmada pela DGEG: a pagina mostra a variacao confirmada, sem intervalo. O override, se existir para esta semana, sobrepoe-se no posprocessar-isp.mjs.
     const conf = oficiais[iso(alvo)];
+    limparProvisoria(dados);
     if (base) {
       dados.gasoleo.atual = base.gasoleo; dados.gasolina.atual = base.gasolina;
       dados.gasoleo.variacao = +(conf.gasoleo - base.gasoleo).toFixed(3);
       dados.gasolina.variacao = +(conf.gasolina - base.gasolina).toFixed(3);
       dados.baseConfirmada = true; dados.baseData = baseData;
+      if (baseAntiga) { dados.notaAcumulado = "A variação desta semana compara com a leitura oficial de " + diaMes(baseData) + ", porque falta a de " + diaMes(iso(somaDias(alvo, -7))) + "."; dados.notaAuto = true; }
     }
     delete dados.gasoleo.intervalo; delete dados.gasolina.intervalo;
     dados.semanaInicio = iso(alvo); dados.semanaFim = iso(somaDias(alvo, 6));
     dados.fonte = "dgeg-confirmado";
     dados.confirmacao = { data: iso(alvo), gasoleo: conf.gasoleo, gasolina: conf.gasolina, fonte: conf.fonte };
   } else {
-    if (base) { dados.gasoleo.atual = base.gasoleo; dados.gasolina.atual = base.gasolina; dados.baseConfirmada = true; dados.baseData = baseData; }
+    limparProvisoria(dados);
+    if (provisoria) {
+      const ult = provisoria[provisoria.length - 1];
+      dados.gasoleo.atual = ult.gasoleo; dados.gasolina.atual = ult.gasolina;
+      dados.baseConfirmada = false; dados.baseData = baseData; // baseData = ultima leitura OFICIAL (o email as redacoes decide por ela)
+      dados.baseProvisoria = { ultimaOficial: baseData, semanas: provisoria };
+      dados.notaAcumulado = notaProvisoria(provisoria, baseData); dados.notaAuto = true;
+    } else if (base) { dados.gasoleo.atual = base.gasoleo; dados.gasolina.atual = base.gasolina; dados.baseConfirmada = !baseAntiga; dados.baseData = baseData; }
     else { dados.baseConfirmada = false; }
     dados.gasoleo.variacao = +(p.gasoleo.variacao / 100).toFixed(3);
     dados.gasolina.variacao = +(p.gasolina.variacao / 100).toFixed(3);
@@ -311,15 +371,17 @@ async function principal() {
     delete dados.confirmacao;
     if (dados.notaIsp && (!override || override.semanaInicio !== dados.semanaInicio)) delete dados.notaIsp; // nota orfa de outra semana
   }
-  // Grafico: ultimas 4 leituras oficiais antes do alvo + o alvo (confirmado ou previsto)
-  const hist = datasOficiais.filter((d) => d < iso(alvo)).slice(-4).map((d) => ({ semana: ddmm(d), gasolina: oficiais[d].gasolina, gasoleo: oficiais[d].gasoleo }));
+  // Grafico: ultimas leituras oficiais antes do alvo (+ as segundas estimadas, marcadas "aprox") + o alvo (confirmado ou previsto) - 5 pontos
+  const nProv = provisoria ? provisoria.length : 0;
+  const hist = datasOficiais.filter((d) => d < iso(alvo)).slice(-(4 - nProv)).map((d) => ({ semana: ddmm(d), gasolina: oficiais[d].gasolina, gasoleo: oficiais[d].gasoleo }));
+  if (provisoria) for (const x of provisoria) hist.push({ semana: ddmm(x.data), gasolina: x.gasolina, gasoleo: x.gasoleo, aprox: true });
   if (alvoConfirmado) hist.push({ semana: ddmm(iso(alvo)), gasolina: oficiais[iso(alvo)].gasolina, gasoleo: oficiais[iso(alvo)].gasoleo });
   else hist.push({ semana: ddmm(iso(alvo)), gasolina: +(dados.gasolina.atual + dados.gasolina.variacao).toFixed(3), gasoleo: +(dados.gasoleo.atual + dados.gasoleo.variacao).toFixed(3), previsto: true });
   dados.historico = hist;
   dados.historicoOficial = datasOficiais.map((d) => ({ data: d, gasolina: oficiais[d].gasolina, gasoleo: oficiais[d].gasoleo }));
   dados.atualizado = iso(hoje);
   await writeFile("combustiveis.json", JSON.stringify(dados, null, 2) + "\n");
-  console.log(" combustiveis.json escrito pelo modelo proprio (" + dados.fonte + ", semana " + dados.semanaInicio + ")");
+  console.log(" combustiveis.json escrito pelo modelo proprio (" + dados.fonte + ", semana " + dados.semanaInicio + (provisoria ? ", base provisoria" : "") + ")");
 }
 
 if (process.argv[1] && process.argv[1].endsWith("previsao-propria.mjs")) {
