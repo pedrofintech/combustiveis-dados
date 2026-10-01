@@ -1,0 +1,25 @@
+name: "Aviso: falta a leitura DGEG"
+
+# Falha de proposito quando a leitura oficial da DGEG da segunda-feira desta semana ainda nao foi registada,
+# para o GitHub mandar o email de workflow falhado. Nao mexe em ficheiros.
+# Para registar a leitura: Actions > Registar leitura DGEG > Run workflow.
+
+on:
+  schedule:
+    - cron: "0 17 * * 2"  # terca ao fim do dia
+    - cron: "0 9 * * 3"   # quarta de manha
+    - cron: "30 7 * * 4"  # quinta, antes do email as redacoes (09:30 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node verificar-leitura.mjs
