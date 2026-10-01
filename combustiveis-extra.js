@@ -55,21 +55,40 @@
   }
   function row(a, b, hl, cls) { return '<div class="lfc-ext-row' + (hl ? ' is-hl' : '') + '"><span>' + a + '</span><span' + (cls ? ' class="' + cls + '"' : '') + '>' + b + '</span></div>'; }
 
+  /* Preco medio da pagina (leitura oficial da DGEG a segunda-feira) na semana do preco eficiente. E o mesmo numero do topo da pagina. */
+  function precoDaSemana(inicio, f) {
+    var D = window.__lfcCombResults, hist = D && D.historicoOficial;
+    if (!inicio || !hist) return null;
+    for (var i = 0; i < hist.length; i++) if (hist[i].data === inicio && typeof hist[i][f] === 'number') return hist[i][f];
+    return null;
+  }
+  function lado(v) { return v > 0 ? ' acima' : ' abaixo'; }
+
   function eficiente() {
     var e = S.d.eficiente, f = S.efi, x = e[f], h = '';
+    var real = precoDaSemana(e.inicio, f), dif = real === null ? 0 : Math.round((real - x.pvp) * 1000) / 10;
     h += '<p class="lfc-ext-sub">O preço eficiente é quanto o litro devia custar segundo a ERSE, o regulador da energia: soma as cotações internacionais, o transporte, os biocombustíveis, a logística, uma margem de retalho e os impostos. Serve para veres se os postos estão a cobrar mais do que os custos justificam.</p>';
     h += seg('data-efi', f);
     h += row('Preço eficiente (semana de ' + e.semana + ')', preco(x.pvp) + '/L', true);
+    if (real !== null) {
+      h += row('Preço médio nessa semana (DGEG)', preco(real) + '/L');
+      h += row('Diferença para o preço eficiente', dif === 0 ? 'Igual' : cent(dif) + lado(dif), false, dif === 0 ? '' : dif > 0 ? 'lfc-ext-neg' : 'lfc-ext-pos');
+    }
     h += row('Preço eficiente antes de impostos', preco(x.semImpostos) + '/L');
-    if (typeof x.variacaoPct === 'number') h += row('Variação face à semana anterior', pct(x.variacaoPct));
+    if (typeof x.variacaoPct === 'number') h += row('Variação do preço eficiente face à semana anterior', pct(x.variacaoPct));
     var a = e.anterior && e.anterior[f];
-    if (a) {
+    if (real !== null) {
+      /* Com o preco da pagina para a mesma semana, a comparacao principal e essa. A da ERSE (semana anterior) fica numa frase. */
+      h += '<p class="lfc-ext-resumo">Na semana de ' + e.semana + ', ' + nome(f, true) + ' custou em média <strong>' + preco(real) + ' por litro</strong>' +
+        (dif === 0 ? ', o mesmo que o preço eficiente.' : ', <strong>' + cent(dif) + lado(dif) + '</strong> do preço eficiente.') +
+        (a ? ' Na semana anterior (' + e.anterior.semana + '), segundo a ERSE, o preço médio com descontos ficou ' + cent(a.descontosCent) + lado(a.descontosCent) + ' do preço eficiente e o preço anunciado nos postos ' + cent(a.porticoCent) + lado(a.porticoCent) + '.' : '') + '</p>';
+    } else if (a) {
       var acima = a.porticoCent > 0, dAcima = a.descontosCent > 0;
       h += row('Preço anunciado nos postos (' + e.anterior.semana + ')', cent(a.porticoCent) + (acima ? ' acima' : ' abaixo'), false, acima ? 'lfc-ext-neg' : 'lfc-ext-pos');
       h += row('Preço com descontos (' + e.anterior.semana + ')', cent(a.descontosCent) + (dAcima ? ' acima' : ' abaixo'), false, dAcima ? 'lfc-ext-neg' : 'lfc-ext-pos');
       h += '<p class="lfc-ext-resumo">Na semana de ' + e.anterior.semana + ', os postos anunciaram ' + nome(f, true) + ' <strong>' + cent(a.porticoCent) + ' por litro ' + (acima ? 'acima' : 'abaixo') + '</strong> do preço eficiente (' + pct(a.porticoPct) + '). Contando com os descontos de cartões e campanhas, o preço pago ficou <strong>' + cent(a.descontosCent) + ' ' + (dAcima ? 'acima' : 'abaixo') + '</strong> (' + pct(a.descontosPct) + ').</p>';
     }
-    h += '<p class="lfc-ext-foot">Fonte: <a href="' + e.fonte + '" target="_blank" rel="noopener">relatório semanal de supervisão dos preços de combustíveis da ERSE</a>. A ERSE publica o preço eficiente de cada semana e compara-o com os preços da semana anterior. Todos os relatórios estão na <a href="' + ERSE + '" target="_blank" rel="noopener">página da ERSE</a>.</p>';
+    h += '<p class="lfc-ext-foot">Fonte: <a href="' + e.fonte + '" target="_blank" rel="noopener">relatório semanal de supervisão dos preços de combustíveis da ERSE</a>, o mais recente publicado. O preço médio é a média oficial da DGEG à segunda-feira, a mesma fonte do topo desta página, e já conta com os descontos de cartões e campanhas. O preço anunciado nos postos é o que está afixado, antes desses descontos. Todos os relatórios estão na <a href="' + ERSE + '" target="_blank" rel="noopener">página da ERSE</a>.</p>';
     return h;
   }
 
@@ -118,14 +137,32 @@
     render();
   }
 
+  /* O combustivel escolhido vale para a pagina toda: o deposito, a fiscalidade e estes blocos mudam juntos */
+  var emSinc = false;
+  function sincronizar(f, origem) {
+    if (emSinc || (f !== 'gasoleo' && f !== 'gasolina')) return;
+    emSinc = true;
+    try {
+      S.efi = f; S.mar = f;
+      if (S.d) render();
+      ['#lfc-comb-seg .lfc-comb-seg-btn', '#lfc-fisc-seg .lfc-fisc-seg-btn'].forEach(function (sel) {
+        var b = document.querySelector(sel + '[data-fuel="' + f + '"]');
+        if (b && b !== origem && !b.classList.contains('is-active')) b.click();
+      });
+    } finally { emSinc = false; }
+  }
   document.addEventListener('click', function (e) {
     var t = e.target;
     if (!t.closest) return;
     var a = t.closest('[data-efi]'), b = t.closest('[data-mar]'), c = t.closest('[data-todas]');
-    if (a) { S.efi = a.getAttribute('data-efi'); render(); }
-    else if (b) { S.mar = b.getAttribute('data-mar'); render(); }
+    var p = t.closest('#lfc-comb-seg .lfc-comb-seg-btn, #lfc-fisc-seg .lfc-fisc-seg-btn');
+    if (a) sincronizar(a.getAttribute('data-efi'), a);
+    else if (b) sincronizar(b.getAttribute('data-mar'), b);
+    else if (p) sincronizar(p.getAttribute('data-fuel'), p);
     else if (c) { e.preventDefault(); S.todas = !S.todas; render(); }
   });
+  /* Os dados da pagina (precos oficiais por semana) podem chegar depois destes blocos */
+  document.addEventListener('lfc-comb:updated', function () { if (S.d) render(); });
 
   function arrancar() {
     var x = new XMLHttpRequest();
