@@ -110,10 +110,11 @@
     if (!ancora || !ancora.parentNode) return;
     S.d = d;
     var st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
-    var c1 = cartao('Preço eficiente: quanto devia custar o litro?', 'lfc-ext-efi');
-    var c2 = cartao('Que marca tem o combustível mais barato?', 'lfc-ext-mar');
-    ancora.parentNode.insertBefore(c2, ancora.nextSibling);
-    ancora.parentNode.insertBefore(c1, c2);
+    var depois = ancora.nextSibling;
+    ancora.parentNode.insertBefore(cartao('Preço eficiente: quanto devia custar o litro?', 'lfc-ext-efi'), depois);
+    /* O bloco das marcas so aparece com precos lidos na ultima atualizacao (marcas.data igual a atualizado).
+       Com a leitura da DGEG desligada no workflow (LF_SEM_DGEG), os precos ficam com data antiga e o bloco nao e mostrado. */
+    if (d.marcas && d.marcas.data === d.atualizado) ancora.parentNode.insertBefore(cartao('Que marca tem o combustível mais barato?', 'lfc-ext-mar'), depois);
     render();
   }
 
@@ -129,7 +130,7 @@
   function arrancar() {
     var x = new XMLHttpRequest();
     x.open('GET', DADOS + '?d=' + new Date().toISOString().slice(0, 10));
-    x.onload = function () { try { var d = JSON.parse(x.responseText); if (d && d.eficiente && d.marcas) montar(d); } catch (err) {} };
+    x.onload = function () { try { var d = JSON.parse(x.responseText); if (d && d.eficiente) montar(d); } catch (err) {} };
     x.send();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arrancar); else arrancar();
