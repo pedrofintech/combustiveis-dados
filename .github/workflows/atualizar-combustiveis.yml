@@ -9,6 +9,10 @@ on:
     # mudam; os runs sem novidade terminam em segundos. Se o GitHub atrasar ou
     # saltar um run (limitação conhecida do cron), o da hora seguinte apanha.
     - cron: '0 6-20 * * *'
+  push:
+    # Corre logo quando o modelo muda, para a página não ficar à espera da hora seguinte.
+    paths:
+      - 'previsao-propria.mjs'
   workflow_dispatch: # permite correr manualmente no separador Actions
 
 permissions:
