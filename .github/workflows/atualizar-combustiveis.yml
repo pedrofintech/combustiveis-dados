@@ -10,9 +10,11 @@ on:
     # saltar um run (limitação conhecida do cron), o da hora seguinte apanha.
     - cron: '0 6-20 * * *'
   push:
-    # Corre logo quando o modelo muda, para a página não ficar à espera da hora seguinte.
+    # Corre logo quando o modelo muda ou quando uma leitura oficial é registada à mão no override.json,
+    # para a página não ficar à espera da hora seguinte.
     paths:
       - 'previsao-propria.mjs'
+      - 'override.json'
   workflow_dispatch: # permite correr manualmente no separador Actions
 
 permissions:
