@@ -1,21 +1,21 @@
 {
-  "atualizado": "2026-09-30",
-  "semanaInicio": "2026-09-28",
-  "semanaFim": "2026-10-04",
+  "atualizado": "2026-10-01",
+  "semanaInicio": "2026-10-05",
+  "semanaFim": "2026-10-11",
   "gasoleo": {
     "atual": 2.21,
-    "variacao": -0.069,
+    "variacao": 0.005,
     "intervalo": {
-      "min": -8.5,
-      "max": -5
+      "min": -0.5,
+      "max": 1.5
     }
   },
   "gasolina": {
     "atual": 2.107,
-    "variacao": 0.016,
+    "variacao": -0.008,
     "intervalo": {
-      "min": 0.5,
-      "max": 2.5
+      "min": -2.5,
+      "max": 0.5
     }
   },
   "isp": {
@@ -45,24 +45,24 @@
       "gasoleo": 2.21
     },
     {
-      "semana": "28/09",
-      "gasolina": 2.123,
-      "gasoleo": 2.141,
+      "semana": "05/10",
+      "gasolina": 2.099,
+      "gasoleo": 2.215,
       "previsto": true
     }
   ],
   "fonte": "modelo-proprio",
   "baseConfirmada": true,
   "modelo": {
-    "janelaCompleta": true,
-    "diasDeCotacoes": 5,
+    "janelaCompleta": false,
+    "diasDeCotacoes": 4,
     "k": {
       "gasoleo": 1.04,
       "gasolina": 1.04
     },
     "fontes": {
       "gasoleo": "yahoo HO=F",
-      "gasolina": "yahoo RBV26.NYM",
+      "gasolina": "yahoo RBX26.NYM",
       "cambio": "frankfurter"
     }
   },
@@ -106,23 +106,23 @@
   ],
   "fiscalidade": {
     "iva": 0.23,
-    "emVigor": "5 de outubro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
-    "portaria": "Portaria n.º 447-A/2026/1, de 2026-09-30",
+    "emVigor": "1 de outubro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
+    "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
     "gasolina": {
       "ispBase": 0.49752,
       "csr": 0.087,
       "carbono": 0.15911,
-      "desconto": 0.07163
+      "desconto": 0.07263
     },
     "gasoleo": {
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.10294
+      "desconto": 0.10394
     }
   },
   "placar": {
-    "atualizado": "2026-09-30",
+    "atualizado": "2026-10-01",
     "semanas": 4,
     "semanasComSetor": 4,
     "gasoleo": {
@@ -194,16 +194,16 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-09-30",
-    "semanaInicio": "2026-09-28",
-    "semanaFim": "2026-10-04",
-    "fonte": "precocombustiveis.pt via allorigins (com ISP)",
+    "lidoEm": "2026-10-01",
+    "semanaInicio": "2026-10-05",
+    "semanaFim": "2026-10-11",
+    "fonte": "https://www.poupapilim.com/preco-dos-combustiveis-na-proxima-semana-5-a-11-de-outubro/ (sem ISP)",
     "gasoleo": {
-      "variacao": -0.06,
+      "variacao": -0.04,
       "preco": null
     },
     "gasolina": {
-      "variacao": -0.02,
+      "variacao": -0.05,
       "preco": null
     }
   }

@@ -1,26 +1,26 @@
 {
-  "geradoEm": "2026-09-30T22:52:26.916Z",
-  "semanaAlvo": "2026-09-28",
-  "modo": "em-vigor",
+  "geradoEm": "2026-10-01T12:43:47.089Z",
+  "semanaAlvo": "2026-10-05",
+  "modo": "previsao",
   "gasoleo": {
-    "variacao": -6.9,
-    "min": -8.5,
-    "max": -5
+    "variacao": 0.5,
+    "min": -0.5,
+    "max": 1.5
   },
   "gasolina": {
-    "variacao": 1.6,
-    "min": 0.5,
-    "max": 2.5
+    "variacao": -0.8,
+    "min": -2.5,
+    "max": 0.5
   },
-  "janelaCompleta": true,
+  "janelaCompleta": false,
   "kUsado": {
     "gasoleo": 1.04,
     "gasolina": 1.04
   },
-  "diasDeCotacoes": 5,
+  "diasDeCotacoes": 4,
   "deltaCotacoesCts": {
-    "gasoleo": -6.59,
-    "gasolina": 1.53
+    "gasoleo": 0.45,
+    "gasolina": -0.77
   },
   "k": {
     "gasoleo": 1.04,
@@ -28,13 +28,13 @@
   },
   "fontes": {
     "gasoleo": "yahoo HO=F",
-    "gasolina": "yahoo RBV26.NYM",
+    "gasolina": "yahoo RBX26.NYM",
     "cambio": "frankfurter"
   },
   "mirror": {
-    "gasoleo": -6,
-    "gasolina": -2,
-    "semanaInicio": "2026-09-28",
-    "fonte": "precocombustiveis.pt via allorigins (com ISP)"
+    "gasoleo": -4,
+    "gasolina": -5,
+    "semanaInicio": "2026-10-05",
+    "fonte": "https://www.poupapilim.com/preco-dos-combustiveis-na-proxima-semana-5-a-11-de-outubro/ (sem ISP)"
   }
 }
