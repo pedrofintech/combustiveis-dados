@@ -87,7 +87,7 @@ def ler_texto(txt):
     b = re.search(r"situa-se em (\d,\d{3}) ?€/l na gasolina 95 simples e em (\d,\d{3}) ?€/l no gasóleo", txt)
     if not a or not b:
         return None
-    out = {"semana": semana_txt(ini, fim),
+    out = {"semana": semana_txt(ini, fim), "inicio": ini.isoformat(),
            "gasolina": {"pvp": n(b.group(1)), "semImpostos": n(a.group(1))},
            "gasoleo": {"pvp": n(b.group(2)), "semImpostos": n(a.group(2))}}
     for f in ("gasolina", "gasoleo"):
@@ -155,7 +155,7 @@ def eficiente():
     url = urllib.parse.urljoin(ERSE_LISTA, m.group(1))
     out = ler_relatorio(get(url))
     if out:
-        out = {"semana": out.pop("semana"), "fonte": url, **out}
+        out = {"semana": out.pop("semana"), "inicio": out.pop("inicio"), "fonte": url, **out}
     return out
 
 
