@@ -1,0 +1,35 @@
+name: Atualizar preço eficiente e marcas
+
+# Dados dos blocos "Preço eficiente" (ERSE) e "Que marca tem o combustível mais barato?" (DGEG)
+# da página /precos-combustiveis. Escreve o extra.json, que a página lê através do combustiveis-extra.js.
+
+on:
+  schedule:
+    # Uma vez por dia, às 21:41 UTC: depois da última corrida do "Atualizar combustíveis" (6-20 UTC),
+    # para os dois workflows nunca fazerem push ao mesmo tempo. A ERSE publica o relatório à segunda ou terça.
+    - cron: "41 21 * * *"
+  push:
+    paths:
+      - "atualizar_extra.py"
+      - ".github/workflows/atualizar-extra.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    env:
+      # Leitura diária da API da DGEG (bloco das marcas) desligada até haver decisão sobre a
+      # "Partilha de Informação" com a DGEG. Para ligar, apagar a linha seguinte.
+      LF_SEM_DGEG: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pypdf
+      # O script grava e faz push do extra.json sozinho. Se alguma leitura falhar, termina com erro
+      # e o GitHub avisa por email, mas os dados que já tinha lido ficam gravados.
+      - run: python3 atualizar_extra.py
