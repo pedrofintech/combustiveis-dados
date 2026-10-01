@@ -3,19 +3,19 @@
   "semanaInicio": "2026-10-05",
   "semanaFim": "2026-10-11",
   "gasoleo": {
-    "atual": 2.21,
-    "variacao": 0.005,
+    "atual": 2.141,
+    "variacao": 0.011,
     "intervalo": {
-      "min": -0.5,
-      "max": 1.5
+      "min": 0,
+      "max": 2
     }
   },
   "gasolina": {
-    "atual": 2.107,
-    "variacao": -0.008,
+    "atual": 2.12,
+    "variacao": -0.002,
     "intervalo": {
-      "min": -2.5,
-      "max": 0.5
+      "min": -1.5,
+      "max": 1.5
     }
   },
   "isp": {
@@ -24,11 +24,6 @@
     "gasolina": 49.61
   },
   "historico": [
-    {
-      "semana": "31/08",
-      "gasolina": 2.013,
-      "gasoleo": 2.029
-    },
     {
       "semana": "07/09",
       "gasolina": 2.093,
@@ -45,14 +40,20 @@
       "gasoleo": 2.21
     },
     {
+      "semana": "28/09",
+      "gasolina": 2.12,
+      "gasoleo": 2.141,
+      "aprox": true
+    },
+    {
       "semana": "05/10",
-      "gasolina": 2.099,
-      "gasoleo": 2.215,
+      "gasolina": 2.118,
+      "gasoleo": 2.152,
       "previsto": true
     }
   ],
   "fonte": "modelo-proprio",
-  "baseConfirmada": true,
+  "baseConfirmada": false,
   "modelo": {
     "janelaCompleta": false,
     "diasDeCotacoes": 4,
@@ -206,5 +207,21 @@
       "variacao": -0.05,
       "preco": null
     }
-  }
+  },
+  "baseProvisoria": {
+    "ultimaOficial": "2026-09-21",
+    "semanas": [
+      {
+        "data": "2026-09-28",
+        "gasoleo": 2.141,
+        "gasolina": 2.12,
+        "variacao": {
+          "gasoleo": -6.9,
+          "gasolina": 1.3
+        }
+      }
+    ]
+  },
+  "notaAcumulado": "Preço atual por confirmar: falta a média oficial da DGEG de segunda-feira, 28 de setembro. Usámos a última leitura oficial (21 de setembro) e a variação que o nosso modelo calcula desde então: gasóleo -6,9 cêntimos e gasolina +1,3.",
+  "notaAuto": true
 }
