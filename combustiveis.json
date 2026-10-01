@@ -3,15 +3,15 @@
   "semanaInicio": "2026-10-05",
   "semanaFim": "2026-10-11",
   "gasoleo": {
-    "atual": 2.141,
-    "variacao": 0.011,
+    "atual": 2.186,
+    "variacao": 0.009,
     "intervalo": {
       "min": 0,
       "max": 2
     }
   },
   "gasolina": {
-    "atual": 2.12,
+    "atual": 2.099,
     "variacao": -0.002,
     "intervalo": {
       "min": -1.5,
@@ -41,19 +41,18 @@
     },
     {
       "semana": "28/09",
-      "gasolina": 2.12,
-      "gasoleo": 2.141,
-      "aprox": true
+      "gasolina": 2.099,
+      "gasoleo": 2.186
     },
     {
       "semana": "05/10",
-      "gasolina": 2.118,
-      "gasoleo": 2.152,
+      "gasolina": 2.097,
+      "gasoleo": 2.195,
       "previsto": true
     }
   ],
   "fonte": "modelo-proprio",
-  "baseConfirmada": false,
+  "baseConfirmada": true,
   "modelo": {
     "janelaCompleta": false,
     "diasDeCotacoes": 4,
@@ -67,7 +66,7 @@
       "cambio": "frankfurter"
     }
   },
-  "baseData": "2026-09-21",
+  "baseData": "2026-09-28",
   "historicoOficial": [
     {
       "data": "2026-08-10",
@@ -103,6 +102,11 @@
       "data": "2026-09-21",
       "gasolina": 2.107,
       "gasoleo": 2.21
+    },
+    {
+      "data": "2026-09-28",
+      "gasolina": 2.099,
+      "gasoleo": 2.186
     }
   ],
   "fiscalidade": {
@@ -124,19 +128,19 @@
   },
   "placar": {
     "atualizado": "2026-10-01",
-    "semanas": 4,
-    "semanasComSetor": 4,
+    "semanas": 5,
+    "semanasComSetor": 5,
     "gasoleo": {
-      "erroMedioModelo": 1,
-      "erroMedioSetor": 3.97
+      "erroMedioModelo": 1.7,
+      "erroMedioSetor": 3.9
     },
     "gasolina": {
-      "erroMedioModelo": 3.02,
-      "erroMedioSetor": 3.52
+      "erroMedioModelo": 2.9,
+      "erroMedioSetor": 3.06
     },
     "vitorias": {
       "modelo": 5,
-      "setor": 3,
+      "setor": 5,
       "empates": 0
     },
     "ultimas": [
@@ -191,6 +195,19 @@
           "setor": 6.5,
           "real": 3.5
         }
+      },
+      {
+        "semana": "2026-09-28",
+        "gasoleo": {
+          "modelo": -6.9,
+          "setor": -6,
+          "real": -2.4
+        },
+        "gasolina": {
+          "modelo": 1.6,
+          "setor": -2,
+          "real": -0.8
+        }
       }
     ]
   },
@@ -207,21 +224,5 @@
       "variacao": -0.05,
       "preco": null
     }
-  },
-  "baseProvisoria": {
-    "ultimaOficial": "2026-09-21",
-    "semanas": [
-      {
-        "data": "2026-09-28",
-        "gasoleo": 2.141,
-        "gasolina": 2.12,
-        "variacao": {
-          "gasoleo": -6.9,
-          "gasolina": 1.3
-        }
-      }
-    ]
-  },
-  "notaAcumulado": "Preço atual por confirmar: falta a média oficial da DGEG de segunda-feira, 28 de setembro. Usámos a última leitura oficial (21 de setembro) e a variação que o nosso modelo calcula desde então: gasóleo -6,9 cêntimos e gasolina +1,3.",
-  "notaAuto": true
+  }
 }
