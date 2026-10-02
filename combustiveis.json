@@ -1,20 +1,20 @@
 {
-  "atualizado": "2026-10-01",
+  "atualizado": "2026-10-02",
   "semanaInicio": "2026-10-05",
   "semanaFim": "2026-10-11",
   "gasoleo": {
     "atual": 2.186,
-    "variacao": 0.011,
+    "variacao": -0.004,
     "intervalo": {
-      "min": 0,
-      "max": 2
+      "min": -1,
+      "max": 0
     }
   },
   "gasolina": {
     "atual": 2.099,
-    "variacao": 0.001,
+    "variacao": 0.004,
     "intervalo": {
-      "min": -1.5,
+      "min": -0.5,
       "max": 1.5
     }
   },
@@ -46,16 +46,16 @@
     },
     {
       "semana": "05/10",
-      "gasolina": 2.1,
-      "gasoleo": 2.197,
+      "gasolina": 2.103,
+      "gasoleo": 2.182,
       "previsto": true
     }
   ],
   "fonte": "modelo-proprio",
   "baseConfirmada": true,
   "modelo": {
-    "janelaCompleta": false,
-    "diasDeCotacoes": 4,
+    "janelaCompleta": true,
+    "diasDeCotacoes": 5,
     "k": {
       "gasoleo": 1.04,
       "gasolina": 1.04
@@ -127,7 +127,7 @@
     }
   },
   "placar": {
-    "atualizado": "2026-10-01",
+    "atualizado": "2026-10-02",
     "semanas": 5,
     "semanasComSetor": 5,
     "gasoleo": {
