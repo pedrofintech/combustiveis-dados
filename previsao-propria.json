@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-10-03T22:45:38.027Z",
+  "geradoEm": "2026-10-04T11:59:38.625Z",
   "semanaAlvo": "2026-10-05",
   "modo": "previsao",
   "gasoleo": {
@@ -32,9 +32,9 @@
     "cambio": "frankfurter"
   },
   "mirror": {
-    "gasoleo": -4,
-    "gasolina": -5,
+    "gasoleo": -3,
+    "gasolina": -3.5,
     "semanaInicio": "2026-10-05",
-    "fonte": "https://www.poupapilim.com/preco-dos-combustiveis-na-proxima-semana-5-a-11-de-outubro/ (sem ISP)"
+    "fonte": "precocombustiveis.pt via allorigins (com ISP)"
   }
 }

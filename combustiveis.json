@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-10-03",
+  "atualizado": "2026-10-04",
   "semanaInicio": "2026-10-05",
   "semanaFim": "2026-10-11",
   "gasoleo": {
@@ -127,7 +127,7 @@
     }
   },
   "placar": {
-    "atualizado": "2026-10-03",
+    "atualizado": "2026-10-04",
     "semanas": 5,
     "semanasComSetor": 5,
     "gasoleo": {
@@ -212,16 +212,16 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-10-01",
+    "lidoEm": "2026-10-04",
     "semanaInicio": "2026-10-05",
     "semanaFim": "2026-10-11",
-    "fonte": "https://www.poupapilim.com/preco-dos-combustiveis-na-proxima-semana-5-a-11-de-outubro/ (sem ISP)",
+    "fonte": "precocombustiveis.pt via allorigins (com ISP)",
     "gasoleo": {
-      "variacao": -0.04,
+      "variacao": -0.03,
       "preco": null
     },
     "gasolina": {
-      "variacao": -0.05,
+      "variacao": -0.035,
       "preco": null
     }
   }
