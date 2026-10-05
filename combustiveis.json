@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-10-04",
+  "atualizado": "2026-10-05",
   "semanaInicio": "2026-10-05",
   "semanaFim": "2026-10-11",
   "gasoleo": {
@@ -117,17 +117,17 @@
       "ispBase": 0.49752,
       "csr": 0.087,
       "carbono": 0.15911,
-      "desconto": 0.07263
+      "desconto": 0.07363
     },
     "gasoleo": {
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.10394
+      "desconto": 0.10493999999999999
     }
   },
   "placar": {
-    "atualizado": "2026-10-04",
+    "atualizado": "2026-10-05",
     "semanas": 5,
     "semanasComSetor": 5,
     "gasoleo": {
