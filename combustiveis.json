@@ -111,7 +111,7 @@
   ],
   "fiscalidade": {
     "iva": 0.23,
-    "emVigor": "6 de outubro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
+    "emVigor": "7 de outubro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
     "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
     "gasolina": {
       "ispBase": 0.49752,
@@ -212,7 +212,7 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-10-06",
+    "lidoEm": "2026-10-07",
     "semanaInicio": "2026-10-05",
     "semanaFim": "2026-10-11",
     "fonte": "precocombustiveis.pt via allorigins (com ISP)",
