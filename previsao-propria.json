@@ -1,14 +1,14 @@
 {
-  "geradoEm": "2026-10-08T16:49:21.174Z",
+  "geradoEm": "2026-10-08T19:43:27.836Z",
   "semanaAlvo": "2026-10-12",
   "modo": "previsao",
   "gasoleo": {
-    "variacao": -1.6,
-    "min": -2.5,
-    "max": -0.5
+    "variacao": -1.2,
+    "min": -2,
+    "max": 0
   },
   "gasolina": {
-    "variacao": 1.1,
+    "variacao": 1.2,
     "min": -0.5,
     "max": 2.5
   },
@@ -17,10 +17,10 @@
     "gasoleo": 1.04,
     "gasolina": 1.04
   },
-  "diasDeCotacoes": 3,
+  "diasDeCotacoes": 4,
   "deltaCotacoesCts": {
-    "gasoleo": -1.59,
-    "gasolina": 1.05
+    "gasoleo": -1.19,
+    "gasolina": 1.15
   },
   "k": {
     "gasoleo": 1.04,
