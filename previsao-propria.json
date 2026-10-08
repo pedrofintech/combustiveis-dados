@@ -1,26 +1,26 @@
 {
-  "geradoEm": "2026-10-07T19:15:19.948Z",
-  "semanaAlvo": "2026-10-05",
-  "modo": "em-vigor",
+  "geradoEm": "2026-10-08T00:04:17.604Z",
+  "semanaAlvo": "2026-10-12",
+  "modo": "previsao",
   "gasoleo": {
-    "variacao": -0.2,
-    "min": -0.5,
-    "max": 0.5
+    "variacao": -2.3,
+    "min": -3.5,
+    "max": -1
   },
   "gasolina": {
-    "variacao": 0.7,
+    "variacao": 0.9,
     "min": -0.5,
-    "max": 1.5
+    "max": 2.5
   },
-  "janelaCompleta": true,
+  "janelaCompleta": false,
   "kUsado": {
     "gasoleo": 1.04,
     "gasolina": 1.04
   },
-  "diasDeCotacoes": 5,
+  "diasDeCotacoes": 3,
   "deltaCotacoesCts": {
-    "gasoleo": -0.23,
-    "gasolina": 0.64
+    "gasoleo": -2.2,
+    "gasolina": 0.83
   },
   "k": {
     "gasoleo": 1.04,
