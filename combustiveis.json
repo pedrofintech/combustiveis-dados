@@ -1,10 +1,10 @@
 {
-  "atualizado": "2026-10-09",
+  "atualizado": "2026-10-10",
   "semanaInicio": "2026-10-12",
   "semanaFim": "2026-10-18",
   "gasoleo": {
     "atual": 2.155,
-    "variacao": -0.01,
+    "variacao": -0.008,
     "intervalo": {
       "min": -1.5,
       "max": -0.5
@@ -12,10 +12,10 @@
   },
   "gasolina": {
     "atual": 2.081,
-    "variacao": 0.012,
+    "variacao": 0.013,
     "intervalo": {
-      "min": 0,
-      "max": 2
+      "min": 0.5,
+      "max": 2.5
     }
   },
   "isp": {
@@ -46,8 +46,8 @@
     },
     {
       "semana": "12/10",
-      "gasolina": 2.093,
-      "gasoleo": 2.145,
+      "gasolina": 2.094,
+      "gasoleo": 2.147,
       "previsto": true
     }
   ],
@@ -132,7 +132,7 @@
     }
   },
   "placar": {
-    "atualizado": "2026-10-09",
+    "atualizado": "2026-10-10",
     "semanas": 6,
     "semanasComSetor": 6,
     "gasoleo": {
