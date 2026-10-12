@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-10-11",
+  "atualizado": "2026-10-12",
   "semanaInicio": "2026-10-12",
   "semanaFim": "2026-10-18",
   "gasoleo": {
@@ -117,7 +117,7 @@
   "fiscalidade": {
     "iva": 0.23,
     "emVigor": "12 de outubro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
-    "portaria": "Portaria n.º 451-A/2026/1, de 2026-10-09",
+    "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
     "gasolina": {
       "ispBase": 0.49752,
       "csr": 0.087,
@@ -128,11 +128,11 @@
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.09994
+      "desconto": 0.09894
     }
   },
   "placar": {
-    "atualizado": "2026-10-11",
+    "atualizado": "2026-10-12",
     "semanas": 6,
     "semanasComSetor": 6,
     "gasoleo": {
@@ -230,16 +230,16 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-10-08",
-    "semanaInicio": "2026-10-05",
-    "semanaFim": "2026-10-11",
-    "fonte": "precocombustiveis.pt via allorigins (com ISP)",
+    "lidoEm": "2026-10-12",
+    "semanaInicio": "2026-10-12",
+    "semanaFim": "2026-10-18",
+    "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)",
     "gasoleo": {
-      "variacao": -0.03,
+      "variacao": -0.01,
       "preco": null
     },
     "gasolina": {
-      "variacao": -0.035,
+      "variacao": 0.05,
       "preco": null
     }
   }

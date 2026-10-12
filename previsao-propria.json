@@ -1,7 +1,7 @@
 {
-  "geradoEm": "2026-10-11T21:42:50.282Z",
+  "geradoEm": "2026-10-12T14:49:54.255Z",
   "semanaAlvo": "2026-10-12",
-  "modo": "previsao",
+  "modo": "em-vigor",
   "gasoleo": {
     "variacao": -0.8,
     "min": -1.5,
@@ -32,9 +32,9 @@
     "cambio": "frankfurter"
   },
   "mirror": {
-    "gasoleo": -3,
-    "gasolina": -3.5,
-    "semanaInicio": "2026-10-05",
-    "fonte": "precocombustiveis.pt via allorigins (com ISP)"
+    "gasoleo": -1,
+    "gasolina": 5,
+    "semanaInicio": "2026-10-12",
+    "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)"
   }
 }
