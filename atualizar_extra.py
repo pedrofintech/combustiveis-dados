@@ -83,6 +83,18 @@ def excerto(txt, marca, antes=40, depois=200):
     return txt[max(k - antes, 0):k + depois] if k > -1 else txt[:depois]
 
 
+def frase(texto):
+    """Regex de uma frase do relatório com os espaços opcionais. O pypdf às vezes come espaços entre palavras
+    (no relatório de 12 a 18 de outubro de 2026 saiu "gasolina 95 simplese de 1,359")."""
+    return r"\s*".join(re.escape(p) for p in texto.split())
+
+
+def achar(txt, texto, inicio=0):
+    """Como txt.find(texto, inicio), mas tolerante a espaços comidos."""
+    m = re.compile(frase(texto)).search(txt, inicio)
+    return m.start() if m else -1
+
+
 def ler_relatorio(pdf_bytes):
     """Extrai os números do relatório semanal da ERSE. Levanta uma exceção a explicar o que falhou."""
     from pypdf import PdfReader
@@ -108,8 +120,11 @@ def ler_texto(txt):
     if (fim - ini).days != 6:
         raise Ilegivel("as datas da capa não fazem uma semana: %s a %s" % (ini, fim))
 
-    a = re.search(r"antes de impostos é de (\d,\d{3}) ?€ ?/ ?l para a gasolina 95 simples e de (\d,\d{3}) ?€ ?/ ?l para o gasóleo", txt)
-    b = re.search(r"situa-se em (\d,\d{3}) ?€ ?/ ?l na gasolina 95 simples e em (\d,\d{3}) ?€ ?/ ?l no gasóleo", txt)
+    eur = r"\s*€\s*/\s*l\s*"
+    a = re.search(frase("antes de impostos é de") + r"\s*(\d,\d{3})" + eur + frase("para a gasolina 95 simples e de")
+                  + r"\s*(\d,\d{3})" + eur + frase("para o gasóleo"), txt)
+    b = re.search(frase("situa-se em") + r"\s*(\d,\d{3})" + eur + frase("na gasolina 95 simples e em")
+                  + r"\s*(\d,\d{3})" + eur + frase("no gasóleo"), txt)
     if not a:
         raise Ilegivel("não encontrei a frase do Preço Eficiente antes de impostos: «%s»" % excerto(txt, "antes de impostos"))
     if not b:
@@ -122,14 +137,14 @@ def ler_texto(txt):
             raise Ilegivel("valores fora do intervalo plausível em %s: %s" % (f, out[f]))
 
     # Variação face à semana anterior: "aumentou 1,0% na gasolina e 3,1% no gasóleo", "diminuiu ...", ou um de cada
-    v = re.search(r"Face à semana anterior, o Preço Eficiente (.{0,160}?no gasóleo)", txt)
+    v = re.search(frase("Face à semana anterior, o Preço Eficiente") + r"\s*(.{0,160}?" + frase("no gasóleo") + ")", txt)
     if v:
         s = v.group(1)
 
         def variacao(alvo, inicio, herdado):
             """Percentagem antes de 'na gasolina' ou 'no gasóleo', com o sinal do verbo mais próximo antes dela.
             Sem verbo próprio ("aumentou 1,0% na gasolina e 3,1% no gasóleo") herda o do combustível anterior."""
-            m = re.search(r"(\d+,\d+) ?% " + alvo, s[inicio:])  # "2,2%" ou "0,08%"
+            m = re.search(r"(\d+,\d+)\s*%\s*" + frase(alvo), s[inicio:])  # "2,2%" ou "0,08%"
             if not m:
                 return None, herdado, inicio
             verbos = re.findall(r"aument\w+|diminu\w+|desceu|subiu|reduziu", s[inicio:inicio + m.start()])
@@ -146,8 +161,8 @@ def ler_texto(txt):
 
     # Comparação com os preços praticados na semana anterior ("A comparação com os preços praticados no mercado...")
     def par(trecho):
-        c = re.findall(r"(\d+,\d+) ?cênt", trecho)
-        p = re.findall(r"([+\-−–]? ?\d+,\d+) ?%", trecho)  # "-2,2%" ou "+0,04%"
+        c = re.findall(r"(\d+,\d+)\s*cênt", trecho)
+        p = re.findall(r"([+\-−–]?\s*\d+,\d+)\s*%", trecho)  # "-2,2%" ou "+0,04%"
         if len(c) < 2 or len(p) < 2:
             return None
         res = []
@@ -155,10 +170,10 @@ def ler_texto(txt):
             pc = n(pc.replace(" ", ""))
             res.append((round((-1 if pc < 0 else 1) * n(cent), 1), pc))
         return res
-    i = txt.find("Preços com Descontos, publicados pela DGEG")
-    j = txt.find("Quanto aos preços de pórtico")
-    desc = par(txt[i:txt.find("respetivamente", i)]) if i > -1 else None
-    port = par(txt[j:txt.find("respetivamente", j)]) if j > -1 else None
+    i = achar(txt, "Preços com Descontos, publicados pela DGEG")
+    j = achar(txt, "Quanto aos preços de pórtico")
+    desc = par(txt[i:achar(txt, "respetivamente", i)]) if i > -1 else None
+    port = par(txt[j:achar(txt, "respetivamente", j)]) if j > -1 else None
     if desc and port:
         ok = True
         for k, f in enumerate(("gasolina", "gasoleo")):
