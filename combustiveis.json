@@ -257,5 +257,6 @@
     "gasoleo": 2.148,
     "gasolina": 2.11,
     "fonte": "dgeg"
-  }
+  },
+  "notaIsp": "<span data-fonte>Fonte: <a href=\"https://precoscombustiveis.dgeg.gov.pt/estatistica/preco-medio-diario/\" target=\"_blank\" rel=\"noopener\" class=\"blue-link\">DGEG</a> (Direção-Geral de Energia e Geologia), preço médio diário de segunda-feira, 12 de outubro de 2026.</span>"
 }
