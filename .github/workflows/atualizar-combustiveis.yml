@@ -15,6 +15,7 @@ on:
     paths:
       - 'previsao-propria.mjs'
       - 'dgeg-oficial.mjs'
+      - 'nota-fonte.mjs'
       - 'override.json'
   workflow_dispatch: # permite correr manualmente no separador Actions
 
@@ -31,7 +32,7 @@ jobs:
         with:
           node-version: 20
 
-      # Ordem: leitura oficial da DGEG -> espelho do setor -> modelo -> placar -> override/ISP -> fiscalidade.
+      # Ordem: leitura oficial da DGEG -> espelho do setor -> modelo -> placar -> override/ISP -> fiscalidade -> linha da fonte DGEG.
       # Cada passo opcional falha em silêncio (|| true) e deixa os ficheiros como estavam.
       # A leitura oficial de segunda entra sozinha pelo dgeg-oficial.mjs (um pedido à DGEG por semana, à terça).
       # Se falhar, o "Aviso: falta a leitura DGEG" manda email e regista-se à mão em "Registar leitura DGEG".
@@ -44,6 +45,7 @@ jobs:
           node posprocessar-isp.mjs
           node isp-overlay.mjs || true
           node fiscalidade.mjs || true
+          node nota-fonte.mjs || true
 
       - name: Commit e push (só se houver alterações)
         run: |

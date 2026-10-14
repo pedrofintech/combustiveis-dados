@@ -39,6 +39,7 @@ jobs:
           node posprocessar-isp.mjs
           node isp-overlay.mjs || true
           node fiscalidade.mjs || true
+          node nota-fonte.mjs || true
 
       - name: Commit e push
         run: |
