@@ -9,12 +9,12 @@ da página /precos-combustiveis.
    de supervisão de preços, incluindo a comparação com os preços da semana anterior.
    Se a leitura falhar ou os números não baterem certo, mantém o que já estava no ficheiro.
 
-Dependência: pypdf (pip install pypdf).
+Dependências: pypdf e cryptography (pip install pypdf cryptography).
 
 Uso normal:          python3 atualizar_extra.py
 Teste com um PDF:    python3 atualizar_extra.py --pdf relatorio.pdf   (não chama a DGEG nem escreve o ficheiro)
 """
-import io, json, os, re, subprocess, sys, urllib.parse, urllib.request
+import io, json, os, re, subprocess, sys, time, urllib.error, urllib.parse, urllib.request
 from datetime import date, timedelta
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "extra.json")
@@ -26,11 +26,21 @@ MIN_POSTOS = 20
 MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
 
 
-def get(url):
+def get(url, tentativas=3):
+    """Descarrega o URL. Erros de rede passageiros (timeout, 429, 5xx) têm mais duas tentativas."""
     partes = urllib.parse.urlsplit(url)
     url = urllib.parse.urlunsplit(partes._replace(path=urllib.parse.quote(partes.path, safe="/%")))
-    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=90) as r:
-        return r.read()
+    for i in range(tentativas):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=90) as r:
+                return r.read()
+        except urllib.error.HTTPError as e:
+            if (e.code < 500 and e.code != 429) or i == tentativas - 1:
+                raise RuntimeError("HTTP %s ao abrir %s" % (e.code, url)) from e
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+            if i == tentativas - 1:
+                raise RuntimeError("%s ao abrir %s: %s" % (type(e).__name__, url, e)) from e
+        time.sleep(15 * (i + 1))
 
 
 def marcas(id_comb):
@@ -63,10 +73,25 @@ def semana_txt(a, b):
     return f"{a.day} de {MESES[a.month - 1]} a {b.day} de {MESES[b.month - 1]}"
 
 
+class Ilegivel(Exception):
+    """O relatório da ERSE abriu, mas o texto não tem o formato esperado. A mensagem diz o que faltou."""
+
+
+def excerto(txt, marca, antes=40, depois=200):
+    """Bocado do texto à volta de `marca`, para a mensagem de erro mostrar o que o PDF diz de facto."""
+    k = txt.find(marca)
+    return txt[max(k - antes, 0):k + depois] if k > -1 else txt[:depois]
+
+
 def ler_relatorio(pdf_bytes):
-    """Extrai os números do relatório semanal da ERSE. Devolve None se algo não bater certo."""
+    """Extrai os números do relatório semanal da ERSE. Levanta uma exceção a explicar o que falhou."""
     from pypdf import PdfReader
-    txt = " ".join((p.extract_text() or "") for p in PdfReader(io.BytesIO(pdf_bytes)).pages)
+    try:
+        txt = " ".join((p.extract_text() or "") for p in PdfReader(io.BytesIO(pdf_bytes)).pages)
+    except Exception as e:
+        raise RuntimeError("o pypdf não conseguiu abrir o PDF (%s: %s)" % (type(e).__name__, e)) from e
+    if len(txt.strip()) < 200:
+        raise Ilegivel("o PDF não tem texto que se consiga extrair (%d caracteres)" % len(txt.strip()))
     return ler_texto(txt)
 
 
@@ -77,22 +102,24 @@ def ler_texto(txt):
     # Datas da semana (capa): "21-setembro -2026 a 27- setembro -2026"
     m = re.search(r"(\d{1,2})\s*-\s*([a-zç]+)\s*-\s*(\d{4})\s*a\s*(\d{1,2})\s*-\s*([a-zç]+)\s*-\s*(\d{4})", txt, re.I)
     if not m or m.group(2).lower() not in MESES or m.group(5).lower() not in MESES:
-        return None
+        raise Ilegivel("não encontrei as datas da semana na capa. Início do texto: «%s»" % txt[:160])
     ini = date(int(m.group(3)), MESES.index(m.group(2).lower()) + 1, int(m.group(1)))
     fim = date(int(m.group(6)), MESES.index(m.group(5).lower()) + 1, int(m.group(4)))
     if (fim - ini).days != 6:
-        return None
+        raise Ilegivel("as datas da capa não fazem uma semana: %s a %s" % (ini, fim))
 
-    a = re.search(r"antes de impostos é de (\d,\d{3}) ?€/l para a gasolina 95 simples e de (\d,\d{3}) ?€/l para o gasóleo", txt)
-    b = re.search(r"situa-se em (\d,\d{3}) ?€/l na gasolina 95 simples e em (\d,\d{3}) ?€/l no gasóleo", txt)
-    if not a or not b:
-        return None
+    a = re.search(r"antes de impostos é de (\d,\d{3}) ?€ ?/ ?l para a gasolina 95 simples e de (\d,\d{3}) ?€ ?/ ?l para o gasóleo", txt)
+    b = re.search(r"situa-se em (\d,\d{3}) ?€ ?/ ?l na gasolina 95 simples e em (\d,\d{3}) ?€ ?/ ?l no gasóleo", txt)
+    if not a:
+        raise Ilegivel("não encontrei a frase do Preço Eficiente antes de impostos: «%s»" % excerto(txt, "antes de impostos"))
+    if not b:
+        raise Ilegivel("não encontrei a frase do Preço Eficiente com impostos: «%s»" % excerto(txt, "situa-se em"))
     out = {"semana": semana_txt(ini, fim), "inicio": ini.isoformat(),
            "gasolina": {"pvp": n(b.group(1)), "semImpostos": n(a.group(1))},
            "gasoleo": {"pvp": n(b.group(2)), "semImpostos": n(a.group(2))}}
     for f in ("gasolina", "gasoleo"):
         if not (1 < out[f]["pvp"] < 4 and 0.3 < out[f]["semImpostos"] < out[f]["pvp"]):
-            return None
+            raise Ilegivel("valores fora do intervalo plausível em %s: %s" % (f, out[f]))
 
     # Variação face à semana anterior: "aumentou 1,0% na gasolina e 3,1% no gasóleo", "diminuiu ...", ou um de cada
     v = re.search(r"Face à semana anterior, o Preço Eficiente (.{0,160}?no gasóleo)", txt)
@@ -102,7 +129,7 @@ def ler_texto(txt):
         def variacao(alvo, inicio, herdado):
             """Percentagem antes de 'na gasolina' ou 'no gasóleo', com o sinal do verbo mais próximo antes dela.
             Sem verbo próprio ("aumentou 1,0% na gasolina e 3,1% no gasóleo") herda o do combustível anterior."""
-            m = re.search(r"(\d+,\d) ?% " + alvo, s[inicio:])
+            m = re.search(r"(\d+,\d+) ?% " + alvo, s[inicio:])  # "2,2%" ou "0,08%"
             if not m:
                 return None, herdado, inicio
             verbos = re.findall(r"aument\w+|diminu\w+|desceu|subiu|reduziu", s[inicio:inicio + m.start()])
@@ -117,10 +144,10 @@ def ler_texto(txt):
         if d is not None:
             out["gasoleo"]["variacaoPct"] = d
 
-    # Comparação com os preços praticados na semana anterior (ponto 7 do relatório)
+    # Comparação com os preços praticados na semana anterior ("A comparação com os preços praticados no mercado...")
     def par(trecho):
-        c = re.findall(r"(\d+,\d) ?cênt", trecho)
-        p = re.findall(r"([+\-−–]? ?\d+,\d) ?%", trecho)
+        c = re.findall(r"(\d+,\d+) ?cênt", trecho)
+        p = re.findall(r"([+\-−–]? ?\d+,\d+) ?%", trecho)  # "-2,2%" ou "+0,04%"
         if len(c) < 2 or len(p) < 2:
             return None
         res = []
@@ -151,18 +178,23 @@ def eficiente():
     html = get(ERSE_LISTA).decode("utf-8", errors="replace")
     m = re.search(r'href="([^"]+relat[^"]*semanal[^"]*\.pdf)"', html, re.I)
     if not m:
-        return None
+        raise Ilegivel("não encontrei o link do relatório semanal na página da ERSE")
     url = urllib.parse.urljoin(ERSE_LISTA, m.group(1))
-    out = ler_relatorio(get(url))
-    if out:
-        out = {"semana": out.pop("semana"), "inicio": out.pop("inicio"), "fonte": url, **out}
-    return out
+    try:
+        out = ler_relatorio(get(url))
+    except Exception as e:
+        raise RuntimeError("%s [%s]" % (e, url)) from e
+    return {"semana": out.pop("semana"), "inicio": out.pop("inicio"), "fonte": url, **out}
 
 
 def main():
     if "--pdf" in sys.argv:
         with open(sys.argv[sys.argv.index("--pdf") + 1], "rb") as f:
-            print(json.dumps(ler_relatorio(f.read()), ensure_ascii=False, indent=1))
+            try:
+                print(json.dumps(ler_relatorio(f.read()), ensure_ascii=False, indent=1))
+            except Exception as e:
+                print("ERRO:", e, file=sys.stderr)
+                sys.exit(1)
         return
     with open(OUT, encoding="utf-8") as f:
         dados = json.load(f)
@@ -177,14 +209,14 @@ def main():
             erros.append("Marcas: leitura da DGEG falhou, mantidos os valores anteriores: %s" % e)
     try:
         novo = eficiente()
-        if novo and novo["fonte"] != dados.get("eficiente", {}).get("fonte"):
+        if novo["fonte"] != dados.get("eficiente", {}).get("fonte"):
             dados["eficiente"] = novo
             dados["eficiente_lido"] = hoje
             print("Preço eficiente atualizado:", novo["semana"], "(com comparação)" if "anterior" in novo else "(sem comparação)")
-        elif not novo:
-            erros.append("Preço eficiente: relatório da ERSE não lido, mantidos os valores anteriores")
+        else:
+            print("Preço eficiente: sem relatório novo da ERSE (continua", novo["semana"] + ")")
     except Exception as e:  # o bloco da ERSE nunca deve impedir a atualização das marcas
-        erros.append("Preço eficiente: leitura falhou, mantidos os valores anteriores: %s" % e)
+        erros.append("Preço eficiente: %s. Ficam os valores anteriores." % e)
     # a ERSE publica um relatório por semana: mais de 16 dias sem um novo é sinal de que algo mudou
     lido = dados.setdefault("eficiente_lido", hoje)
     if (date.today() - date.fromisoformat(lido)).days > 16:
@@ -196,7 +228,11 @@ def main():
     publicar("Atualiza preço eficiente e marcas (%s)" % hoje)
     if erros:  # falhar o workflow faz o GitHub enviar um email de aviso
         for e in erros:
-            print("ERRO:", e, file=sys.stderr)
+            if os.environ.get("GITHUB_ACTIONS"):
+                # "::error::" faz o erro aparecer como anotação no resumo do workflow, sem ser preciso abrir o log
+                print("::error::" + e.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A"))
+            else:
+                print("ERRO:", e, file=sys.stderr)
         sys.exit(1)
 
 

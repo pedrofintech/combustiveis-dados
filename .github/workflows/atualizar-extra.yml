@@ -29,7 +29,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install pypdf
+      # cryptography: o pypdf precisa dela para abrir PDFs protegidos (AES)
+      - run: pip install pypdf cryptography
       # O script grava e faz push do extra.json sozinho. Se alguma leitura falhar, termina com erro
       # e o GitHub avisa por email, mas os dados que já tinha lido ficam gravados.
       - run: python3 atualizar_extra.py
