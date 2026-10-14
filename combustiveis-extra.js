@@ -95,7 +95,7 @@
   function marcas() {
     var m = S.d.marcas, f = S.mar, x = m[f], lista = S.todas ? x.lista : x.lista.slice(0, 8), h = '';
     var barata = x.lista[0], cara = x.lista[x.lista.length - 1];
-    h += '<p class="lfc-ext-sub">Preço médio afixado por cada marca em Portugal continental, calculado com os preços de todos os postos registados na DGEG. A média nacional está em ' + preco(x.media) + ' por litro.</p>';
+    h += '<p class="lfc-ext-sub">Preço médio afixado por cada marca em Portugal continental, calculado pelo Literacia Financeira a partir dos preços de todos os postos publicados pela DGEG. A média nacional está em ' + preco(x.media) + ' por litro.</p>';
     h += seg('data-mar', f);
     h += '<table class="lfc-ext-t"><thead><tr><th></th><th>Marca</th><th class="num">Preço médio</th><th class="num">Face à média</th><th class="num hide-m">Postos</th></tr></thead><tbody>';
     lista.forEach(function (r, i) {
@@ -105,7 +105,8 @@
     h += '</tbody></table>';
     if (x.lista.length > 8) h += '<a href="#" class="button is-secondary is-small w-inline-block lfc-ext-more" data-todas style="width:fit-content"><div>' + (S.todas ? 'Mostrar menos' : 'Mostrar as ' + x.lista.length + ' marcas') + '</div></a>';
     h += '<p class="lfc-ext-resumo">Entre a marca mais barata (' + marca(barata[0]) + ') e a mais cara (' + marca(cara[0]) + ') há <strong>' + cent((cara[2] - barata[2]) * 100) + ' por litro</strong> de diferença: num depósito de 50 litros são <strong>' + ((cara[2] - barata[2]) * 50).toFixed(2).replace('.', ',') + '€</strong>.</p>';
-    h += '<p class="lfc-ext-foot">Fonte: <a href="' + DGEG + '" target="_blank" rel="noopener">portal Preços de Combustíveis Online da DGEG</a>, preços afixados a ' + dataPT(m.data) + ' em ' + String(x.postos).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' postos. Média simples por posto, sem descontos de cartões, para marcas com ' + m.minPostos + ' ou mais postos. O preço de cada posto pode ser muito diferente da média da marca.</p>';
+    /* Condição da DGEG (email de 14 out 2026): tem de ficar claro que estas médias são um cálculo nosso sobre os dados da DGEG */
+    h += '<p class="lfc-ext-foot">Cálculo do Literacia Financeira com os preços afixados a ' + dataPT(m.data) + ' em ' + String(x.postos).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' postos, publicados no <a href="' + DGEG + '" target="_blank" rel="noopener">portal Preços dos Combustíveis Online da DGEG</a> (Direção-Geral de Energia e Geologia). Média simples por posto, sem descontos de cartões, para marcas com ' + m.minPostos + ' ou mais postos. O preço de cada posto pode ser muito diferente da média da marca.</p>';
     return h;
   }
 
@@ -131,9 +132,10 @@
     var st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
     var depois = ancora.nextSibling;
     ancora.parentNode.insertBefore(cartao('Preço eficiente: quanto devia custar o litro?', 'lfc-ext-efi'), depois);
-    /* O bloco das marcas so aparece com precos lidos na ultima atualizacao (marcas.data igual a atualizado).
-       Com a leitura da DGEG desligada no workflow (LF_SEM_DGEG), os precos ficam com data antiga e o bloco nao e mostrado. */
-    if (d.marcas && d.marcas.data === d.atualizado) ancora.parentNode.insertBefore(cartao('Que marca tem o combustível mais barato?', 'lfc-ext-mar'), depois);
+    /* O bloco das marcas so aparece com precos da ultima semana: a leitura da DGEG e semanal (segunda-feira a noite).
+       Com a leitura desligada no workflow (LF_SEM_DGEG), os precos ficam com data antiga e o bloco nao e mostrado. */
+    var diasMarcas = d.marcas && d.marcas.data && d.atualizado ? (new Date(d.atualizado + 'T00:00:00Z') - new Date(d.marcas.data + 'T00:00:00Z')) / 864e5 : NaN;
+    if (diasMarcas >= 0 && diasMarcas <= 8) ancora.parentNode.insertBefore(cartao('Que marca tem o combustível mais barato?', 'lfc-ext-mar'), depois);
     render();
   }
 

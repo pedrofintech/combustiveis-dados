@@ -2,8 +2,10 @@
 """Atualiza extra.json, os dados dos blocos "Preço eficiente" e "Marca mais barata"
 da página /precos-combustiveis.
 
-1. Preço médio por marca: API pública da DGEG (precoscombustiveis.dgeg.gov.pt),
-   média simples dos preços afixados por posto, marcas com 20 ou mais postos.
+1. Preço médio por marca: preços por posto do portal Preços dos Combustíveis Online da DGEG
+   (precoscombustiveis.dgeg.gov.pt), média simples por posto, marcas com 20 ou mais postos.
+   Uma leitura por semana, à segunda-feira à noite (dia em que os postos mudam os preços).
+   A DGEG autorizou estas médias por email a 14 out 2026, desde que fique claro que o cálculo é nosso.
    Com LF_SEM_DGEG=1 no ambiente este passo é saltado e ficam os valores anteriores.
 2. Preço eficiente: relatório semanal da ERSE (PDF). Lê o PDF mais recente da página
    de supervisão de preços, incluindo a comparação com os preços da semana anterior.
@@ -60,6 +62,15 @@ def marcas(id_comb):
     lista = sorted(([m, len(v), round(sum(v) / len(v), 4)] for m, v in por_marca.items() if m and len(v) >= MIN_POSTOS),
                    key=lambda x: x[2])
     return {"media": round(sum(todos) / len(todos), 4), "postos": len(todos), "lista": lista}
+
+
+def marcas_desta_vez(dados):
+    """Uma leitura por semana: à segunda-feira, ou em qualquer dia se a última tiver 7 ou mais dias."""
+    ult = (dados.get("marcas") or {}).get("data")
+    if not ult:
+        return True
+    dias = (date.today() - date.fromisoformat(ult)).days
+    return dias >= 7 or (date.today().weekday() == 0 and dias > 0)
 
 
 def n(s):
@@ -217,6 +228,8 @@ def main():
     erros = []
     if os.environ.get("LF_SEM_DGEG") == "1":
         print("Marcas: leitura da DGEG desligada (LF_SEM_DGEG=1), mantidos os valores anteriores")
+    elif not marcas_desta_vez(dados):
+        print("Marcas: leitura semanal já feita a %s, a próxima é na segunda-feira" % dados["marcas"]["data"])
     else:
         try:
             dados["marcas"] = {"data": hoje, "minPostos": MIN_POSTOS, "gasolina": marcas(3201), "gasoleo": marcas(2101)}
