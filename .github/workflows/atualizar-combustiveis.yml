@@ -10,10 +10,11 @@ on:
     # saltar um run (limitação conhecida do cron), o da hora seguinte apanha.
     - cron: '0 6-20 * * *'
   push:
-    # Corre logo quando o modelo muda ou quando uma leitura oficial é registada à mão no override.json,
-    # para a página não ficar à espera da hora seguinte.
+    # Corre logo quando o modelo ou o leitor da DGEG mudam, ou quando uma leitura oficial é registada à mão
+    # no override.json, para a página não ficar à espera da hora seguinte.
     paths:
       - 'previsao-propria.mjs'
+      - 'dgeg-oficial.mjs'
       - 'override.json'
   workflow_dispatch: # permite correr manualmente no separador Actions
 
@@ -30,11 +31,13 @@ jobs:
         with:
           node-version: 20
 
-      # Ordem: espelho do setor -> modelo -> placar -> override/ISP -> fiscalidade.
+      # Ordem: leitura oficial da DGEG -> espelho do setor -> modelo -> placar -> override/ISP -> fiscalidade.
       # Cada passo opcional falha em silêncio (|| true) e deixa os ficheiros como estavam.
-      # As leituras oficiais da DGEG entram pelo override.json (workflow "Registar leitura DGEG").
+      # A leitura oficial de segunda entra sozinha pelo dgeg-oficial.mjs (um pedido à DGEG por semana, à terça).
+      # Se falhar, o "Aviso: falta a leitura DGEG" manda email e regista-se à mão em "Registar leitura DGEG".
       - name: Atualizar dados
         run: |
+          node dgeg-oficial.mjs || true
           node update-combustiveis.mjs || true
           node previsao-propria.mjs || true
           node placar.mjs || true
@@ -47,6 +50,6 @@ jobs:
           git config user.name "combustiveis-bot"
           git config user.email "bot@users.noreply.github.com"
           git add combustiveis.json
-          for f in previsao-propria.json precisao-log.csv; do [ -f "$f" ] && git add "$f" || true; done
+          for f in dgeg-oficial.json previsao-propria.json precisao-log.csv; do [ -f "$f" ] && git add "$f" || true; done
           git diff --cached --quiet || git commit -m "Atualiza dados dos combustiveis [skip ci]"
           git push

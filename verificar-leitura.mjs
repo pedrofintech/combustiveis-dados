@@ -9,8 +9,10 @@ seg.setUTCDate(seg.getUTCDate() - ((seg.getUTCDay() + 6) % 7));
 const data = seg.toISOString().slice(0, 10);
 const { oficiais } = await carregarOficiais();
 if (!oficiais[data]) {
-  console.log("FALTA a leitura oficial da DGEG de segunda-feira, " + data + ". Regista-a em Actions > Registar leitura DGEG > Run workflow.");
-  console.log("Ate la a pagina usa uma base provisoria (estimativa do modelo) e o email as redacoes nao sai.");
+  const msg = "FALTA a leitura oficial da DGEG de segunda-feira, " + data + ": a leitura automatica (dgeg-oficial.mjs) nao a conseguiu obter. "
+    + "Regista-a em Actions > Registar leitura DGEG > Run workflow. Ate la a pagina usa uma base provisoria e o email as redacoes nao sai.";
+  // "::error::" faz a mensagem aparecer no resumo do workflow, logo ao abrir o link do email
+  console.log(process.env.GITHUB_ACTIONS ? "::error::" + msg : msg);
   process.exit(1);
 }
 console.log("Leitura de " + data + " registada: gasoleo " + oficiais[data].gasoleo + ", gasolina " + oficiais[data].gasolina + ".");
