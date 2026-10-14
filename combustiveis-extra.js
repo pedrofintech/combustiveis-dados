@@ -40,7 +40,7 @@
   function pct(v) { return (v > 0 ? '+' : '') + v.toFixed(1).replace('.', ',') + '%'; }
   function nome(f, art) { return f === 'gasoleo' ? (art ? 'o gasóleo simples' : 'Gasóleo simples') : (art ? 'a gasolina 95 simples' : 'Gasolina 95'); }
   function marca(m) {
-    var fixo = { 'INTERMARCHÉ': 'Intermarché', 'PINGO DOCE': 'Pingo Doce', 'AUCHAN': 'Auchan', 'ALVES BANDEIRA': 'Alves Bandeira', 'Genérico': 'Sem marca (genérico)', 'FREITAS': 'Freitas', 'GASPE': 'Gaspe', 'E.LECLERC': 'E.Leclerc' };
+    var fixo = { 'INTERMARCHÉ': 'Intermarché', 'PINGO DOCE': 'Pingo Doce', 'AUCHAN': 'Auchan', 'ALVES BANDEIRA': 'Alves Bandeira', 'Genérico': 'Sem marca (genérico)', 'FREITAS': 'Freitas', 'GASPE': 'Gaspe', 'E.LECLERC': 'E.Leclerc', 'OZ Energia': 'OZ Energia' };
     if (fixo[m]) return fixo[m];
     return m.length <= 5 ? m : m.charAt(0) + m.slice(1).toLowerCase();
   }
