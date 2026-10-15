@@ -1,14 +1,22 @@
 {
-  "atualizado": "2026-10-14",
-  "semanaInicio": "2026-10-12",
-  "semanaFim": "2026-10-18",
+  "atualizado": "2026-10-15",
+  "semanaInicio": "2026-10-19",
+  "semanaFim": "2026-10-25",
   "gasoleo": {
-    "atual": 2.155,
-    "variacao": -0.007
+    "atual": 2.148,
+    "variacao": 0.035,
+    "intervalo": {
+      "min": 2,
+      "max": 5
+    }
   },
   "gasolina": {
-    "atual": 2.081,
-    "variacao": 0.029
+    "atual": 2.11,
+    "variacao": -0.004,
+    "intervalo": {
+      "min": -2,
+      "max": 1
+    }
   },
   "isp": {
     "portaria": "Portaria n.º 345-C/2026/1, de 14 de agosto",
@@ -16,11 +24,6 @@
     "gasolina": 49.61
   },
   "historico": [
-    {
-      "semana": "14/09",
-      "gasolina": 2.072,
-      "gasoleo": 2.152
-    },
     {
       "semana": "21/09",
       "gasolina": 2.107,
@@ -40,13 +43,19 @@
       "semana": "12/10",
       "gasolina": 2.11,
       "gasoleo": 2.148
+    },
+    {
+      "semana": "19/10",
+      "gasolina": 2.106,
+      "gasoleo": 2.183,
+      "previsto": true
     }
   ],
-  "fonte": "dgeg-confirmado",
+  "fonte": "modelo-proprio",
   "baseConfirmada": true,
   "modelo": {
-    "janelaCompleta": true,
-    "diasDeCotacoes": 5,
+    "janelaCompleta": false,
+    "diasDeCotacoes": 4,
     "k": {
       "gasoleo": 1.04,
       "gasolina": 1.04
@@ -57,7 +66,7 @@
       "cambio": "frankfurter"
     }
   },
-  "baseData": "2026-10-05",
+  "baseData": "2026-10-12",
   "historicoOficial": [
     {
       "data": "2026-08-10",
@@ -112,13 +121,13 @@
   ],
   "fiscalidade": {
     "iva": 0.23,
-    "emVigor": "14 de outubro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
+    "emVigor": "15 de outubro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
     "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
     "gasolina": {
       "ispBase": 0.49752,
       "csr": 0.087,
       "carbono": 0.15911,
-      "desconto": 0.07263
+      "desconto": 0.07363
     },
     "gasoleo": {
       "ispBase": 0.3616,
@@ -128,7 +137,7 @@
     }
   },
   "placar": {
-    "atualizado": "2026-10-14",
+    "atualizado": "2026-10-15",
     "semanas": 7,
     "semanasComSetor": 6,
     "gasoleo": {
@@ -239,7 +248,7 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-10-14",
+    "lidoEm": "2026-10-15",
     "semanaInicio": "2026-10-12",
     "semanaFim": "2026-10-18",
     "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)",
@@ -251,11 +260,5 @@
       "variacao": 0.05,
       "preco": null
     }
-  },
-  "confirmacao": {
-    "data": "2026-10-12",
-    "gasoleo": 2.148,
-    "gasolina": 2.11,
-    "fonte": "dgeg"
   }
 }
