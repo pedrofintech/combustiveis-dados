@@ -1,21 +1,21 @@
 {
-  "atualizado": "2026-10-15",
+  "atualizado": "2026-10-16",
   "semanaInicio": "2026-10-19",
   "semanaFim": "2026-10-25",
   "gasoleo": {
     "atual": 2.148,
-    "variacao": 0.034,
+    "variacao": 0.036,
     "intervalo": {
-      "min": 2,
+      "min": 2.5,
       "max": 4.5
     }
   },
   "gasolina": {
     "atual": 2.11,
-    "variacao": -0.007,
+    "variacao": -0.01,
     "intervalo": {
       "min": -2,
-      "max": 1
+      "max": 0
     }
   },
   "isp": {
@@ -46,16 +46,16 @@
     },
     {
       "semana": "19/10",
-      "gasolina": 2.103,
-      "gasoleo": 2.182,
+      "gasolina": 2.1,
+      "gasoleo": 2.184,
       "previsto": true
     }
   ],
   "fonte": "modelo-proprio",
   "baseConfirmada": true,
   "modelo": {
-    "janelaCompleta": false,
-    "diasDeCotacoes": 4,
+    "janelaCompleta": true,
+    "diasDeCotacoes": 5,
     "k": {
       "gasoleo": 1.04,
       "gasolina": 1.04
@@ -121,7 +121,7 @@
   ],
   "fiscalidade": {
     "iva": 0.23,
-    "emVigor": "15 de outubro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
+    "emVigor": "16 de outubro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
     "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
     "gasolina": {
       "ispBase": 0.49752,
@@ -133,11 +133,11 @@
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.09794
+      "desconto": 0.09694
     }
   },
   "placar": {
-    "atualizado": "2026-10-15",
+    "atualizado": "2026-10-16",
     "semanas": 7,
     "semanasComSetor": 6,
     "gasoleo": {
@@ -248,16 +248,16 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-10-15",
-    "semanaInicio": "2026-10-12",
-    "semanaFim": "2026-10-18",
+    "lidoEm": "2026-10-16",
+    "semanaInicio": "2026-10-19",
+    "semanaFim": "2026-10-25",
     "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)",
     "gasoleo": {
-      "variacao": -0.01,
+      "variacao": 0.045,
       "preco": null
     },
     "gasolina": {
-      "variacao": 0.05,
+      "variacao": -0.015,
       "preco": null
     }
   }
