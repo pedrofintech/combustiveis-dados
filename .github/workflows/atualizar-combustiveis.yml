@@ -58,10 +58,9 @@ jobs:
       # estado e schema da página /precos-combustiveis, calculados a partir do combustiveis.json.
       # Atualiza e publica SÓ esse item (nunca o site: o que estiver por publicar no Designer fica
       # por publicar). Só mexe quando os textos mudam. Precisa do secret WEBFLOW_TOKEN (token do
-      # site com CMS: Read and write); sem ele o passo não corre. Se falhar, o run fica com aviso
-      # mas os dados já foram guardados acima.
+      # site com CMS: Read and write); sem o secret o script diz que não mexe e sai sem erro.
+      # Se falhar, o run fica com aviso mas os dados já foram guardados acima.
       - name: Atualizar item do CMS no Webflow (só o item, nunca o site)
-        if: ${{ secrets.WEBFLOW_TOKEN != '' }}
         continue-on-error: true
         env:
           WEBFLOW_TOKEN: ${{ secrets.WEBFLOW_TOKEN }}
