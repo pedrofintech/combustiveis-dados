@@ -85,7 +85,10 @@ export function camposDoItem(D, hoje = hojeLisboa()) {
   const emCurso = hoje >= D.semanaInicio;              // igual ao emCurso() do embed "fase da semana"
   const m = miolo(D);
 
-  const titulo = fresca && !emCurso ? `${BASE} (${range})` : BASE;
+  // H1 sempre com a semana: de sexta a domingo é a próxima ("(26 de outubro a 1 de novembro)"),
+  // de segunda a quinta é a que está a decorrer ("(em vigor: 19 a 25 de outubro)"). Só fica sem
+  // data se o JSON tiver mais de 12 dias, para não afirmar uma semana que já passou.
+  const titulo = !fresca ? BASE : emCurso ? `${BASE} (em vigor: ${range})` : `${BASE} (${range})`;
   const frase = emCurso
     ? `Esta semana, de <strong>${range}</strong>, os preços em vigor refletem ${m}. A previsão para a próxima semana sai na quinta-feira.`
     : `Nova semana, novos preços: para <strong>${range}</strong>, o nosso modelo aponta para ${m}.`;
@@ -99,7 +102,7 @@ export function camposDoItem(D, hoje = hojeLisboa()) {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: `${BASE} (${range})`,
+    headline: titulo,
     inLanguage: 'pt-PT',
     datePublished: DATA_PUBLICACAO,
     dateModified: D.atualizado,
