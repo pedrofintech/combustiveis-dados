@@ -1,22 +1,14 @@
 {
-  "atualizado": "2026-10-19",
+  "atualizado": "2026-10-20",
   "semanaInicio": "2026-10-19",
   "semanaFim": "2026-10-25",
   "gasoleo": {
     "atual": 2.148,
-    "variacao": 0.048,
-    "intervalo": {
-      "min": 3.5,
-      "max": 6
-    }
+    "variacao": 0.027
   },
   "gasolina": {
     "atual": 2.11,
-    "variacao": -0.007,
-    "intervalo": {
-      "min": -1.5,
-      "max": 0.5
-    }
+    "variacao": -0.011
   },
   "isp": {
     "portaria": "Portaria n.º 345-C/2026/1, de 14 de agosto",
@@ -46,12 +38,11 @@
     },
     {
       "semana": "19/10",
-      "gasolina": 2.103,
-      "gasoleo": 2.196,
-      "previsto": true
+      "gasolina": 2.099,
+      "gasoleo": 2.175
     }
   ],
-  "fonte": "modelo-proprio",
+  "fonte": "dgeg-confirmado",
   "baseConfirmada": true,
   "modelo": {
     "janelaCompleta": true,
@@ -117,6 +108,11 @@
       "data": "2026-10-12",
       "gasolina": 2.11,
       "gasoleo": 2.148
+    },
+    {
+      "data": "2026-10-19",
+      "gasolina": 2.099,
+      "gasoleo": 2.175
     }
   ],
   "fiscalidade": {
@@ -133,25 +129,25 @@
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.09694
+      "desconto": 0.09794
     }
   },
   "placar": {
-    "atualizado": "2026-10-19",
-    "semanas": 7,
-    "semanasComSetor": 6,
+    "atualizado": "2026-10-20",
+    "semanas": 8,
+    "semanasComSetor": 7,
     "gasoleo": {
-      "erroMedioModelo": 1.64,
-      "erroMedioSetor": 3.27
+      "erroMedioModelo": 1.59,
+      "erroMedioSetor": 3.06
     },
     "gasolina": {
-      "erroMedioModelo": 2.66,
-      "erroMedioSetor": 2.83
+      "erroMedioModelo": 2.38,
+      "erroMedioSetor": 2.49
     },
     "vitorias": {
-      "modelo": 5,
+      "modelo": 6,
       "setor": 7,
-      "empates": 0
+      "empates": 1
     },
     "ultimas": [
       {
@@ -244,6 +240,19 @@
           "setor": null,
           "real": 2.9
         }
+      },
+      {
+        "semana": "2026-10-19",
+        "gasoleo": {
+          "modelo": 3.9,
+          "setor": 4.5,
+          "real": 2.7
+        },
+        "gasolina": {
+          "modelo": -0.7,
+          "setor": -1.5,
+          "real": -1.1
+        }
       }
     ]
   },
@@ -260,5 +269,11 @@
       "variacao": -0.015,
       "preco": null
     }
+  },
+  "confirmacao": {
+    "data": "2026-10-19",
+    "gasoleo": 2.175,
+    "gasolina": 2.099,
+    "fonte": "dgeg"
   }
 }
