@@ -1,32 +1,32 @@
 {
- "atualizado": "2026-10-21",
+ "atualizado": "2026-10-22",
  "eficiente": {
-  "semana": "12 a 18 de outubro",
-  "inicio": "2026-10-12",
-  "fonte": "https://www.erse.pt/media/v03dhnep/relatório-semanal-12out-18out.pdf",
+  "semana": "19 a 25 de outubro",
+  "inicio": "2026-10-19",
+  "fonte": "https://www.erse.pt/media/xt2hnsn3/relatório-semanal-19out-25out.pdf",
   "gasolina": {
-   "pvp": 2.167,
-   "semImpostos": 1.183,
-   "variacaoPct": 2.2
+   "pvp": 2.144,
+   "semImpostos": 1.158,
+   "variacaoPct": -1.1
   },
   "gasoleo": {
-   "pvp": 2.211,
-   "semImpostos": 1.359,
-   "variacaoPct": 0.08
+   "pvp": 2.245,
+   "semImpostos": 1.392,
+   "variacaoPct": 1.51
   },
   "anterior": {
-   "semana": "5 a 11 de outubro",
+   "semana": "12 a 18 de outubro",
    "gasolina": {
-    "porticoCent": 0.1,
-    "porticoPct": 0.04,
-    "descontosCent": -4.6,
-    "descontosPct": -2.2
+    "porticoCent": -0.7,
+    "porticoPct": -0.3,
+    "descontosCent": -5.2,
+    "descontosPct": -2.4
    },
    "gasoleo": {
-    "porticoCent": -0.1,
-    "porticoPct": -0.03,
-    "descontosCent": -6.2,
-    "descontosPct": -2.8
+    "porticoCent": -0.2,
+    "porticoPct": -0.1,
+    "descontosCent": -6.6,
+    "descontosPct": -3.0
    }
   }
  },
@@ -196,5 +196,5 @@
    ]
   }
  },
- "eficiente_lido": "2026-10-14"
+ "eficiente_lido": "2026-10-22"
 }
