@@ -126,8 +126,8 @@
   ],
   "fiscalidade": {
     "iva": 0.23,
-    "emVigor": "23 de outubro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
-    "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
+    "emVigor": "26 de outubro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
+    "portaria": "Portaria n.º 467-A/2026/1, de 2026-10-23",
     "gasolina": {
       "ispBase": 0.49752,
       "csr": 0.087,
