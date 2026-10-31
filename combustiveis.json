@@ -1,18 +1,18 @@
 {
-  "atualizado": "2026-10-30",
+  "atualizado": "2026-10-31",
   "semanaInicio": "2026-11-02",
   "semanaFim": "2026-11-08",
   "gasoleo": {
     "atual": 2.189,
-    "variacao": -0.025,
+    "variacao": -0.018,
     "intervalo": {
-      "min": -3,
-      "max": -2
+      "min": -2.5,
+      "max": -1.5
     }
   },
   "gasolina": {
     "atual": 2.04,
-    "variacao": 0.013,
+    "variacao": 0.014,
     "intervalo": {
       "min": 0.5,
       "max": 2.5
@@ -46,8 +46,8 @@
     },
     {
       "semana": "02/11",
-      "gasolina": 2.053,
-      "gasoleo": 2.164,
+      "gasolina": 2.054,
+      "gasoleo": 2.171,
       "previsto": true
     }
   ],
@@ -137,17 +137,17 @@
       "ispBase": 0.49752,
       "csr": 0.087,
       "carbono": 0.15911,
-      "desconto": 0.06763
+      "desconto": 0.06663
     },
     "gasoleo": {
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.10194
+      "desconto": 0.10294
     }
   },
   "placar": {
-    "atualizado": "2026-10-30",
+    "atualizado": "2026-10-31",
     "semanas": 9,
     "semanasComSetor": 8,
     "gasoleo": {
@@ -271,7 +271,7 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-10-30",
+    "lidoEm": "2026-10-31",
     "semanaInicio": "2026-11-02",
     "semanaFim": "2026-11-08",
     "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)",
