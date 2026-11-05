@@ -1,14 +1,14 @@
 {
-  "geradoEm": "2026-11-05T17:34:50.509Z",
+  "geradoEm": "2026-11-05T20:53:16.715Z",
   "semanaAlvo": "2026-11-09",
   "modo": "previsao",
   "gasoleo": {
-    "variacao": -11.5,
-    "min": -17,
+    "variacao": -11.2,
+    "min": -16.5,
     "max": -6
   },
   "gasolina": {
-    "variacao": -7.4,
+    "variacao": -7.2,
     "min": -9.5,
     "max": -5
   },
@@ -19,8 +19,8 @@
   },
   "diasDeCotacoes": 4,
   "deltaCotacoesCts": {
-    "gasoleo": -11.03,
-    "gasolina": -7.07
+    "gasoleo": -10.77,
+    "gasolina": -6.94
   },
   "k": {
     "gasoleo": 1.04,
