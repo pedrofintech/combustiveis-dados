@@ -1,15 +1,19 @@
 /* Combustiveis: blocos "Preco eficiente" (ERSE) e "Preco medio por marca" (DGEG).
-   Carregado pela pagina /precos-combustiveis. Dados em extra.json, no mesmo repositorio (pedrofintech/combustiveis-dados),
-   atualizado pelo atualizar_extra.py (workflow "Atualizar preço eficiente e marcas"). */
+   Carregado pela pagina /precos-combustiveis. Dados no mesmo repositorio (pedrofintech/combustiveis-dados):
+   - preco eficiente em extra.json, atualizado pelo atualizar_extra.py (workflow "Atualizar preço eficiente e marcas");
+   - precos por marca em postos-resumo.json, lido na API oficial da DGEG pelo dgeg-postos.mjs (workflow "Ler postos DGEG").
+   Condicao da DGEG: citar a DGEG com a data e a hora da leitura e dizer que as medias sao calculo nosso. */
 (function () {
   'use strict';
   if (window.__lfCombExtra) return;
   window.__lfCombExtra = true;
 
   var DADOS = window.__lfCombExtraDados || 'https://raw.githubusercontent.com/pedrofintech/combustiveis-dados/main/extra.json';
+  var POSTOS = window.__lfCombPostosDados || 'https://raw.githubusercontent.com/pedrofintech/combustiveis-dados/main/postos-resumo.json';
   var ERSE = 'https://www.erse.pt/combustiveis-e-gpl/supervisao-do-mercado/supervisao-dos-precos-de-combustiveis/';
   var DGEG = 'https://precoscombustiveis.dgeg.gov.pt/';
-  var S = { d: null, efi: 'gasoleo', mar: 'gasoleo', todas: false };
+  var MAX_DIAS_MARCAS = 8; /* sem leitura da DGEG ha mais tempo do que isto, o bloco das marcas nao aparece */
+  var S = { d: null, m: null, efi: 'gasoleo', mar: 'gasoleo', todas: false };
 
   var CSS = '.lfc-ext{width:100%;max-width:624px;margin:0 auto;font-family:inherit}' +
     '.lfc-ext-sub{margin:0 0 16px;font-size:14px;color:#4F5969;line-height:1.5}' +
@@ -48,6 +52,12 @@
     var M = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
     var p = String(iso || '').split('-'); return p.length < 3 ? '' : parseInt(p[2], 10) + ' de ' + M[parseInt(p[1], 10) - 1] + ' de ' + p[0];
   }
+  /* '2026-11-06 13:05' (hora de Lisboa) -> '6 de novembro de 2026, às 13:05' */
+  function dataHoraPT(s) {
+    var p = String(s || '').split(' ');
+    return dataPT(p[0]) + (p[1] ? ', às ' + p[1] : '');
+  }
+  function milhar(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
   function seg(attr, atual) {
     return '<div class="lfc-ext-seg">' + ['gasoleo', 'gasolina'].map(function (f) {
       return '<button type="button" class="lfc-ext-btn' + (atual === f ? ' is-active' : '') + '" ' + attr + '="' + f + '">' + nome(f) + '</button>';
@@ -93,9 +103,9 @@
   }
 
   function marcas() {
-    var m = S.d.marcas, f = S.mar, x = m[f], lista = S.todas ? x.lista : x.lista.slice(0, 8), h = '';
+    var m = S.m, f = S.mar, x = m[f], lista = S.todas ? x.lista : x.lista.slice(0, 8), h = '';
     var barata = x.lista[0], cara = x.lista[x.lista.length - 1];
-    h += '<p class="lfc-ext-sub">Preço médio afixado por cada marca em Portugal continental, calculado pelo Literacia Financeira a partir dos preços de todos os postos publicados pela DGEG. A média nacional está em ' + preco(x.media) + ' por litro.</p>';
+    h += '<p class="lfc-ext-sub">Preço médio afixado por cada marca em Portugal continental, calculado pelo Literacia Financeira a partir dos preços dos postos publicados pela DGEG. A média nacional está em ' + preco(x.media) + ' por litro.</p>';
     h += seg('data-mar', f);
     h += '<table class="lfc-ext-t"><thead><tr><th></th><th>Marca</th><th class="num">Preço médio</th><th class="num">Face à média</th><th class="num hide-m">Postos</th></tr></thead><tbody>';
     lista.forEach(function (r, i) {
@@ -105,15 +115,23 @@
     h += '</tbody></table>';
     if (x.lista.length > 8) h += '<a href="#" class="button is-secondary is-small w-inline-block lfc-ext-more" data-todas style="width:fit-content"><div>' + (S.todas ? 'Mostrar menos' : 'Mostrar as ' + x.lista.length + ' marcas') + '</div></a>';
     h += '<p class="lfc-ext-resumo">Entre a marca mais barata (' + marca(barata[0]) + ') e a mais cara (' + marca(cara[0]) + ') há <strong>' + cent((cara[2] - barata[2]) * 100) + ' por litro</strong> de diferença: num depósito de 50 litros são <strong>' + ((cara[2] - barata[2]) * 50).toFixed(2).replace('.', ',') + '€</strong>.</p>';
-    /* Condição da DGEG (email de 14 out 2026): tem de ficar claro que estas médias são um cálculo nosso sobre os dados da DGEG */
-    h += '<p class="lfc-ext-foot">Cálculo do Literacia Financeira com os preços afixados a ' + dataPT(m.data) + ' em ' + String(x.postos).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' postos, publicados no <a href="' + DGEG + '" target="_blank" rel="noopener">portal Preços dos Combustíveis Online da DGEG</a> (Direção-Geral de Energia e Geologia). Média simples por posto, sem descontos de cartões, para marcas com ' + m.minPostos + ' ou mais postos. O preço de cada posto pode ser muito diferente da média da marca.</p>';
+    /* Condições da DGEG (emails de 14 out e 6 nov 2026): fonte DGEG com a data e a hora dos dados, e dizer que a média é cálculo nosso */
+    h += '<p class="lfc-ext-foot">Média calculada pelo Literacia Financeira (não é um dado oficial da DGEG) com os preços de ' + milhar(x.postos) + ' postos lidos a ' + dataHoraPT(m.lidoEmLisboa) + ', no <a href="' + DGEG + '" target="_blank" rel="noopener">portal Preços dos Combustíveis Online da DGEG</a> (Direção-Geral de Energia e Geologia). Conta cada posto por igual, sem descontos de cartões, e só entram marcas com ' + m.minPostos + ' ou mais postos e preços atualizados nos últimos ' + (x.diasValidos || MAX_DIAS_MARCAS) + ' dias. O preço de cada posto pode ser muito diferente da média da marca.</p>';
     return h;
   }
 
   function render() {
     var a = document.getElementById('lfc-ext-efi'), b = document.getElementById('lfc-ext-mar');
-    if (a) a.innerHTML = eficiente();
-    if (b) b.innerHTML = marcas();
+    if (a && S.d && S.d.eficiente) a.innerHTML = eficiente();
+    if (b && S.m) b.innerHTML = marcas();
+  }
+
+  /* Leitura da DGEG com menos de MAX_DIAS_MARCAS dias e listas de marcas nos dois combustíveis; senão o bloco não aparece */
+  function marcasValidas(p) {
+    if (!p || !p.lidoEm || !p.lidoEmLisboa || !p.gasoleo || !p.gasolina) return null;
+    if (!(p.gasoleo.lista && p.gasoleo.lista.length) || !(p.gasolina.lista && p.gasolina.lista.length)) return null;
+    var dias = (Date.now() - Date.parse(p.lidoEm)) / 864e5;
+    return dias > -1 && dias <= MAX_DIAS_MARCAS ? p : null;
   }
 
   function cartao(titulo, id) {
@@ -124,18 +142,19 @@
     return w;
   }
 
-  function montar(d) {
+  function montar(d, p) {
     var fisc = document.getElementById('lfc-fisc');
     var ancora = fisc && fisc.closest('.all-results_wrapper');
     if (!ancora || !ancora.parentNode) return;
-    S.d = d;
+    S.d = d && d.eficiente ? d : null;
+    S.m = marcasValidas(p);
+    if (!S.d && !S.m) return;
     var st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
     var depois = ancora.nextSibling;
-    ancora.parentNode.insertBefore(cartao('Preço eficiente: quanto devia custar o litro?', 'lfc-ext-efi'), depois);
-    /* O bloco das marcas so aparece com precos da ultima semana: a leitura da DGEG e semanal (segunda-feira a noite).
-       Com a leitura desligada no workflow (LF_SEM_DGEG), os precos ficam com data antiga e o bloco nao e mostrado. */
-    var diasMarcas = d.marcas && d.marcas.data && d.atualizado ? (new Date(d.atualizado + 'T00:00:00Z') - new Date(d.marcas.data + 'T00:00:00Z')) / 864e5 : NaN;
-    if (diasMarcas >= 0 && diasMarcas <= 8) ancora.parentNode.insertBefore(cartao('Que marca tem o combustível mais barato?', 'lfc-ext-mar'), depois);
+    if (S.d) ancora.parentNode.insertBefore(cartao('Preço eficiente: quanto devia custar o litro?', 'lfc-ext-efi'), depois);
+    /* As marcas vêm da API oficial da DGEG (duas leituras por dia, às 13h e às 20h). Se a leitura parar,
+       o bloco some ao fim de MAX_DIAS_MARCAS dias em vez de mostrar preços antigos. */
+    if (S.m) ancora.parentNode.insertBefore(cartao('Que marca tem o combustível mais barato?', 'lfc-ext-mar'), depois);
     render();
   }
 
@@ -146,7 +165,7 @@
     emSinc = true;
     try {
       S.efi = f; S.mar = f;
-      if (S.d) render();
+      if (S.d || S.m) render();
       ['#lfc-comb-seg .lfc-comb-seg-btn', '#lfc-fisc-seg .lfc-fisc-seg-btn'].forEach(function (sel) {
         var b = document.querySelector(sel + '[data-fuel="' + f + '"]');
         if (b && b !== origem && !b.classList.contains('is-active')) b.click();
@@ -164,13 +183,21 @@
     else if (c) { e.preventDefault(); S.todas = !S.todas; render(); }
   });
   /* Os dados da pagina (precos oficiais por semana) podem chegar depois destes blocos */
-  document.addEventListener('lfc-comb:updated', function () { if (S.d) render(); });
+  document.addEventListener('lfc-comb:updated', function () { if (S.d || S.m) render(); });
 
-  function arrancar() {
+  function pedir(url, cb) {
     var x = new XMLHttpRequest();
-    x.open('GET', DADOS + '?d=' + new Date().toISOString().slice(0, 10));
-    x.onload = function () { try { var d = JSON.parse(x.responseText); if (d && d.eficiente) montar(d); } catch (err) {} };
+    x.open('GET', url);
+    x.onload = function () { var j = null; if (x.status === 200) { try { j = JSON.parse(x.responseText); } catch (err) {} } cb(j); };
+    x.onerror = function () { cb(null); };
     x.send();
+  }
+  function arrancar() {
+    var d = null, p = null, falta = 2, agora = new Date().toISOString();
+    function fim() { if (--falta === 0) montar(d, p); }
+    pedir(DADOS + '?d=' + agora.slice(0, 10), function (j) { d = j; fim(); });
+    /* a leitura da DGEG muda duas vezes por dia: a cache muda de hora a hora */
+    pedir(POSTOS + '?h=' + agora.slice(0, 13), function (j) { p = j; fim(); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arrancar); else arrancar();
 })();
