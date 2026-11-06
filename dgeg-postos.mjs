@@ -115,7 +115,7 @@ async function pedir(url, init = {}, ms = 120000) {
     // não se escreve e.message: nalguns erros de rede o Node junta o endereço, que no login leva a palavra-passe
     throw new Error("sem resposta da DGEG (" + (e?.cause?.code || e?.name || "erro de rede") + ")");
   }
-  const txt = (await r.text()).replace(/^﻿/, "");
+  const txt = (await r.text()).trimStart(); // trimStart também tira o BOM que alguns servidores Windows põem no início
   let json = null;
   try { json = normalizar(JSON.parse(txt)); } catch { /* resposta que não é JSON (página de erro) */ }
   return { status: r.status, json, txt };
