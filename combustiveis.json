@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-11-07",
+  "atualizado": "2026-11-08",
   "semanaInicio": "2026-11-09",
   "semanaFim": "2026-11-15",
   "gasoleo": {
@@ -152,7 +152,7 @@
     }
   },
   "placar": {
-    "atualizado": "2026-11-07",
+    "atualizado": "2026-11-08",
     "semanas": 10,
     "semanasComSetor": 9,
     "gasoleo": {
@@ -276,7 +276,7 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-11-07",
+    "lidoEm": "2026-11-08",
     "semanaInicio": "2026-11-09",
     "semanaFim": "2026-11-15",
     "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)",
