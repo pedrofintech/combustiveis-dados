@@ -1,8 +1,9 @@
 name: Ler postos DGEG
 
 # Preços de todos os postos pela API oficial da DGEG (web service do portal Preços dos Combustíveis Online).
-# Escreve postos-resumo.json (médias por marca e distrito), postos-top.json (postos mais baratos por distrito)
-# e postos-historico.csv (uma fotografia por dia). Tudo no dgeg-postos.mjs.
+# Escreve postos-resumo.json (médias por marca e distrito), postos-top.json (postos mais baratos por distrito e concelhos),
+# postos-todos.json (todos os postos com preço recente e coordenadas) e postos-historico.csv (uma fotografia por dia).
+# Tudo no dgeg-postos.mjs, que recusa a leitura se os dados não passarem nas verificações descritas lá.
 #
 # A API só responde em três janelas de uma hora: 03h, 13h e 20h, hora de Lisboa. O cron do GitHub é em UTC e atrasa,
 # por isso há três tentativas por hora às 12h, 13h, 19h e 20h UTC (cobre o inverno e o verão). O script só pede à DGEG
@@ -55,7 +56,7 @@ jobs:
         run: |
           git config user.name "combustiveis-bot"
           git config user.email "bot@users.noreply.github.com"
-          for f in postos-resumo.json postos-top.json postos-historico.csv; do [ -f "$f" ] && git add "$f" || true; done
+          for f in postos-resumo.json postos-top.json postos-todos.json postos-historico.csv; do [ -f "$f" ] && git add "$f" || true; done
           git diff --cached --quiet && exit 0
           git commit -m "Atualiza preços dos postos (DGEG) [skip ci]"
           # o "Atualizar combustíveis" também faz push: se chegar primeiro, junta-se e tenta outra vez
