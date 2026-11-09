@@ -67,7 +67,10 @@
   function nome(s) {
     s = String(s || '').replace(/\s+/g, ' ').trim();
     if (s.length > 4 && s === s.toUpperCase() && s !== s.toLowerCase()) {
-      s = s.toLowerCase().replace(/(^|[\s\-\/(."'])(\S)/g, function (m, a, b) { return a + b.toUpperCase(); }).replace(/\b(De|Da|Do|Das|Dos|E|Em|A|O|Lda)\b/g, function (m) { return m === 'Lda' ? 'Lda' : m.toLowerCase(); });
+      s = s.toLowerCase().replace(/(^|[\s\-\/(."'])(\S)/g, function (m, a, b) { return a + b.toUpperCase(); })
+        .replace(/(\s)(De|Da|Do|Das|Dos|E|Em|A|O)(?=\s)/g, function (m, a, b) { return a + b.toLowerCase(); }) /* "de", "e" no meio do nome */
+        .replace(/\b(Ii|Iii|Iv|Vi|Vii|Viii|Ix|Xi|Xii)\b/g, function (m) { return m.toUpperCase(); }) /* numeração romana: "Gaia III" */
+        .replace(/\bS\.a\./g, 'S.A.').replace(/\bE\.p\./g, 'E.P.');
     }
     return s;
   }
