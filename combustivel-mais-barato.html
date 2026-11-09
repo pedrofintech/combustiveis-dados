@@ -13,6 +13,7 @@
 .lfk .lfcmb-posto { display: flex; flex-direction: column; gap: .125rem; min-width: 0; white-space: normal; }
 .lfk .lfcmb-posto small { color: var(--lfk-text-3); font-size: var(--lfk-fs-xs); line-height: var(--lfk-lh-xs); }
 .lfk .lfcmb-top { font-weight: 600; }
+.lfk .lfk-stat.lfcmb-ok .lfk-stat-v { color: var(--lfk-ok); } /* o mais barato a verde, como os valores positivos do kit */
 .lfk .lfk-table td.lfcmb-rank { color: var(--lfk-text-3); width: 2rem; }
 .lfk .lfcmb-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; margin-bottom: 1rem; }
 .lfk .lfcmb-head h2 { margin: 0; }
@@ -68,7 +69,7 @@
           <span class="lfk-tag is-sm is-ok" id="lfcmb-hora"></span>
         </div>
         <div class="lfk-kpis" id="lfcmb-kpis">
-          <div class="lfk-stat is-brand"><div class="lfk-stat-l">O mais barato</div><div class="lfk-stat-v" id="lfcmb-k-min">-</div><div class="lfk-stat-s" id="lfcmb-k-min-s"></div></div>
+          <div class="lfk-stat lfcmb-ok"><div class="lfk-stat-l">O mais barato</div><div class="lfk-stat-v" id="lfcmb-k-min">-</div><div class="lfk-stat-s" id="lfcmb-k-min-s"></div></div>
           <div class="lfk-stat"><div class="lfk-stat-l">Preço médio afixado</div><div class="lfk-stat-v" id="lfcmb-k-media">-</div><div class="lfk-stat-s" id="lfcmb-k-media-s"></div></div>
           <div class="lfk-stat"><div class="lfk-stat-l">Poupança num depósito de 50 L</div><div class="lfk-stat-v" id="lfcmb-k-poup">-</div><div class="lfk-stat-s" id="lfcmb-k-poup-s"></div></div>
         </div>
@@ -100,9 +101,6 @@
       <div class="lfcmb-links">
         <a class="lfk-calc-card" href="https://www.literaciafinanceira.pt/precos-combustiveis">
           <div class="lfk-calc-card-body"><h3 class="lfk-calc-card-title">Os combustíveis sobem ou descem na segunda-feira?</h3><p class="lfk-ds-text">A previsão do nosso modelo para a próxima semana, confirmada todas as terças com a média oficial da DGEG.</p></div>
-        </a>
-        <a class="lfk-calc-card" href="https://www.literaciafinanceira.pt/precos-combustiveis#lfc-ext-mar">
-          <div class="lfk-calc-card-body"><h3 class="lfk-calc-card-title">Que marca tem o combustível mais barato?</h3><p class="lfk-ds-text">Preço médio de cada marca em Portugal continental, calculado com os mesmos dados da DGEG.</p></div>
         </a>
       </div>
     </div>
