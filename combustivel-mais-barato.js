@@ -2,7 +2,7 @@
    Mostra os postos mais baratos do país, de um distrito, de um concelho ou à volta do utilizador, para gasóleo simples,
    gasolina simples 95 e GPL Auto, com os preços que os postos comunicam ao portal Preços dos Combustíveis Online da DGEG.
 
-   Dados (escritos pelo dgeg-postos.mjs deste repositório, lidos na API oficial da DGEG às 13h e às 20h):
+   Dados (escritos pelo dgeg-postos.mjs deste repositório, lidos na API oficial da DGEG às 3h, 13h e 20h):
    - postos-resumo.json  médias nacionais e por distrito (só Portugal continental na média nacional)
    - postos-top.json     os 10 postos mais baratos de cada distrito e a lista de concelhos de cada distrito
    - postos-todos.json   todos os postos com preço recente e coordenadas; só se carrega para o filtro por concelho e para
@@ -391,8 +391,8 @@
     if (!el.comb || !el.distrito || !el.ver) return;
     var faltam = 2;
     function depois(e) {
-      /* 404: a DGEG ainda não deu a primeira leitura (o ficheiro só existe depois dela). A API abre às 13h e às 20h. */
-      if (e) { erro(e.status === 404 ? 'Ainda não temos os preços dos postos. A DGEG dá acesso aos dados às 13h e às 20h; a lista aparece aqui logo a seguir à próxima leitura.' : 'Não conseguimos carregar os preços dos postos. Tenta outra vez daqui a pouco.'); return; }
+      /* 404: a DGEG ainda não deu a primeira leitura (o ficheiro só existe depois dela). A API abre às 3h, 13h e 20h. */
+      if (e) { erro(e.status === 404 ? 'Ainda não temos os preços dos postos. A DGEG dá acesso aos dados às 3h, às 13h e às 20h; a lista aparece aqui logo a seguir à próxima leitura.' : 'Não conseguimos carregar os preços dos postos. Tenta outra vez daqui a pouco.'); return; }
       if (--faltam) return;
       if (!D.resumo[estado.comb] || !D.top[estado.comb]) { erro('Ainda não há preços de postos para mostrar.'); return; }
       lerHash();

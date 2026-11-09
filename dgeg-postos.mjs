@@ -10,7 +10,7 @@
 //   postos-historico.csv  uma linha por dia, combustível e grupo (país, marca, distrito). A API não guarda histórico.
 //
 // A API só responde em três janelas de uma hora: 03h, 13h e 20h, hora de Lisboa. O workflow "Ler postos DGEG" corre
-// três vezes em cada hora à volta das 13h e das 20h, porque o cron do GitHub é em UTC e atrasa. Este script só pede à
+// três vezes em cada uma dessas horas, porque o cron do GitHub é em UTC e atrasa. Este script só pede à
 // DGEG dentro de uma janela e uma vez por janela. Nas outras corridas sai em segundos sem fazer nada.
 //
 // Verificações antes de gravar (se alguma falhar não se grava nada e fica a leitura anterior):
