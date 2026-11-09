@@ -99,7 +99,7 @@
     x.onreadystatechange = function () {
       if (x.readyState !== 4) return;
       if (x.status >= 200 && x.status < 300) { try { cb(null, JSON.parse(x.responseText)); return; } catch (e) { cb(e); return; } }
-      cb(new Error('HTTP ' + x.status));
+      var e = new Error('HTTP ' + x.status); e.status = x.status; cb(e);
     };
     x.onerror = function () { cb(new Error('rede')); };
     x.send();
@@ -368,7 +368,8 @@
     if (!el.comb || !el.distrito || !el.ver) return;
     var faltam = 2;
     function depois(e) {
-      if (e) { erro('Não conseguimos carregar os preços dos postos. Tenta outra vez daqui a pouco.'); return; }
+      /* 404: a DGEG ainda não deu a primeira leitura (o ficheiro só existe depois dela). A API abre às 13h e às 20h. */
+      if (e) { erro(e.status === 404 ? 'Ainda não temos os preços dos postos. A DGEG dá acesso aos dados às 13h e às 20h; a lista aparece aqui logo a seguir à próxima leitura.' : 'Não conseguimos carregar os preços dos postos. Tenta outra vez daqui a pouco.'); return; }
       if (--faltam) return;
       if (!D.resumo[estado.comb] || !D.top[estado.comb]) { erro('Ainda não há preços de postos para mostrar.'); return; }
       lerHash();
