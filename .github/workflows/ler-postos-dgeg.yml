@@ -6,7 +6,7 @@ name: Ler postos DGEG
 # Tudo no dgeg-postos.mjs, que recusa a leitura se os dados não passarem nas verificações descritas lá.
 #
 # A API só responde em três janelas de uma hora: 03h, 13h e 20h, hora de Lisboa. O cron do GitHub é em UTC e atrasa,
-# por isso há três tentativas por hora às 12h, 13h, 19h e 20h UTC (cobre o inverno e o verão). O script só pede à DGEG
+# por isso há três tentativas por hora às 2h, 3h, 12h, 13h, 19h e 20h UTC (cobre o inverno e o verão). O script só pede à DGEG
 # dentro da janela e uma vez por janela; nas outras corridas sai em segundos sem fazer nada.
 #
 # Precisa dos secrets DGEG_USER e DGEG_PASSWORD (Settings > Secrets and variables > Actions). Sem eles avisa e não lê.
@@ -14,7 +14,7 @@ name: Ler postos DGEG
 
 on:
   schedule:
-    - cron: "7,27,47 12,13,19,20 * * *"
+    - cron: "7,27,47 2,3,12,13,19,20 * * *"
   push:
     branches: [main]
     paths:
