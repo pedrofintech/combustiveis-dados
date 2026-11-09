@@ -190,8 +190,8 @@
   /* ---------- render ---------- */
   function rodape() {
     return 'Preços comunicados pelos próprios postos ao <a href="https://precoscombustiveis.dgeg.gov.pt/" target="_blank" rel="noopener">portal Preços dos Combustíveis Online da DGEG</a> (Direção-Geral de Energia e Geologia), lidos pelo Literacia Financeira a <b>' +
-      esc(dataHoraPT(D.resumo.lidoEmLisboa)) + '</b>. A ordenação, as médias e a poupança são cálculo nosso, não informação da DGEG. Só entram postos com preço atualizado nos últimos ' +
-      (estado.comb === 'gpl' ? '31' : '8') + ' dias. Os preços não incluem descontos de cartões.';
+      esc(dataHoraPT(D.resumo.lidoEmLisboa)) + '</b>. A ordenação, as médias e a poupança são cálculo nosso, não informação da DGEG. A média é a média simples dos preços afixados, sem descontos de cartões, por isso fica acima do preço médio oficial da DGEG, que pondera as quantidades vendidas e inclui descontos. Só entram postos com preço atualizado nos últimos ' +
+      (estado.comb === 'gpl' ? '31' : '8') + ' dias.';
   }
   function render(v) {
     var c = COMB[estado.comb];
@@ -235,7 +235,7 @@
     var caro = v.lista[v.lista.length - 1], frase;
     if (temMedia) {
       frase = (c.art.charAt(0).toUpperCase() + c.art.slice(1)) + ' mais barat' + (estado.comb === 'gasolina' ? 'a' : 'o') + ' ' + v.onde + ' está a <b>' + preco(min.preco) + '</b> por litro' +
-        (v.media > min.preco ? ', <b>' + cent(v.media - min.preco) + ' abaixo da média</b> ' + v.mediaOnde : '') + '. Num depósito de ' + DEPOSITO_L + ' litros são <b>' + fmt(Math.max(0, v.media - min.preco) * DEPOSITO_L) + '</b> a menos do que num posto na média' +
+        (v.media > min.preco ? ', <b>' + cent(v.media - min.preco) + ' abaixo da média afixada</b> ' + v.mediaOnde : '') + '. Num depósito de ' + DEPOSITO_L + ' litros são <b>' + fmt(Math.max(0, v.media - min.preco) * DEPOSITO_L) + '</b> a menos do que num posto na média' +
         (v.lista.length > 1 && caro.preco > min.preco ? ' e <b>' + fmt((caro.preco - min.preco) * DEPOSITO_L) + '</b> a menos do que no ' + v.lista.length + '.º posto desta lista.' : '.');
       if (v.poucos != null) frase += ' Como o concelho tem ' + (v.poucos ? 'só ' + v.poucos + ' posto' + (v.poucos === 1 ? '' : 's') : 'poucos postos') + ', a comparação é com a média do distrito.';
     } else {
@@ -255,7 +255,7 @@
         '<td class="is-num">' + preco(l.media) + '</td><td class="is-num lfcmb-esconde">' + preco(l.minimo) + '</td>' +
         '<td class="is-num lfcmb-esconde ' + (d < 0 ? 'lfk-pos' : d > 0 ? 'lfk-neg' : '') + '">' + (nacional != null ? dif(d) : '-') + '</td></tr>';
     }).join('');
-    $('lfcmb-d-nota').textContent = 'Média simples dos postos de cada distrito' + (linhas.some(function (l) { return ehIlha(l.nome); }) ? ' e região autónoma (a média nacional é só do continente)' : '') + '. Clica num distrito para veres os postos.';
+    $('lfcmb-d-nota').textContent = 'Média simples dos preços afixados nos postos de cada distrito' + (linhas.some(function (l) { return ehIlha(l.nome); }) ? ' e região autónoma (a média nacional é só do continente)' : '') + '. Clica num distrito para veres os postos.';
   }
   function mostrarResultados() {
     $('lfcmb-estado').hidden = true;
