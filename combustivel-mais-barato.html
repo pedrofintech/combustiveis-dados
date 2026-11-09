@@ -6,7 +6,8 @@
 <style>
 /* Peças que o kit não tem, só com as variáveis do kit (prefixo lfcmb-) */
 .lfk .lfcmb-filtros { min-width: 0; }
-.lfk .lfcmb-filtros .lfk-segment { flex-wrap: wrap; max-width: 100%; }
+.lfk .lfcmb-filtros .lfk-segment { display: flex; flex-wrap: wrap; max-width: 100%; }
+.lfk .lfcmb-filtros .lfk-segment > button { flex: 1 1 auto; }
 .lfk .lfcmb-acoes { display: flex; flex-wrap: wrap; gap: .75rem; }
 .lfk .lfcmb-acoes .lfk-btn { flex: 1 1 14rem; }
 .lfk .lfcmb-posto { display: flex; flex-direction: column; gap: .125rem; min-width: 0; white-space: normal; }
@@ -43,7 +44,7 @@
           <label class="lfk-label" for="lfcmb-distrito">Distrito</label>
           <select class="lfk-input" id="lfcmb-distrito" name="distrito"><option value="">Todo o país</option></select>
         </div>
-        <div class="lfk-field" id="lfcmb-campo-concelho" hidden>
+        <div class="lfk-field" id="lfcmb-campo-concelho">
           <label class="lfk-label" for="lfcmb-concelho">Concelho</label>
           <select class="lfk-input" id="lfcmb-concelho" name="concelho"><option value="">Todos os concelhos</option></select>
         </div>

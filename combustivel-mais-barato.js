@@ -280,20 +280,40 @@
     sel.value = lista.indexOf(atual) !== -1 ? atual : '';
     sel.dispatchEvent(new Event('change', { bubbles: true })); /* o dropdown do kit acompanha o select */
   }
+  /* O select dos concelhos está sempre à vista. Com um distrito escolhido lista só os concelhos desse distrito; com
+     "Todo o país" lista os concelhos todos (valor "Distrito|Concelho"), e escolher um deles preenche o distrito. */
+  function opcaoConcelho(d, c, comNomeDistrito) {
+    return '<option value="' + esc(d + '|' + c) + '">' + esc(comNomeDistrito ? c + ' (' + nomeDistrito(d) + ')' : c) + '</option>';
+  }
   function preencherConcelhos() {
-    var d = el.distrito.value, campo = $('lfcmb-campo-concelho'), sel = el.concelho;
-    var lista = d && D.top.concelhos ? (D.top.concelhos[d] || []) : [];
-    var atual = sel.value;
-    sel.innerHTML = '<option value="">Todos os concelhos</option>' + lista.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join('');
-    sel.value = lista.indexOf(atual) !== -1 ? atual : '';
-    sel.dispatchEvent(new Event('change', { bubbles: true }));
-    campo.hidden = !lista.length;
+    var d = el.distrito.value, sel = el.concelho, mapa = D.top.concelhos || {}, atual = sel.value, html;
+    if (d) {
+      html = (mapa[d] || []).map(function (c) { return opcaoConcelho(d, c, false); }).join('');
+    } else {
+      var todos = [], vezes = {};
+      Object.keys(mapa).forEach(function (dd) { mapa[dd].forEach(function (c) { todos.push([dd, c]); vezes[c] = (vezes[c] || 0) + 1; }); });
+      todos.sort(function (a, b) { return a[1].localeCompare(b[1], 'pt') || a[0].localeCompare(b[0], 'pt'); });
+      html = todos.map(function (x) { return opcaoConcelho(x[0], x[1], vezes[x[1]] > 1); }).join('');
+    }
+    sel.innerHTML = '<option value="">Todos os concelhos</option>' + html;
+    /* mantém o concelho só se continuar a pertencer ao distrito escolhido; voltar a "Todo o país" limpa-o */
+    sel.value = d && atual.indexOf(d + '|') === 0 && sel.querySelector('option[value="' + atual.replace(/"/g, '&quot;') + '"]') ? atual : '';
+    sel.dispatchEvent(new Event('change', { bubbles: true })); /* o dropdown do kit acompanha o select */
+  }
+  function concelhoEscolhido() { var v = el.concelho.value || ''; var i = v.indexOf('|'); return i < 0 ? { d: '', c: '' } : { d: v.slice(0, i), c: v.slice(i + 1) }; }
+  /* escolher um concelho na lista de todo o país preenche o distrito e encurta a lista; não calcula nada */
+  function aoMudarConcelho() {
+    var x = concelhoEscolhido();
+    if (!x.c || el.distrito.value === x.d) return;
+    el.distrito.value = x.d;
+    el.distrito.dispatchEvent(new Event('change', { bubbles: true })); /* dispara preencherConcelhos, que mantém o valor */
   }
   function lerFormulario() {
     var b = el.comb.querySelector('button[aria-pressed="true"]');
     estado.comb = b ? b.getAttribute('data-comb') : 'gasoleo';
-    estado.distrito = el.distrito.value || '';
-    estado.concelho = estado.distrito ? (el.concelho.value || '') : '';
+    var x = concelhoEscolhido();
+    estado.distrito = el.distrito.value || x.d || '';
+    estado.concelho = x.c && (x.d === estado.distrito) ? x.c : '';
   }
   function escreverHash() {
     var h = '#' + estado.comb + (estado.distrito ? '/' + slug(estado.distrito) + (estado.concelho ? '/' + slug(estado.concelho) : '') : '');
@@ -315,7 +335,7 @@
     el.distrito.value = estado.distrito;
     el.distrito.dispatchEvent(new Event('change', { bubbles: true }));
     preencherConcelhos();
-    el.concelho.value = estado.concelho;
+    el.concelho.value = estado.concelho ? estado.distrito + '|' + estado.concelho : '';
     el.concelho.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
@@ -381,6 +401,7 @@
     pedir('postos-top.json', function (e, j) { if (!e) D.top = j; depois(e); });
 
     el.distrito.addEventListener('change', preencherConcelhos);
+    el.concelho.addEventListener('change', aoMudarConcelho);
     el.ver.addEventListener('click', function (e) { e.preventDefault(); if (!D.resumo || !D.top) return; estado.geo = null; lerFormulario(); aplicar(true); });
     el.perto.addEventListener('click', function (e) { e.preventDefault(); if (!D.resumo || !D.top) return; localizar(); });
     $('lfcmb-d-linhas').addEventListener('click', function (e) {
