@@ -228,7 +228,7 @@
         '<td><div class="lfcmb-posto"><span class="' + (i === 0 ? 'lfcmb-top' : '') + '"><span class="lfcmb-so-movel">' + (i + 1) + '. </span>' + esc(p.nome) + '</span><small>' + esc(onde) + '</small><small class="lfcmb-so-movel">' + link + '</small></div></td>' +
         '<td class="is-num"><b>' + preco(p.preco) + '</b></td>' +
         '<td class="is-num lfcmb-esconde ' + (d < 0 ? 'lfk-pos' : d > 0 ? 'lfk-neg' : '') + '">' + (temMedia ? dif(d) : '-') + '</td>' +
-        '<td class="lfcmb-esconde">' + esc(v.perto ? fmt(p.km, { currency: false, decimals: 1 }) + ' km' : quando(p.atualizado)) + '</td>' +
+        '<td class="lfcmb-esconde lfcmb-esconde-m">' + esc(v.perto ? fmt(p.km, { currency: false, decimals: 1 }) + ' km' : quando(p.atualizado)) + '</td>' +
         '<td class="is-num lfcmb-esconde">' + link + '</td></tr>';
     }).join('');
 

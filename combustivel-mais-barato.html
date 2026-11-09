@@ -19,6 +19,7 @@
 .lfk .lfcmb-links .lfk-calc-card-body { padding: 0 1.5rem; }
 .lfk .lfcmb-mapa { white-space: nowrap; }
 .lfk .lfcmb-so-movel { display: none; }
+@media (max-width: 760px) { .lfk .lfk-table .lfcmb-esconde-m { display: none; } }
 @media (max-width: 640px) {
   .lfk .lfk-table .lfcmb-esconde { display: none; }
   .lfk .lfcmb-so-movel { display: inline; }
@@ -73,7 +74,7 @@
         <div class="lfk-alert" id="lfcmb-sem" hidden></div>
         <div class="lfk-table-wrap" id="lfcmb-tabela-wrap" style="margin-top:1.5rem">
           <table class="lfk-table" id="lfcmb-tabela">
-            <thead><tr><th class="lfcmb-esconde"></th><th>Posto</th><th class="is-num">Preço</th><th class="is-num lfcmb-esconde">Face à média</th><th class="lfcmb-esconde" id="lfcmb-th-local">Atualizado</th><th class="lfcmb-esconde"></th></tr></thead>
+            <thead><tr><th class="lfcmb-esconde"></th><th>Posto</th><th class="is-num">Preço</th><th class="is-num lfcmb-esconde">Face à média</th><th class="lfcmb-esconde lfcmb-esconde-m" id="lfcmb-th-local">Atualizado</th><th class="lfcmb-esconde"></th></tr></thead>
             <tbody id="lfcmb-linhas"></tbody>
           </table>
         </div>
