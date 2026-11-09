@@ -1,0 +1,63 @@
+name: Ler postos DGEG
+
+# Preços de todos os postos pela API oficial da DGEG (web service do portal Preços dos Combustíveis Online).
+# Escreve postos-resumo.json (médias por marca e distrito), postos-top.json (postos mais baratos por distrito)
+# e postos-historico.csv (uma fotografia por dia). Tudo no dgeg-postos.mjs.
+#
+# A API só responde em três janelas de uma hora: 03h, 13h e 20h, hora de Lisboa. O cron do GitHub é em UTC e atrasa,
+# por isso há três tentativas por hora às 12h, 13h, 19h e 20h UTC (cobre o inverno e o verão). O script só pede à DGEG
+# dentro da janela e uma vez por janela; nas outras corridas sai em segundos sem fazer nada.
+#
+# Precisa dos secrets DGEG_USER e DGEG_PASSWORD (Settings > Secrets and variables > Actions). Sem eles avisa e não lê.
+# Se não houver leitura boa há mais de 26 horas, o run falha e o GitHub avisa por email.
+
+on:
+  schedule:
+    - cron: "7,27,47 12,13,19,20 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "dgeg-postos.mjs"
+      - ".github/workflows/ler-postos-dgeg.yml"
+  workflow_dispatch:
+    inputs:
+      forcar:
+        description: "Ler já, mesmo que já tenha lido nesta janela (fora das janelas a DGEG não responde)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ler-postos-dgeg
+  cancel-in-progress: false
+
+jobs:
+  ler:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Ler a API da DGEG
+        env:
+          DGEG_USER: ${{ secrets.DGEG_USER }}
+          DGEG_PASSWORD: ${{ secrets.DGEG_PASSWORD }}
+          LF_FORCAR: ${{ inputs.forcar && '1' || '' }}
+        run: node dgeg-postos.mjs
+
+      - name: Commit e push (só se houver alterações)
+        run: |
+          git config user.name "combustiveis-bot"
+          git config user.email "bot@users.noreply.github.com"
+          for f in postos-resumo.json postos-top.json postos-historico.csv; do [ -f "$f" ] && git add "$f" || true; done
+          git diff --cached --quiet && exit 0
+          git commit -m "Atualiza preços dos postos (DGEG) [skip ci]"
+          # o "Atualizar combustíveis" também faz push: se chegar primeiro, junta-se e tenta outra vez
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 15; done
+          exit 1
