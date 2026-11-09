@@ -1,0 +1,108 @@
+<!-- Página /combustivel-mais-barato do literaciafinanceira.pt: HTML do embed da ferramenta (cópia de referência do que está no Webflow).
+     Fica dentro da secção da página, no lugar do conteúdo da calculadora; o título (H1) e o subtítulo são elementos nativos do Webflow.
+     Estilos: LF kit (pedrofintech/lf-site-assets/kit) com o commit fixo do README do kit. Lógica: combustivel-mais-barato.js
+     (carregado num embed no fim da página, a seguir ao lf-kit.js). Os textos de fonte citam a DGEG com a data e a hora da leitura. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/pedrofintech/lf-site-assets@dfdac1557c15ffd067c35f1e20ddfe4c93731826/kit/lf-kit.css">
+<style>
+/* Peças que o kit não tem, só com as variáveis do kit (prefixo lfcmb-) */
+.lfk .lfcmb-filtros { min-width: 0; }
+.lfk .lfcmb-filtros .lfk-segment { flex-wrap: wrap; max-width: 100%; }
+.lfk .lfcmb-acoes { display: flex; flex-wrap: wrap; gap: .75rem; }
+.lfk .lfcmb-acoes .lfk-btn { flex: 1 1 14rem; }
+.lfk .lfcmb-posto { display: flex; flex-direction: column; gap: .125rem; min-width: 0; white-space: normal; }
+.lfk .lfcmb-posto small { color: var(--lfk-text-3); font-size: var(--lfk-fs-xs); line-height: var(--lfk-lh-xs); }
+.lfk .lfcmb-top { font-weight: 600; }
+.lfk .lfk-table td.lfcmb-rank { color: var(--lfk-text-3); width: 2rem; }
+.lfk .lfcmb-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; margin-bottom: 1rem; }
+.lfk .lfcmb-head h2 { margin: 0; }
+.lfk .lfcmb-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+.lfk .lfcmb-links .lfk-calc-card-body { padding: 0 1.5rem; }
+.lfk .lfcmb-mapa { white-space: nowrap; }
+.lfk .lfcmb-so-movel { display: none; }
+@media (max-width: 640px) {
+  .lfk .lfk-table .lfcmb-esconde { display: none; }
+  .lfk .lfcmb-so-movel { display: inline; }
+}
+</style>
+
+<div class="lfk" id="lf-cmb">
+  <div class="lfk-calc">
+    <div class="lfk-calc-form"><div class="lfk-calc-inner">
+      <div class="lfk-calc-title">Onde está o combustível mais barato?</div>
+      <form class="lfk-stack lfcmb-filtros" id="lfcmb-form" onsubmit="return false">
+        <div class="lfk-field">
+          <span class="lfk-label" id="lfcmb-lbl-comb">Combustível</span>
+          <div class="lfk-segment" role="group" aria-labelledby="lfcmb-lbl-comb" id="lfcmb-comb">
+            <button type="button" data-comb="gasoleo" aria-pressed="true">Gasóleo</button>
+            <button type="button" data-comb="gasolina" aria-pressed="false">Gasolina 95</button>
+            <button type="button" data-comb="gpl" aria-pressed="false">GPL</button>
+          </div>
+        </div>
+        <div class="lfk-field">
+          <label class="lfk-label" for="lfcmb-distrito">Distrito</label>
+          <select class="lfk-input" id="lfcmb-distrito" name="distrito"><option value="">Todo o país</option></select>
+        </div>
+        <div class="lfk-field" id="lfcmb-campo-concelho" hidden>
+          <label class="lfk-label" for="lfcmb-concelho">Concelho</label>
+          <select class="lfk-input" id="lfcmb-concelho" name="concelho"><option value="">Todos os concelhos</option></select>
+        </div>
+        <div class="lfk-hint">Para veres só os postos à tua volta, usa a tua localização. Fica no teu telemóvel: a conta é feita aqui na página.</div>
+        <div class="lfcmb-acoes">
+          <button type="button" class="lfk-btn" id="lfcmb-ver">Ver os postos mais baratos <span class="lfk-ico-arrow"></span></button>
+          <button type="button" class="lfk-btn is-secondary" id="lfcmb-perto">Usar a minha localização</button>
+        </div>
+        <div class="lfk-alert is-warn" id="lfcmb-aviso" hidden></div>
+      </form>
+    </div></div>
+
+    <div class="lfk-calc-results" id="lfcmb-estado">
+      <div class="lfk-empty"><p>A carregar os preços dos postos...</p></div>
+    </div>
+
+    <div class="lfk-calc-results" id="lfcmb-resultados" hidden>
+      <div class="lfk-card">
+        <div class="lfcmb-head">
+          <h2 class="lfk-h-sm" id="lfcmb-titulo">Gasóleo simples mais barato em Portugal continental</h2>
+          <span class="lfk-tag is-sm is-ok" id="lfcmb-hora"></span>
+        </div>
+        <div class="lfk-kpis" id="lfcmb-kpis">
+          <div class="lfk-stat is-brand"><div class="lfk-stat-l">O mais barato</div><div class="lfk-stat-v" id="lfcmb-k-min">-</div><div class="lfk-stat-s" id="lfcmb-k-min-s"></div></div>
+          <div class="lfk-stat"><div class="lfk-stat-l">Preço médio</div><div class="lfk-stat-v" id="lfcmb-k-media">-</div><div class="lfk-stat-s" id="lfcmb-k-media-s"></div></div>
+          <div class="lfk-stat"><div class="lfk-stat-l">Poupança num depósito de 50 L</div><div class="lfk-stat-v" id="lfcmb-k-poup">-</div><div class="lfk-stat-s" id="lfcmb-k-poup-s"></div></div>
+        </div>
+        <div class="lfk-alert" id="lfcmb-sem" hidden></div>
+        <div class="lfk-table-wrap" id="lfcmb-tabela-wrap" style="margin-top:1.5rem">
+          <table class="lfk-table" id="lfcmb-tabela">
+            <thead><tr><th class="lfcmb-esconde"></th><th>Posto</th><th class="is-num">Preço</th><th class="is-num lfcmb-esconde">Face à média</th><th class="lfcmb-esconde" id="lfcmb-th-local">Atualizado</th><th class="lfcmb-esconde"></th></tr></thead>
+            <tbody id="lfcmb-linhas"></tbody>
+          </table>
+        </div>
+        <p class="lfk-summary" style="margin-top:1.5rem" id="lfcmb-frase"></p>
+        <p class="lfk-foot" style="margin-top:1rem" id="lfcmb-fonte">Preços comunicados pelos próprios postos ao <a href="https://precoscombustiveis.dgeg.gov.pt/" target="_blank" rel="noopener">portal Preços dos Combustíveis Online da DGEG</a> (Direção-Geral de Energia e Geologia). A ordenação, as médias e a poupança são cálculo do Literacia Financeira, não informação da DGEG.</p>
+      </div>
+
+      <div class="lfk-card" id="lfcmb-distritos">
+        <div class="lfcmb-head">
+          <h2 class="lfk-h-sm" id="lfcmb-d-titulo">Onde é mais barato em cada distrito</h2>
+          <span class="lfk-small lfk-muted">Do mais barato ao mais caro</span>
+        </div>
+        <div class="lfk-table-wrap">
+          <table class="lfk-table" id="lfcmb-d-tabela">
+            <thead><tr><th>Distrito</th><th class="is-num">Preço médio</th><th class="is-num lfcmb-esconde">Mais barato</th><th class="is-num lfcmb-esconde">Face à média nacional</th></tr></thead>
+            <tbody id="lfcmb-d-linhas"></tbody>
+          </table>
+        </div>
+        <p class="lfk-foot" style="margin-top:1rem" id="lfcmb-d-nota">Média simples dos postos de cada distrito. Clica num distrito para veres os postos.</p>
+      </div>
+
+      <div class="lfcmb-links">
+        <a class="lfk-calc-card" href="https://www.literaciafinanceira.pt/precos-combustiveis">
+          <div class="lfk-calc-card-body"><h3 class="lfk-calc-card-title">Os combustíveis sobem ou descem na segunda-feira?</h3><p class="lfk-ds-text">A previsão do nosso modelo para a próxima semana, confirmada todas as terças com a média oficial da DGEG.</p></div>
+        </a>
+        <a class="lfk-calc-card" href="https://www.literaciafinanceira.pt/precos-combustiveis#lfc-ext-mar">
+          <div class="lfk-calc-card-body"><h3 class="lfk-calc-card-title">Que marca tem o combustível mais barato?</h3><p class="lfk-ds-text">Preço médio de cada marca em Portugal continental, calculado com os mesmos dados da DGEG.</p></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
