@@ -9,9 +9,11 @@
 //   postos-todos.json     todos os postos com preço recente, com coordenadas (filtro por concelho e "perto de mim")
 //   postos-historico.csv  uma linha por dia, combustível e grupo (país, marca, distrito). A API não guarda histórico.
 //
-// A API só responde em três janelas de uma hora: 03h, 13h e 20h, hora de Lisboa. O workflow "Ler postos DGEG" corre
-// três vezes em cada uma dessas horas, porque o cron do GitHub é em UTC e atrasa. Este script só pede à
-// DGEG dentro de uma janela e uma vez por janela. Nas outras corridas sai em segundos sem fazer nada.
+// A API só responde em três janelas de uma hora: 03h, 13h e 20h, hora de Lisboa. O cron do GitHub chega horas atrasado
+// e salta a maior parte das corridas (neste repositório, o cron de hora a hora do "Atualizar combustíveis" corre 2 a 3
+// vezes por dia). Por isso o workflow "Ler postos DGEG" tenta de 20 em 20 minutos nas horas antes de cada janela, e a
+// corrida agendada que chegar até MAX_ESPERA_H horas antes de uma janela fica à espera dela em vez de sair. Este script
+// só pede à DGEG dentro de uma janela e uma vez por janela. Nas outras corridas sai em segundos sem fazer nada.
 //
 // Verificações antes de gravar (se alguma falhar não se grava nada e fica a leitura anterior):
 //   - o nome do combustível em cada preço tem de bater com o ID (nunca trocar gasóleo por gasolina);
@@ -22,7 +24,9 @@
 // Condições da DGEG (emails de 14 out e 6 nov 2026): citar a DGEG como fonte com a data e a hora da leitura e deixar
 // claro que as médias e as listas são cálculo nosso, não informação produzida pela DGEG.
 //
-// Para testar fora do GitHub: DGEG_WS_BASE (outro servidor), LF_AGORA (outra hora) e LF_FORCAR=1 (ignora as janelas).
+// Para testar fora do GitHub: DGEG_WS_BASE (outro servidor), LF_AGORA (outra hora; com ela a espera pela janela é
+// simulada, não se dorme a sério), LF_ESPERAR=1 (espera pela janela, como nas corridas agendadas) e LF_FORCAR=1
+// (ignora as janelas).
 import { readFile, writeFile } from "node:fs/promises";
 
 const BASE = (process.env.DGEG_WS_BASE || "https://ws-precoscombustiveis.dgeg.gov.pt").replace(/\/+$/, "");
@@ -41,7 +45,9 @@ const MIN_POSTOS_MARCA = 20; // marcas com menos postos não entram na lista: a 
 const TOP_POR_DISTRITO = 10;
 const MIN_POSTOS_LEITURA = 1000; // menos postos do que isto no gasóleo ou na gasolina = resposta incompleta, não se grava
 const HORAS_ENTRE_LEITURAS = 3; // uma leitura por janela: as janelas estão a pelo menos 7 horas umas das outras
-const HORAS_ALERTA = 26; // sem leitura boa há mais tempo do que isto, o workflow falha e o GitHub avisa por email
+const HORAS_ALERTA = 26; // se uma leitura falhar sem leitura boa há mais tempo do que isto, o workflow falha e o GitHub avisa por email
+const MAX_ESPERA_H = 3; // uma corrida agendada que chegue até isto antes de uma janela espera por ela (o timeout do workflow tem de chegar)
+const MARGEM_MIN = 2; // minutos depois do início da janela: o relógio da DGEG pode não bater certo com o nosso
 // Preços fora deste intervalo à volta da mediana nacional são erros de escrita do posto, não preços. O posto mais barato
 // a sério fica uns 10% abaixo da média; um preço 20% abaixo (1,70€ quando a mediana é 2,10€) não existe.
 const DESVIO_MIN = 0.8, DESVIO_MAX = 1.35;
@@ -60,7 +66,8 @@ const CAMPOS_TODOS = ["id", "nome", "marca", "municipio", "distrito", "lat", "lo
 const CONTINENTE = ["Aveiro", "Beja", "Braga", "Bragança", "Castelo Branco", "Coimbra", "Évora", "Faro", "Guarda", "Leiria", "Lisboa",
   "Portalegre", "Porto", "Santarém", "Setúbal", "Viana do Castelo", "Vila Real", "Viseu"];
 
-const agora = process.env.LF_AGORA ? new Date(process.env.LF_AGORA) : new Date();
+const simulado = !!process.env.LF_AGORA; // em testes o tempo é simulado: a espera pela janela avança o relógio em vez de dormir
+let agora = simulado ? new Date(process.env.LF_AGORA) : new Date();
 const noGitHub = !!process.env.GITHUB_ACTIONS;
 
 // ---------- utilitários ----------
@@ -70,7 +77,28 @@ function lisboa(d) {
   const fmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Lisbon", year: "numeric", month: "2-digit", day: "2-digit",
     hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
   for (const x of fmt.formatToParts(d)) p[x.type] = x.value;
-  return { data: `${p.year}-${p.month}-${p.day}`, hora: Number(p.hour), txt: `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}` };
+  return { data: `${p.year}-${p.month}-${p.day}`, hora: Number(p.hour), minuto: Number(p.minute),
+    txt: `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}` };
+}
+
+function naJanela(d) {
+  // As janelas são hora de Lisboa. Por precaução também se aceita a mesma hora em UTC (só é diferente no verão).
+  return HORAS_JANELA.includes(lisboa(d).hora) || HORAS_JANELA.includes(d.getUTCHours());
+}
+
+// Devolve os minutos até à próxima janela (com a margem) ou Infinity se estiver mais longe do que MAX_ESPERA_H.
+function minutosAteJanela(d) {
+  const l = lisboa(d);
+  const m = l.hora * 60 + l.minuto;
+  const proxima = HORAS_JANELA.map((h) => h * 60).find((x) => x > m) ?? HORAS_JANELA[0] * 60 + 1440;
+  const minutos = proxima - m + MARGEM_MIN;
+  return minutos <= MAX_ESPERA_H * 60 ? minutos : Infinity;
+}
+
+async function dormir(minutos) {
+  if (simulado) { agora = new Date(agora.getTime() + minutos * 60e3); return; }
+  await new Promise((r) => setTimeout(r, minutos * 60e3));
+  agora = new Date();
 }
 
 // A palavra-passe vai na query string do login: nada do que se escreve no log pode trazê-la.
@@ -300,20 +328,31 @@ async function gravarHistorico(dia, linhasNovas) {
   await writeFile(F_HIST, [CAB, ...antigas, ...novas].join("\n") + "\n");
 }
 
-// ---------- decidir se é hora de pedir ----------
+// ---------- decidir se é hora de pedir (e esperar pela janela, se estiver perto) ----------
 
 const anterior = await lerJSON(F_RESUMO);
 const ultima = anterior?.lidoEm ? Date.parse(anterior.lidoEm) : NaN;
-const horasDesde = Number.isFinite(ultima) ? (agora.getTime() - ultima) / 36e5 : Infinity;
-const L = lisboa(agora);
 const forcar = process.env.LF_FORCAR === "1";
-// As janelas devem ser hora de Lisboa. Por precaução também se tenta à mesma hora em UTC (só muda no verão).
-const naJanela = HORAS_JANELA.includes(L.hora) || HORAS_JANELA.includes(agora.getUTCHours());
+const esperar = process.env.LF_ESPERAR === "1"; // só nas corridas agendadas: num push lê-se se estiver na janela e sai-se se não
 
-if (!forcar && !naJanela) {
-  console.log(`dgeg-postos: ${L.txt} em Lisboa, fora das janelas da API (03h, 13h e 20h). Nada a fazer.`);
+// Até duas esperas: a segunda só acontece se a primeira acabar fora da janela (mudança de hora durante a espera).
+for (let volta = 0; !forcar && !naJanela(agora) && volta < 2; volta++) {
+  const minutos = esperar ? minutosAteJanela(agora) : Infinity;
+  if (!Number.isFinite(minutos)) {
+    console.log(`dgeg-postos: ${lisboa(agora).txt} em Lisboa, fora das janelas da API (03h, 13h e 20h)` +
+      `${esperar ? ` e a próxima está a mais de ${MAX_ESPERA_H} horas` : ""}. Nada a fazer.`);
+    process.exit(0);
+  }
+  console.log(`dgeg-postos: ${lisboa(agora).txt} em Lisboa; espero ${minutos} minutos pela janela da API.`);
+  await dormir(minutos);
+}
+if (!forcar && !naJanela(agora)) {
+  anotar("warning", `dgeg-postos: ${lisboa(agora).txt} em Lisboa, ainda fora da janela depois de esperar. Nada a fazer.`);
   process.exit(0);
 }
+const horasDesde = Number.isFinite(ultima) ? (agora.getTime() - ultima) / 36e5 : Infinity;
+const L = lisboa(agora);
+
 if (!forcar && horasDesde >= 0 && horasDesde < HORAS_ENTRE_LEITURAS) {
   console.log(`dgeg-postos: já li nesta janela (${anterior.lidoEmLisboa}). Nada a fazer.`);
   process.exit(0);
