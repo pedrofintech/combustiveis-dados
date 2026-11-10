@@ -69,6 +69,12 @@ jobs:
           for f in postos-resumo.json postos-top.json postos-todos.json postos-historico.csv; do [ -f "$f" ] && git add "$f" || true; done
           git diff --cached --quiet && exit 0
           git commit -m "Atualiza preços dos postos (DGEG) [skip ci]"
-          # o "Atualizar combustíveis" também faz push: se chegar primeiro, junta-se e tenta outra vez
-          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 15; done
+          # Outro workflow pode ter feito push entretanto: junta-se e tenta outra vez. Se outra corrida desta mesma leitura
+          # tiver gravado os mesmos ficheiros (aconteceu a 10 nov, dois pushes com 30 s de intervalo), ficam os nossos,
+          # que são a leitura mais recente (num rebase, "theirs" é o commit que se está a aplicar, ou seja, o nosso).
+          for i in 1 2 3; do
+            git pull --rebase -X theirs && git push && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep 15
+          done
           exit 1
