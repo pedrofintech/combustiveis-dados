@@ -1,22 +1,14 @@
 {
-  "atualizado": "2026-11-09",
+  "atualizado": "2026-11-10",
   "semanaInicio": "2026-11-09",
   "semanaFim": "2026-11-15",
   "gasoleo": {
     "atual": 2.205,
-    "variacao": -0.113,
-    "intervalo": {
-      "min": -16,
-      "max": -6.5
-    }
+    "variacao": -0.07
   },
   "gasolina": {
     "atual": 2.006,
-    "variacao": -0.075,
-    "intervalo": {
-      "min": -9.5,
-      "max": -5.5
-    }
+    "variacao": -0.084
   },
   "isp": {
     "portaria": "Portaria n.º 345-C/2026/1, de 14 de agosto",
@@ -46,12 +38,11 @@
     },
     {
       "semana": "09/11",
-      "gasolina": 1.931,
-      "gasoleo": 2.092,
-      "previsto": true
+      "gasolina": 1.922,
+      "gasoleo": 2.135
     }
   ],
-  "fonte": "modelo-proprio",
+  "fonte": "dgeg-confirmado",
   "baseConfirmada": true,
   "modelo": {
     "janelaCompleta": true,
@@ -132,56 +123,48 @@
       "data": "2026-11-02",
       "gasolina": 2.006,
       "gasoleo": 2.205
+    },
+    {
+      "data": "2026-11-09",
+      "gasolina": 1.922,
+      "gasoleo": 2.135
     }
   ],
   "fiscalidade": {
     "iva": 0.23,
-    "emVigor": "9 de novembro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
+    "emVigor": "10 de novembro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
     "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
     "gasolina": {
       "ispBase": 0.49752,
       "csr": 0.087,
       "carbono": 0.15911,
-      "desconto": 0.06063
+      "desconto": 0.05863
     },
     "gasoleo": {
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.10493999999999999
+      "desconto": 0.10394
     }
   },
   "placar": {
-    "atualizado": "2026-11-09",
-    "semanas": 10,
-    "semanasComSetor": 9,
+    "atualizado": "2026-11-10",
+    "semanas": 11,
+    "semanasComSetor": 10,
     "gasoleo": {
-      "erroMedioModelo": 1.82,
-      "erroMedioSetor": 2.52
+      "erroMedioModelo": 2.05,
+      "erroMedioSetor": 2.67
     },
     "gasolina": {
-      "erroMedioModelo": 2.77,
-      "erroMedioSetor": 2.27
+      "erroMedioModelo": 2.6,
+      "erroMedioSetor": 2.45
     },
     "vitorias": {
-      "modelo": 6,
-      "setor": 11,
+      "modelo": 7,
+      "setor": 12,
       "empates": 1
     },
     "ultimas": [
-      {
-        "semana": "2026-09-14",
-        "gasoleo": {
-          "modelo": 4.3,
-          "setor": 4,
-          "real": 4.8
-        },
-        "gasolina": {
-          "modelo": 3.2,
-          "setor": -6,
-          "real": -2.1
-        }
-      },
       {
         "semana": "2026-09-21",
         "gasoleo": {
@@ -272,11 +255,24 @@
           "setor": -2.5,
           "real": -3.4
         }
+      },
+      {
+        "semana": "2026-11-09",
+        "gasoleo": {
+          "modelo": -11.3,
+          "setor": -11,
+          "real": -7
+        },
+        "gasolina": {
+          "modelo": -7.5,
+          "setor": -12.5,
+          "real": -8.4
+        }
       }
     ]
   },
   "espelho": {
-    "lidoEm": "2026-11-09",
+    "lidoEm": "2026-11-10",
     "semanaInicio": "2026-11-09",
     "semanaFim": "2026-11-15",
     "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)",
@@ -288,5 +284,11 @@
       "variacao": -0.125,
       "preco": null
     }
+  },
+  "confirmacao": {
+    "data": "2026-11-09",
+    "gasoleo": 2.135,
+    "gasolina": 1.922,
+    "fonte": "dgeg"
   }
 }
