@@ -5,20 +5,24 @@ name: Ler postos DGEG
 # postos-todos.json (todos os postos com preço recente e coordenadas) e postos-historico.csv (uma fotografia por dia).
 # Tudo no dgeg-postos.mjs, que recusa a leitura se os dados não passarem nas verificações descritas lá.
 #
-# A API só responde em três janelas de uma hora: 03h, 13h e 20h, hora de Lisboa. O cron do GitHub é em UTC e atrasa,
-# por isso há três tentativas por hora às 2h, 3h, 12h, 13h, 19h e 20h UTC (cobre o inverno e o verão). O script só pede à DGEG
-# dentro da janela e uma vez por janela; nas outras corridas sai em segundos sem fazer nada.
+# A API só responde em três janelas de uma hora: 03h, 13h e 20h, hora de Lisboa. O cron do GitHub é em UTC, chega horas
+# atrasado e salta a maior parte das corridas (neste repositório, o cron de hora a hora do "Atualizar combustíveis" corre
+# 2 a 3 vezes por dia). Por isso há uma tentativa de 20 em 20 minutos nas 3 a 4 horas antes de cada janela e durante a
+# janela (cobre o inverno e o verão): a corrida que chegar até 3 horas antes de uma janela fica à espera dela e lê assim
+# que ela abre; as outras saem em segundos. O grupo de concorrência garante que só uma corrida agendada espera de cada vez
+# (as seguintes ficam pendentes e saem logo, porque a leitura já foi feita). O timeout tem de chegar para a espera.
 #
 # Precisa dos secrets DGEG_USER e DGEG_PASSWORD (Settings > Secrets and variables > Actions). Sem eles avisa e não lê.
 #
 # Atenção ao cron: o GitHub corre as leituras agendadas em nome de quem fez a última alteração a este ficheiro. Se essa
 # pessoa não tiver acesso ao repositório (por exemplo um commit do Claude feito por git), o agendamento fica mudo sem
 # avisar. Foi o que aconteceu a 9 nov 2026. Alterações a este ficheiro devem ser feitas pela conta do Pedro (GitHub MCP).
-# Se não houver leitura boa há mais de 26 horas, o run falha e o GitHub avisa por email.
+# Se uma leitura falhar e não houver leitura boa há mais de 26 horas, o run falha e o GitHub avisa por email.
 
 on:
   schedule:
-    - cron: "7,27,47 2,3,12,13,19,20 * * *"
+    # janela das 3h (Lisboa) -> 23h a 3h UTC; das 13h -> 9h a 13h UTC; das 20h -> 16h a 20h UTC
+    - cron: "3,23,43 0,1,2,3,9,10,11,12,13,16,17,18,19,20,23 * * *"
   push:
     branches: [main]
     paths:
@@ -35,13 +39,14 @@ permissions:
   contents: write
 
 concurrency:
-  group: ler-postos-dgeg
+  # as corridas agendadas esperam umas pelas outras; um push não fica horas atrás de uma corrida à espera da janela
+  group: ler-postos-dgeg-${{ github.event_name }}
   cancel-in-progress: false
 
 jobs:
   ler:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 200
     steps:
       - uses: actions/checkout@v4
 
@@ -49,11 +54,12 @@ jobs:
         with:
           node-version: 20
 
-      - name: Ler a API da DGEG
+      - name: Ler a API da DGEG (espera pela janela, se estiver perto)
         env:
           DGEG_USER: ${{ secrets.DGEG_USER }}
           DGEG_PASSWORD: ${{ secrets.DGEG_PASSWORD }}
           LF_FORCAR: ${{ inputs.forcar && '1' || '' }}
+          LF_ESPERAR: ${{ github.event_name != 'push' && '1' || '' }}
         run: node dgeg-postos.mjs
 
       - name: Commit e push (só se houver alterações)
