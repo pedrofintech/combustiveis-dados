@@ -62,7 +62,9 @@
   function horasDesde(iso) { var t = Date.parse(iso); return isFinite(t) ? (Date.now() - t) / 36e5 : Infinity; }
   function ehIlha(d) { return CONTINENTE.indexOf(d) === -1; }
   function nomeDistrito(d) { return /madeira/i.test(d) ? 'Madeira' : /a[çc]ores/i.test(d) ? 'Açores' : d; }
-  function noDistrito(d) { return ehIlha(d) ? 'na ' + nomeDistrito(d) : 'no distrito de ' + d; }
+  /* o Porto e a Guarda levam artigo: "distrito do Porto", "distrito da Guarda" */
+  function deDistrito(d) { return d === 'Porto' ? 'do Porto' : d === 'Guarda' ? 'da Guarda' : 'de ' + d; }
+  function noDistrito(d) { return ehIlha(d) ? 'na ' + nomeDistrito(d) : 'no distrito ' + deDistrito(d); }
   /* nomes que a API devolve todos em maiúsculas passam a Título */
   function nome(s) {
     s = String(s || '').replace(/\s+/g, ' ').trim();
