@@ -10,6 +10,10 @@ name: Ler postos DGEG
 # dentro da janela e uma vez por janela; nas outras corridas sai em segundos sem fazer nada.
 #
 # Precisa dos secrets DGEG_USER e DGEG_PASSWORD (Settings > Secrets and variables > Actions). Sem eles avisa e não lê.
+#
+# Atenção ao cron: o GitHub corre as leituras agendadas em nome de quem fez a última alteração a este ficheiro. Se essa
+# pessoa não tiver acesso ao repositório (por exemplo um commit do Claude feito por git), o agendamento fica mudo sem
+# avisar. Foi o que aconteceu a 9 nov 2026. Alterações a este ficheiro devem ser feitas pela conta do Pedro (GitHub MCP).
 # Se não houver leitura boa há mais de 26 horas, o run falha e o GitHub avisa por email.
 
 on:
