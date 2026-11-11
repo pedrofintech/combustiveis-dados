@@ -18,9 +18,13 @@
 .lfk .lfk-stat.lfcmb-ok .lfk-stat-v { color: var(--lfk-ok); } /* o mais barato a verde, como os valores positivos do kit */
 .lfk .lfk-table td.lfcmb-rank { color: var(--lfk-text-3); width: 2rem; }
 .lfk .lfcmb-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; margin-bottom: 1rem; }
-.lfk .lfcmb-head h2 { margin: 0; padding-bottom: 0; } /* o título dos resultados usa a classe do título do formulário (lfk-calc-title) */
+.lfk .lfcmb-head h2 { margin: 0; }
+.lfk .lfcmb-tabela .lfcmb-rank, .lfk .lfcmb-tabela th:first-child { width: 1%; white-space: nowrap; } /* coluna do número só com a largura do número */
 .lfk .lfcmb-dif-movel { display: none; font-size: var(--lfk-fs-xs); line-height: var(--lfk-lh-xs); font-weight: 400; }
 .lfk .lfcmb-so-movel, .lfk .lfcmb-so-estreito { display: none; }
+@media (min-width: 641px) {
+  .lfk .lfcmb-1l { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } /* texto dos indicadores numa linha */
+}
 @media (max-width: 760px) {
   .lfk .lfk-table .lfcmb-esconde-m { display: none; }
   .lfk .lfcmb-so-estreito { display: inline; }
@@ -69,7 +73,7 @@
     <div class="lfk-calc-results" id="lfcmb-resultados" hidden>
       <div class="lfk-calc-form"><div class="lfk-calc-inner"><!-- mesma caixa e mesma coluna do formulário, para os dois cartões ficarem alinhados -->
         <div class="lfcmb-head">
-          <h2 class="lfk-calc-title" id="lfcmb-titulo">Gasóleo simples mais barato em Portugal continental</h2>
+          <h2 class="lfk-h-sm" id="lfcmb-titulo">Gasóleo simples mais barato em Portugal continental</h2>
           <span class="lfk-tag is-sm is-ok" id="lfcmb-hora"></span>
         </div>
         <div class="lfk-kpis" id="lfcmb-kpis">

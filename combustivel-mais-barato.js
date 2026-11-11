@@ -187,7 +187,7 @@
     var rd = resumoDistrito(d) || {};
     var v = { titulo: COMB[estado.comb].nome + ' ' + maisBarato() + ' ' + emLocal(c), onde: emLocal(c), lista: ordenar(lista).slice(0, TOP), mostraDistrito: false, concelho: c };
     if (todosConcelho.length >= 3) { v.media = media(todosConcelho); v.mediaOnde = 'no concelho ' + deLocal(c); v.postos = todosConcelho.length; }
-    else { v.media = rd.media; v.mediaOnde = noDistrito(d); v.postos = rd.postos; v.poucos = todosConcelho.length; }
+    else { v.media = rd.media; v.mediaOnde = noDistrito(d); v.postos = rd.postos; v.poucos = todosConcelho.length; v.mediaFora = 'do distrito'; }
     return v;
   }
   function vistaPerto(lat, lon) {
@@ -205,7 +205,8 @@
     return { titulo: COMB[estado.comb].nome + ' ' + maisBarato() + ' num raio de ' + fmt(raio, { currency: false, decimals: 0 }) + ' km', onde: 'à tua volta',
       lista: ordenar(dentro).slice(0, TOP), media: dentro.length >= 3 ? media(precos) : D.resumo[estado.comb].media,
       mediaOnde: dentro.length >= 3 ? 'num raio de ' + fmt(raio, { currency: false, decimals: 0 }) + ' km' : 'em Portugal continental',
-      postos: dentro.length >= 3 ? dentro.length : D.resumo[estado.comb].postos, mostraDistrito: true, perto: true, raio: raio };
+      postos: dentro.length >= 3 ? dentro.length : D.resumo[estado.comb].postos, mostraDistrito: true, perto: true, raio: raio,
+      mediaFora: dentro.length >= 3 ? '' : 'nacional' };
   }
 
   /* ---------- render ---------- */
@@ -233,12 +234,15 @@
     aviso.hidden = true; $('lfcmb-kpis').hidden = false; $('lfcmb-tabela-wrap').hidden = false; $('lfcmb-frase').hidden = false;
     var min = v.lista[0], temMedia = v.media != null;
     $('lfcmb-k-min').textContent = preco(min.preco);
-    $('lfcmb-k-min-s').textContent = 'por litro, ' + (v.perto ? 'a ' + fmt(min.km, { currency: false, decimals: 1 }) + ' km (' + min.municipio + ')' :
-      v.concelho ? 'em ' + min.nome : v.mostraDistrito ? emLocal(min.municipio) + ' (' + nomeDistrito(min.distrito) + ')' : emLocal(min.municipio));
+    /* textos curtos por baixo dos indicadores, numa linha em computador (classe lfcmb-1l): o sítio já está no título.
+       O texto completo fica no title, para os nomes de posto compridos que o ecrã corta com reticências. */
+    function sub(id, txt) { var e = $(id); e.textContent = txt; e.title = txt; e.classList.add('lfcmb-1l'); }
+    sub('lfcmb-k-min-s', v.perto ? 'a ' + fmt(min.km, { currency: false, decimals: 1 }) + ' km, ' + emLocal(min.municipio) :
+      v.concelho ? 'em ' + min.nome : emLocal(min.municipio));
     $('lfcmb-k-media').textContent = temMedia ? preco(v.media) : '-';
-    $('lfcmb-k-media-s').textContent = temMedia ? 'em ' + fmt(v.postos, { currency: false, decimals: 0 }) + ' postos, ' + v.mediaOnde : '';
+    sub('lfcmb-k-media-s', !temMedia ? '' : v.mediaFora ? 'média ' + v.mediaFora : 'em ' + fmt(v.postos, { currency: false, decimals: 0 }) + ' postos');
     $('lfcmb-k-poup').textContent = temMedia ? fmt(Math.max(0, v.media - min.preco) * DEPOSITO_L) : '-';
-    $('lfcmb-k-poup-s').textContent = temMedia ? 'no mais barato, face à média ' + v.mediaOnde : '';
+    sub('lfcmb-k-poup-s', temMedia ? 'face à média' + (v.mediaFora ? ' ' + v.mediaFora : '') : '');
 
     $('lfcmb-th-local').textContent = v.perto ? 'Distância' : 'Atualizado';
     tb.innerHTML = v.lista.map(function (p, i) {
@@ -362,7 +366,9 @@
   /* aplica o estado: escolhe a vista, carrega o ficheiro completo se for preciso e desenha */
   function aplicar(rolar) {
     aviso('');
-    function pronto(v) { render(v); mostrarResultados(); escreverHash(); if (rolar) rolarAte($('lfcmb-resultados')); }
+    /* rola até ao cartão (não até ao bloco que o envolve, que tem margem em cima): o cartão do formulário fica
+       escondido debaixo do menu, como nas outras calculadoras */
+    function pronto(v) { render(v); mostrarResultados(); escreverHash(); if (rolar) rolarAte($('lfcmb-resultados').firstElementChild || $('lfcmb-resultados')); }
     if (estado.geo) {
       carregarTodos(function (e) {
         if (e) { aviso('Não conseguimos carregar a lista completa dos postos. Tenta outra vez daqui a pouco.', 'is-err'); return; }
