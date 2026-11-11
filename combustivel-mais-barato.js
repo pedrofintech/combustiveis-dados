@@ -6,7 +6,7 @@
    - postos-resumo.json  médias nacionais e por distrito (só Portugal continental na média nacional)
    - postos-top.json     os 10 postos mais baratos de cada distrito e a lista de concelhos de cada distrito
    - postos-todos.json   todos os postos com preço recente e coordenadas; só se carrega para o filtro por concelho e para
-                         "Usar a minha localização" (uns 80 KB comprimidos)
+                         "Perto de mim" (uns 80 KB comprimidos)
    O HTML da ferramenta está no embed da página (cópia em combustivel-mais-barato.html) e usa o LF kit (lf-site-assets/kit).
    Condições da DGEG: citar a DGEG com a data e a hora da leitura e dizer que a ordenação, as médias e a poupança são
    cálculo nosso. Os textos que o fazem estão em rodape() e no HTML do embed. */
@@ -18,6 +18,7 @@
   var BASE = window.__lfCombBaratoDados || 'https://raw.githubusercontent.com/pedrofintech/combustiveis-dados/main/';
   var RAIO_KM = 15, RAIO_MAX_KM = 40, TOP = 10, DEPOSITO_L = 50;
   var MAX_HORAS_AVISO = 30; /* leitura com mais horas do que isto: aviso de que os preços podem estar desatualizados */
+  var PERTO = '__perto'; /* valor da opção "Perto de mim" no select do distrito: usa a localização do browser */
   var COMB = {
     gasoleo: { nome: 'Gasóleo simples', art: 'o gasóleo simples' },
     gasolina: { nome: 'Gasolina 95', art: 'a gasolina 95' },
@@ -227,14 +228,16 @@
     $('lfcmb-th-local').textContent = v.perto ? 'Distância' : 'Atualizado';
     tb.innerHTML = v.lista.map(function (p, i) {
       var d = temMedia ? p.preco - v.media : 0;
-      var link = '<a class="lfk-link lfcmb-mapa" href="' + esc(mapa(p)) + '" target="_blank" rel="noopener">Como chegar</a>';
-      var onde = v.perto ? p.municipio + ' · ' + fmt(p.km, { currency: false, decimals: 1 }) + ' km' : v.concelho ? (p.localidade || p.municipio) : v.mostraDistrito ? p.municipio + ', ' + nomeDistrito(p.distrito) : p.municipio;
+      /* o nome do posto é o link para o caminho no Google Maps (abre noutro separador) */
+      var nomeLink = '<a class="lfk-link" href="' + esc(mapa(p)) + '" target="_blank" rel="noopener" title="Como chegar (Google Maps)">' + esc(p.nome) + '</a>';
+      var onde = v.concelho ? (p.localidade || p.municipio) : v.mostraDistrito && !v.perto ? p.municipio + ', ' + nomeDistrito(p.distrito) : p.municipio;
+      /* a distância tem coluna própria; em ecrãs estreitos, onde a coluna se esconde, aparece ao lado do concelho */
+      var km = v.perto ? '<span class="lfcmb-so-estreito"> · ' + fmt(p.km, { currency: false, decimals: 1 }) + ' km</span>' : '';
       return '<tr' + (i === 0 ? ' class="is-on"' : '') + '><td class="lfcmb-rank lfcmb-esconde">' + (i + 1) + '</td>' +
-        '<td><div class="lfcmb-posto"><span class="' + (i === 0 ? 'lfcmb-top' : '') + '"><span class="lfcmb-so-movel">' + (i + 1) + '. </span>' + esc(p.nome) + '</span><small>' + esc(onde) + '</small><small class="lfcmb-so-movel">' + link + '</small></div></td>' +
+        '<td><div class="lfcmb-posto"><span class="' + (i === 0 ? 'lfcmb-top' : '') + '"><span class="lfcmb-so-movel">' + (i + 1) + '. </span>' + nomeLink + '</span><small>' + esc(onde) + km + '</small></div></td>' +
         '<td class="is-num"><b>' + preco(p.preco) + '</b></td>' +
         '<td class="is-num lfcmb-esconde ' + (d < 0 ? 'lfk-pos' : d > 0 ? 'lfk-neg' : '') + '">' + (temMedia ? dif(d) : '-') + '</td>' +
-        '<td class="lfcmb-esconde lfcmb-esconde-m">' + esc(v.perto ? fmt(p.km, { currency: false, decimals: 1 }) + ' km' : quando(p.atualizado)) + '</td>' +
-        '<td class="is-num lfcmb-esconde">' + link + '</td></tr>';
+        '<td class="lfcmb-esconde lfcmb-esconde-m">' + esc(v.perto ? fmt(p.km, { currency: false, decimals: 1 }) + ' km' : quando(p.atualizado)) + '</td></tr>';
     }).join('');
 
     var caro = v.lista[v.lista.length - 1], frase;
@@ -249,19 +252,6 @@
     $('lfcmb-frase').innerHTML = frase;
     $('lfcmb-fonte').innerHTML = rodape();
   }
-  function renderDistritos() {
-    var r = D.resumo[estado.comb], nacional = r.media;
-    $('lfcmb-d-titulo').textContent = COMB[estado.comb].nome + ': onde é mais barato em cada distrito';
-    var linhas = (r.distritos || []).map(function (x) { return { nome: x[0], postos: x[1], media: x[2], minimo: x[3] }; })
-      .sort(function (a, b) { return a.media - b.media; });
-    $('lfcmb-d-linhas').innerHTML = linhas.map(function (l) {
-      var d = nacional != null ? l.media - nacional : 0;
-      return '<tr' + (l.nome === estado.distrito && !estado.concelho && !estado.geo ? ' class="is-on"' : '') + '><td><a class="lfk-link" href="#" data-distrito="' + esc(l.nome) + '">' + esc(nomeDistrito(l.nome)) + '</a></td>' +
-        '<td class="is-num">' + preco(l.media) + '</td><td class="is-num lfcmb-esconde">' + preco(l.minimo) + '</td>' +
-        '<td class="is-num lfcmb-esconde ' + (d < 0 ? 'lfk-pos' : d > 0 ? 'lfk-neg' : '') + '">' + (nacional != null ? dif(d) : '-') + '</td></tr>';
-    }).join('');
-    $('lfcmb-d-nota').textContent = 'Média simples dos preços afixados nos postos de cada distrito' + (linhas.some(function (l) { return ehIlha(l.nome); }) ? ' e região autónoma (a média nacional é só do continente)' : '') + '. Clica num distrito para veres os postos.';
-  }
   function mostrarResultados() {
     $('lfcmb-estado').hidden = true;
     $('lfcmb-resultados').hidden = false;
@@ -275,23 +265,25 @@
   function aviso(msg, tipo) {
     var a = $('lfcmb-aviso');
     if (!msg) { a.hidden = true; return; }
-    a.className = 'lfk-alert ' + (tipo || 'is-warn'); a.textContent = msg; a.hidden = false;
+    a.className = 'lfk-alert ' + (tipo == null ? 'is-warn' : tipo); a.textContent = msg; a.hidden = false; /* tipo '' = informativo (azul) */
   }
 
   /* ---------- formulário ---------- */
+  /* O select do distrito tem "Todo o país", "Perto de mim" (localização do browser) e os distritos. */
   function preencherDistritos() {
     var sel = el.distrito, atual = sel.value, lista = distritos();
-    sel.innerHTML = '<option value="">Todo o país</option>' + lista.map(function (d) { return '<option value="' + esc(d) + '">' + esc(nomeDistrito(d)) + '</option>'; }).join('');
-    sel.value = lista.indexOf(atual) !== -1 ? atual : '';
+    sel.innerHTML = '<option value="">Todo o país</option><option value="' + PERTO + '">Perto de mim</option>' +
+      lista.map(function (d) { return '<option value="' + esc(d) + '">' + esc(nomeDistrito(d)) + '</option>'; }).join('');
+    sel.value = atual === PERTO || lista.indexOf(atual) !== -1 ? atual : '';
     sel.dispatchEvent(new Event('change', { bubbles: true })); /* o dropdown do kit acompanha o select */
   }
   /* O select dos concelhos está sempre à vista. Com um distrito escolhido lista só os concelhos desse distrito; com
-     "Todo o país" lista os concelhos todos (valor "Distrito|Concelho"), e escolher um deles preenche o distrito. */
+     "Todo o país" ou "Perto de mim" lista os concelhos todos (valor "Distrito|Concelho"), e escolher um deles preenche o distrito. */
   function opcaoConcelho(d, c, comNomeDistrito) {
     return '<option value="' + esc(d + '|' + c) + '">' + esc(comNomeDistrito ? c + ' (' + nomeDistrito(d) + ')' : c) + '</option>';
   }
   function preencherConcelhos() {
-    var d = el.distrito.value, sel = el.concelho, mapa = D.top.concelhos || {}, atual = sel.value, html;
+    var d = el.distrito.value === PERTO ? '' : el.distrito.value, sel = el.concelho, mapa = D.top.concelhos || {}, atual = sel.value, html;
     if (d) {
       html = (mapa[d] || []).map(function (c) { return opcaoConcelho(d, c, false); }).join('');
     } else {
@@ -306,18 +298,25 @@
     sel.dispatchEvent(new Event('change', { bubbles: true })); /* o dropdown do kit acompanha o select */
   }
   function concelhoEscolhido() { var v = el.concelho.value || ''; var i = v.indexOf('|'); return i < 0 ? { d: '', c: '' } : { d: v.slice(0, i), c: v.slice(i + 1) }; }
-  /* escolher um concelho na lista de todo o país preenche o distrito e encurta a lista; não calcula nada */
+  /* escolher um concelho na lista de todo o país preenche o distrito (e desliga "Perto de mim") e encurta a lista; não calcula nada */
   function aoMudarConcelho() {
     var x = concelhoEscolhido();
     if (!x.c || el.distrito.value === x.d) return;
+    estado.geo = null;
     el.distrito.value = x.d;
     el.distrito.dispatchEvent(new Event('change', { bubbles: true })); /* dispara preencherConcelhos, que mantém o valor */
+  }
+  /* só o utilizador dispara "input" (o kit e o select nativo disparam-no antes do "change"; o nosso código só dispara "change") */
+  function aoEscolherDistrito() {
+    if (el.distrito.value === PERTO) { if (D.resumo && D.top) localizar(); }
+    else { estado.geo = null; aviso(''); }
   }
   function lerFormulario() {
     var b = el.comb.querySelector('button[aria-pressed="true"]');
     estado.comb = b ? b.getAttribute('data-comb') : 'gasoleo';
-    var x = concelhoEscolhido();
-    estado.distrito = el.distrito.value || x.d || '';
+    var x = concelhoEscolhido(), d = el.distrito.value;
+    if (d !== PERTO) estado.geo = null; /* a localização só conta enquanto "Perto de mim" estiver escolhido */
+    estado.distrito = (d === PERTO ? '' : d) || x.d || '';
     estado.concelho = x.c && (x.d === estado.distrito) ? x.c : '';
   }
   function escreverHash() {
@@ -347,7 +346,6 @@
   /* aplica o estado: escolhe a vista, carrega o ficheiro completo se for preciso e desenha */
   function aplicar(rolar) {
     aviso('');
-    renderDistritos();
     function pronto(v) { render(v); mostrarResultados(); escreverHash(); if (rolar) rolarAte($('lfcmb-resultados')); }
     if (estado.geo) {
       carregarTodos(function (e) {
@@ -368,28 +366,34 @@
     pronto(estado.distrito ? vistaDistrito(estado.distrito) : vistaPais());
   }
 
+  /* "Perto de mim": pede a localização ao browser e mostra logo os postos à volta; se falhar, volta a "Todo o país" e explica */
+  var aLocalizar = false;
+  function semLocalizacao(msg) {
+    estado.geo = null;
+    if (el.distrito.value === PERTO) { el.distrito.value = ''; el.distrito.dispatchEvent(new Event('change', { bubbles: true })); }
+    aviso(msg, 'is-warn');
+  }
   function localizar() {
-    if (!navigator.geolocation) { aviso('O teu browser não permite obter a localização. Escolhe o distrito e o concelho.', 'is-err'); return; }
-    el.perto.disabled = true;
-    var antes = el.perto.textContent;
-    el.perto.textContent = 'A obter a localização...';
+    if (!navigator.geolocation) { semLocalizacao('O teu browser não permite obter a localização. Escolhe o distrito e o concelho.'); return; }
+    if (aLocalizar) return;
+    aLocalizar = true; el.ver.disabled = true;
+    aviso('A obter a tua localização...', '');
     navigator.geolocation.getCurrentPosition(function (pos) {
-      el.perto.disabled = false; el.perto.textContent = antes;
-      lerFormulario();
+      aLocalizar = false; el.ver.disabled = false;
+      if (el.distrito.value !== PERTO) { aviso(''); return; } /* entretanto escolheu outra coisa */
       estado.geo = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-      estado.distrito = ''; estado.concelho = '';
-      el.distrito.value = ''; el.distrito.dispatchEvent(new Event('change', { bubbles: true })); preencherConcelhos();
+      lerFormulario();
       aplicar(true);
     }, function (err) {
-      el.perto.disabled = false; el.perto.textContent = antes;
-      aviso(err && err.code === 1 ? 'Para veres os postos à tua volta, autoriza a localização no browser. A localização não sai do teu telemóvel: a conta é feita aqui na página.' :
-        'Não conseguimos obter a tua localização. Escolhe o distrito e o concelho.', 'is-warn');
+      aLocalizar = false; el.ver.disabled = false;
+      semLocalizacao(err && err.code === 1 ? 'Para veres os postos à tua volta, autoriza a localização no browser. A localização não sai do teu telemóvel: a conta é feita aqui na página.' :
+        'Não conseguimos obter a tua localização. Escolhe o distrito e o concelho.');
     }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 600000 });
   }
 
   /* ---------- arranque ---------- */
   function iniciar() {
-    el.comb = $('lfcmb-comb'); el.distrito = $('lfcmb-distrito'); el.concelho = $('lfcmb-concelho'); el.ver = $('lfcmb-ver'); el.perto = $('lfcmb-perto');
+    el.comb = $('lfcmb-comb'); el.distrito = $('lfcmb-distrito'); el.concelho = $('lfcmb-concelho'); el.ver = $('lfcmb-ver');
     if (!el.comb || !el.distrito || !el.ver) return;
     var faltam = 2;
     function depois(e) {
@@ -405,16 +409,13 @@
     pedir('postos-resumo.json', function (e, j) { if (!e) D.resumo = j; depois(e); });
     pedir('postos-top.json', function (e, j) { if (!e) D.top = j; depois(e); });
 
+    el.distrito.addEventListener('input', aoEscolherDistrito);
     el.distrito.addEventListener('change', preencherConcelhos);
     el.concelho.addEventListener('change', aoMudarConcelho);
-    el.ver.addEventListener('click', function (e) { e.preventDefault(); if (!D.resumo || !D.top) return; estado.geo = null; lerFormulario(); aplicar(true); });
-    el.perto.addEventListener('click', function (e) { e.preventDefault(); if (!D.resumo || !D.top) return; localizar(); });
-    $('lfcmb-d-linhas').addEventListener('click', function (e) {
-      var a = e.target.closest ? e.target.closest('a[data-distrito]') : null; if (!a) return;
-      e.preventDefault();
-      estado.geo = null; estado.distrito = a.getAttribute('data-distrito'); estado.concelho = '';
-      el.distrito.value = estado.distrito; el.distrito.dispatchEvent(new Event('change', { bubbles: true }));
-      preencherConcelhos();
+    el.ver.addEventListener('click', function (e) {
+      e.preventDefault(); if (!D.resumo || !D.top) return;
+      lerFormulario();
+      if (el.distrito.value === PERTO && !estado.geo) { localizar(); return; } /* ainda sem localização: pede-a e mostra quando chegar */
       aplicar(true);
     });
   }

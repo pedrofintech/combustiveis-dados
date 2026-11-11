@@ -9,22 +9,25 @@
 .lfk .lfcmb-filtros .lfk-segment { display: flex; flex-wrap: wrap; max-width: 100%; }
 .lfk .lfcmb-filtros .lfk-segment > button { flex: 1 1 auto; }
 .lfk .lfcmb-acoes { display: flex; flex-wrap: wrap; gap: .75rem; }
-.lfk .lfcmb-acoes .lfk-btn { flex: 1 1 14rem; }
+.lfk .lfcmb-acoes .lfk-btn { flex: 0 1 auto; min-width: 14rem; max-width: 100%; }
+.lfk .lfcmb-tabela th { white-space: nowrap; } /* "Face à média" e "Distância" numa só linha (o kit deixa os cabeçalhos quebrar) */
 .lfk .lfcmb-posto { display: flex; flex-direction: column; gap: .125rem; min-width: 0; white-space: normal; }
 .lfk .lfcmb-posto small { color: var(--lfk-text-3); font-size: var(--lfk-fs-xs); line-height: var(--lfk-lh-xs); }
-.lfk .lfcmb-top { font-weight: 600; }
+.lfk .lfcmb-posto .lfk-link { font-weight: 500; } /* o nome é o link para o caminho no Google Maps, com o estilo de link do kit */
+.lfk .lfcmb-top .lfk-link { font-weight: 600; }
 .lfk .lfk-stat.lfcmb-ok .lfk-stat-v { color: var(--lfk-ok); } /* o mais barato a verde, como os valores positivos do kit */
 .lfk .lfk-table td.lfcmb-rank { color: var(--lfk-text-3); width: 2rem; }
 .lfk .lfcmb-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; margin-bottom: 1rem; }
 .lfk .lfcmb-head h2 { margin: 0; }
-.lfk .lfcmb-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
-.lfk .lfcmb-links .lfk-calc-card-body { padding: 0 1.5rem; }
-.lfk .lfcmb-mapa { white-space: nowrap; }
-.lfk .lfcmb-so-movel { display: none; }
-@media (max-width: 760px) { .lfk .lfk-table .lfcmb-esconde-m { display: none; } }
+.lfk .lfcmb-so-movel, .lfk .lfcmb-so-estreito { display: none; }
+@media (max-width: 760px) {
+  .lfk .lfk-table .lfcmb-esconde-m { display: none; }
+  .lfk .lfcmb-so-estreito { display: inline; }
+}
 @media (max-width: 640px) {
   .lfk .lfk-table .lfcmb-esconde { display: none; }
   .lfk .lfcmb-so-movel { display: inline; }
+  .lfk .lfcmb-acoes .lfk-btn { flex: 1 1 auto; }
 }
 </style>
 
@@ -43,16 +46,15 @@
         </div>
         <div class="lfk-field">
           <label class="lfk-label" for="lfcmb-distrito">Distrito</label>
-          <select class="lfk-input" id="lfcmb-distrito" name="distrito"><option value="">Todo o país</option></select>
+          <select class="lfk-input" id="lfcmb-distrito" name="distrito"><option value="">Todo o país</option><option value="__perto">Perto de mim</option></select>
+          <span class="lfk-hint">"Perto de mim" pede a tua localização ao browser. Fica no teu telemóvel.</span>
         </div>
         <div class="lfk-field" id="lfcmb-campo-concelho">
           <label class="lfk-label" for="lfcmb-concelho">Concelho</label>
           <select class="lfk-input" id="lfcmb-concelho" name="concelho"><option value="">Todos os concelhos</option></select>
         </div>
-        <div class="lfk-hint">Para veres só os postos à tua volta, usa a tua localização. Fica no teu telemóvel: a conta é feita aqui na página.</div>
         <div class="lfcmb-acoes">
           <button type="button" class="lfk-btn" id="lfcmb-ver">Ver os postos mais baratos <span class="lfk-ico-arrow"></span></button>
-          <button type="button" class="lfk-btn is-secondary" id="lfcmb-perto">Usar a minha localização</button>
         </div>
         <div class="lfk-alert is-warn" id="lfcmb-aviso" hidden></div>
       </form>
@@ -75,33 +77,14 @@
         </div>
         <div class="lfk-alert" id="lfcmb-sem" hidden></div>
         <div class="lfk-table-wrap" id="lfcmb-tabela-wrap" style="margin-top:1.5rem">
-          <table class="lfk-table" id="lfcmb-tabela">
-            <thead><tr><th class="lfcmb-esconde"></th><th>Posto</th><th class="is-num">Preço</th><th class="is-num lfcmb-esconde">Face à média</th><th class="lfcmb-esconde lfcmb-esconde-m" id="lfcmb-th-local">Atualizado</th><th class="lfcmb-esconde"></th></tr></thead>
+          <table class="lfk-table lfcmb-tabela" id="lfcmb-tabela">
+            <thead><tr><th class="lfcmb-esconde"></th><th>Posto</th><th class="is-num">Preço</th><th class="is-num lfcmb-esconde">Face à média</th><th class="lfcmb-esconde lfcmb-esconde-m" id="lfcmb-th-local">Atualizado</th></tr></thead>
             <tbody id="lfcmb-linhas"></tbody>
           </table>
         </div>
+        <p class="lfk-hint" style="margin-top:.75rem">Clica no nome do posto para veres o caminho no Google Maps.</p>
         <p class="lfk-summary" style="margin-top:1.5rem" id="lfcmb-frase"></p>
         <p class="lfk-foot" style="margin-top:1rem" id="lfcmb-fonte">Preços comunicados pelos próprios postos ao <a href="https://precoscombustiveis.dgeg.gov.pt/" target="_blank" rel="noopener">portal Preços dos Combustíveis Online da DGEG</a> (Direção-Geral de Energia e Geologia). A ordenação, as médias e a poupança são cálculo do Literacia Financeira, não informação da DGEG.</p>
-      </div>
-
-      <div class="lfk-card" id="lfcmb-distritos">
-        <div class="lfcmb-head">
-          <h2 class="lfk-h-sm" id="lfcmb-d-titulo">Onde é mais barato em cada distrito</h2>
-          <span class="lfk-small lfk-muted">Do mais barato ao mais caro</span>
-        </div>
-        <div class="lfk-table-wrap">
-          <table class="lfk-table" id="lfcmb-d-tabela">
-            <thead><tr><th>Distrito</th><th class="is-num">Preço médio</th><th class="is-num lfcmb-esconde">Mais barato</th><th class="is-num lfcmb-esconde">Face à média nacional</th></tr></thead>
-            <tbody id="lfcmb-d-linhas"></tbody>
-          </table>
-        </div>
-        <p class="lfk-foot" style="margin-top:1rem" id="lfcmb-d-nota">Média simples dos preços afixados nos postos de cada distrito. Clica num distrito para veres os postos.</p>
-      </div>
-
-      <div class="lfcmb-links">
-        <a class="lfk-calc-card" href="https://www.literaciafinanceira.pt/precos-combustiveis">
-          <div class="lfk-calc-card-body"><h3 class="lfk-calc-card-title">Os combustíveis sobem ou descem na segunda-feira?</h3><p class="lfk-ds-text">A previsão do nosso modelo para a próxima semana, confirmada todas as terças com a média oficial da DGEG.</p></div>
-        </a>
       </div>
     </div>
   </div>
