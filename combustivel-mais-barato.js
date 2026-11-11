@@ -21,7 +21,7 @@
   var PERTO = '__perto'; /* valor da opção "Perto de mim" no select do distrito: usa a localização do browser */
   var COMB = {
     gasoleo: { nome: 'Gasóleo simples', art: 'o gasóleo simples' },
-    gasolina: { nome: 'Gasolina 95', art: 'a gasolina 95' },
+    gasolina: { nome: 'Gasolina simples 95', art: 'a gasolina simples 95' },
     gpl: { nome: 'GPL Auto', art: 'o GPL Auto' }
   };
   var CONTINENTE = ['Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa',
@@ -37,7 +37,10 @@
   function preco(v) { return fmt(v, { decimals: 3 }); }
   function cents(v) { var c = Math.abs(v) * 100; return fmt(c, { currency: false, decimals: c % 1 === 0 ? 0 : 1 }); }
   function cent(v) { var c = Math.abs(v) * 100; return cents(v) + (Math.round(c * 10) === 10 ? ' cêntimo' : ' cêntimos'); }
-  function dif(v) { return (v < 0 ? '-' : '+') + fmt(Math.abs(v) * 100, { currency: false, decimals: 1 }) + ' cênt.'; }
+  /* diferença face à média; arredondada a zero fica "0,0 cênt." sem sinal (nunca "-0,0") */
+  function dif(v) { var c = Math.round(Math.abs(v) * 1000) / 10; return (c === 0 ? '' : v < 0 ? '-' : '+') + fmt(c, { currency: false, decimals: 1 }) + ' cênt.'; }
+  /* "mais barata" para a gasolina, "mais barato" para o gasóleo e o GPL */
+  function maisBarato() { return estado.comb === 'gasolina' ? 'mais barata' : 'mais barato'; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function slug(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
   function media(a) { var s = 0; for (var i = 0; i < a.length; i++) s += a[i]; return a.length ? s / a.length : 0; }
@@ -65,6 +68,18 @@
   function nomeDistrito(d) { return /madeira/i.test(d) ? 'Madeira' : /a[çc]ores/i.test(d) ? 'Açores' : d; }
   /* o Porto e a Guarda levam artigo: "distrito do Porto", "distrito da Guarda" */
   function deDistrito(d) { return d === 'Porto' ? 'do Porto' : d === 'Guarda' ? 'da Guarda' : 'de ' + d; }
+  /* concelhos que levam artigo: "na Maia", "no Porto", "nas Caldas da Rainha"; os outros levam "em": "em Lisboa" */
+  var ARTIGO = {
+    'Porto': 'o', 'Barreiro': 'o', 'Seixal': 'o', 'Montijo': 'o', 'Cadaval': 'o', 'Bombarral': 'o', 'Cartaxo': 'o', 'Entroncamento': 'o',
+    'Sardoal': 'o', 'Crato': 'o', 'Gavião': 'o', 'Sabugal': 'o', 'Redondo': 'o', 'Alandroal': 'o', 'Fundão': 'o', 'Marco de Canaveses': 'o',
+    'Peso da Régua': 'o',
+    'Maia': 'a', 'Trofa': 'a', 'Póvoa de Varzim': 'a', 'Póvoa de Lanhoso': 'a', 'Amadora': 'a', 'Azambuja': 'a', 'Lourinhã': 'a', 'Moita': 'a',
+    'Nazaré': 'a', 'Batalha': 'a', 'Marinha Grande': 'a', 'Figueira da Foz': 'a', 'Lousã': 'a', 'Pampilhosa da Serra': 'a', 'Mealhada': 'a',
+    'Murtosa': 'a', 'Covilhã': 'a', 'Sertã': 'a', 'Guarda': 'a', 'Golegã': 'a', 'Chamusca': 'a', 'Vidigueira': 'a',
+    'Caldas da Rainha': 'as'
+  };
+  function emLocal(c) { var a = ARTIGO[c]; return (a ? 'n' + a + ' ' : 'em ') + c; }
+  function deLocal(c) { var a = ARTIGO[c]; return (a ? 'd' + a + ' ' : 'de ') + c; }
   function noDistrito(d) { return ehIlha(d) ? 'na ' + nomeDistrito(d) : 'no distrito ' + deDistrito(d); }
   /* nomes que a API devolve todos em maiúsculas passam a Título */
   function nome(s) {
@@ -151,14 +166,14 @@
       for (var i = 0; i < top[d].length; i++) { var p = postoTop(top[d][i]); p.distrito = d; lista.push(p); }
     }
     var r = D.resumo[estado.comb];
-    return { titulo: COMB[estado.comb].nome + ' mais barato em Portugal continental', onde: 'do país', lista: ordenar(lista).slice(0, TOP),
+    return { titulo: COMB[estado.comb].nome + ' ' + maisBarato() + ' em Portugal continental', onde: 'do país', lista: ordenar(lista).slice(0, TOP),
       media: r.media, mediaOnde: 'em Portugal continental', postos: r.postos, mostraDistrito: true };
   }
   function vistaDistrito(d) {
     var top = D.top[estado.comb][d] || [], lista = [];
     for (var i = 0; i < top.length; i++) { var p = postoTop(top[i]); p.distrito = d; lista.push(p); }
     var r = resumoDistrito(d) || {};
-    return { titulo: COMB[estado.comb].nome + ' mais barato ' + noDistrito(d), onde: noDistrito(d), lista: lista.slice(0, TOP),
+    return { titulo: COMB[estado.comb].nome + ' ' + maisBarato() + ' ' + noDistrito(d), onde: noDistrito(d), lista: lista.slice(0, TOP),
       media: r.media, mediaOnde: noDistrito(d), postos: r.postos, mostraDistrito: false };
   }
   function vistaConcelho(d, c) {
@@ -170,8 +185,8 @@
       lista.push(p); todosConcelho.push(p.preco);
     }
     var rd = resumoDistrito(d) || {};
-    var v = { titulo: COMB[estado.comb].nome + ' mais barato em ' + c, onde: 'em ' + c, lista: ordenar(lista).slice(0, TOP), mostraDistrito: false, concelho: c };
-    if (todosConcelho.length >= 3) { v.media = media(todosConcelho); v.mediaOnde = 'no concelho de ' + c; v.postos = todosConcelho.length; }
+    var v = { titulo: COMB[estado.comb].nome + ' ' + maisBarato() + ' ' + emLocal(c), onde: emLocal(c), lista: ordenar(lista).slice(0, TOP), mostraDistrito: false, concelho: c };
+    if (todosConcelho.length >= 3) { v.media = media(todosConcelho); v.mediaOnde = 'no concelho ' + deLocal(c); v.postos = todosConcelho.length; }
     else { v.media = rd.media; v.mediaOnde = noDistrito(d); v.postos = rd.postos; v.poucos = todosConcelho.length; }
     return v;
   }
@@ -187,7 +202,7 @@
     var dentro = perto.filter(function (p) { return p.km <= raio; });
     if (dentro.length < 3) { raio = RAIO_MAX_KM; dentro = perto; }
     var precos = dentro.map(function (p) { return p.preco; });
-    return { titulo: COMB[estado.comb].nome + ' mais barato num raio de ' + fmt(raio, { currency: false, decimals: 0 }) + ' km', onde: 'à tua volta',
+    return { titulo: COMB[estado.comb].nome + ' ' + maisBarato() + ' num raio de ' + fmt(raio, { currency: false, decimals: 0 }) + ' km', onde: 'à tua volta',
       lista: ordenar(dentro).slice(0, TOP), media: dentro.length >= 3 ? media(precos) : D.resumo[estado.comb].media,
       mediaOnde: dentro.length >= 3 ? 'num raio de ' + fmt(raio, { currency: false, decimals: 0 }) + ' km' : 'em Portugal continental',
       postos: dentro.length >= 3 ? dentro.length : D.resumo[estado.comb].postos, mostraDistrito: true, perto: true, raio: raio };
@@ -219,7 +234,7 @@
     var min = v.lista[0], temMedia = v.media != null;
     $('lfcmb-k-min').textContent = preco(min.preco);
     $('lfcmb-k-min-s').textContent = 'por litro, ' + (v.perto ? 'a ' + fmt(min.km, { currency: false, decimals: 1 }) + ' km (' + min.municipio + ')' :
-      v.concelho ? 'em ' + min.nome : v.mostraDistrito ? 'em ' + min.municipio + ' (' + nomeDistrito(min.distrito) + ')' : 'em ' + min.municipio);
+      v.concelho ? 'em ' + min.nome : v.mostraDistrito ? emLocal(min.municipio) + ' (' + nomeDistrito(min.distrito) + ')' : emLocal(min.municipio));
     $('lfcmb-k-media').textContent = temMedia ? preco(v.media) : '-';
     $('lfcmb-k-media-s').textContent = temMedia ? 'em ' + fmt(v.postos, { currency: false, decimals: 0 }) + ' postos, ' + v.mediaOnde : '';
     $('lfcmb-k-poup').textContent = temMedia ? fmt(Math.max(0, v.media - min.preco) * DEPOSITO_L) : '-';
@@ -231,12 +246,13 @@
       /* o nome do posto é o link para o caminho no Google Maps (abre noutro separador) */
       var nomeLink = '<a class="lfk-link" href="' + esc(mapa(p)) + '" target="_blank" rel="noopener" title="Como chegar (Google Maps)">' + esc(p.nome) + '</a>';
       var onde = v.concelho ? (p.localidade || p.municipio) : v.mostraDistrito && !v.perto ? p.municipio + ', ' + nomeDistrito(p.distrito) : p.municipio;
-      /* a distância tem coluna própria; em ecrãs estreitos, onde a coluna se esconde, aparece ao lado do concelho */
-      var km = v.perto ? '<span class="lfcmb-so-estreito"> · ' + fmt(p.km, { currency: false, decimals: 1 }) + ' km</span>' : '';
+      /* em ecrãs estreitos a última coluna (distância ou hora de atualização) esconde-se e passa para ao lado do concelho */
+      var km = '<span class="lfcmb-so-estreito"> · ' + (v.perto ? fmt(p.km, { currency: false, decimals: 1 }) + ' km' : 'atualizado ' + esc(quando(p.atualizado))) + '</span>';
+      var corDif = d < 0 ? 'lfk-pos' : d > 0 ? 'lfk-neg' : '';
       return '<tr' + (i === 0 ? ' class="is-on"' : '') + '><td class="lfcmb-rank lfcmb-esconde">' + (i + 1) + '</td>' +
         '<td><div class="lfcmb-posto"><span class="' + (i === 0 ? 'lfcmb-top' : '') + '"><span class="lfcmb-so-movel">' + (i + 1) + '. </span>' + nomeLink + '</span><small>' + esc(onde) + km + '</small></div></td>' +
-        '<td class="is-num"><b>' + preco(p.preco) + '</b></td>' +
-        '<td class="is-num lfcmb-esconde ' + (d < 0 ? 'lfk-pos' : d > 0 ? 'lfk-neg' : '') + '">' + (temMedia ? dif(d) : '-') + '</td>' +
+        '<td class="is-num"><b>' + preco(p.preco) + '</b>' + (temMedia ? '<small class="lfcmb-dif-movel ' + corDif + '">' + dif(d) + '</small>' : '') + '</td>' +
+        '<td class="is-num lfcmb-esconde ' + corDif + '">' + (temMedia ? dif(d) : '-') + '</td>' +
         '<td class="lfcmb-esconde lfcmb-esconde-m">' + esc(v.perto ? fmt(p.km, { currency: false, decimals: 1 }) + ' km' : quando(p.atualizado)) + '</td></tr>';
     }).join('');
 
@@ -386,7 +402,7 @@
       aplicar(true);
     }, function (err) {
       aLocalizar = false; el.ver.disabled = false;
-      semLocalizacao(err && err.code === 1 ? 'Para veres os postos à tua volta, autoriza a localização no browser. A localização não sai do teu telemóvel: a conta é feita aqui na página.' :
+      semLocalizacao(err && err.code === 1 ? 'Para veres os postos à tua volta, autoriza a localização no browser. A localização não sai do teu dispositivo: a conta é feita aqui na página.' :
         'Não conseguimos obter a tua localização. Escolhe o distrito e o concelho.');
     }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 600000 });
   }
@@ -398,7 +414,7 @@
     var faltam = 2;
     function depois(e) {
       /* 404: a DGEG ainda não deu a primeira leitura (o ficheiro só existe depois dela). A API abre às 3h, 13h e 20h. */
-      if (e) { erro(e.status === 404 ? 'Ainda não temos os preços dos postos. A DGEG dá acesso aos dados às 3h, às 13h e às 20h; a lista aparece aqui logo a seguir à próxima leitura.' : 'Não conseguimos carregar os preços dos postos. Tenta outra vez daqui a pouco.'); return; }
+      if (e) { erro(e.status === 404 ? 'Ainda não temos os preços dos postos. A DGEG dá acesso aos dados às 3h, às 13h e às 20h. A lista aparece aqui logo a seguir à próxima leitura.' : 'Não conseguimos carregar os preços dos postos. Tenta outra vez daqui a pouco.'); return; }
       if (--faltam) return;
       if (!D.resumo[estado.comb] || !D.top[estado.comb]) { erro('Ainda não há preços de postos para mostrar.'); return; }
       lerHash();

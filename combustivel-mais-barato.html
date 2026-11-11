@@ -18,7 +18,8 @@
 .lfk .lfk-stat.lfcmb-ok .lfk-stat-v { color: var(--lfk-ok); } /* o mais barato a verde, como os valores positivos do kit */
 .lfk .lfk-table td.lfcmb-rank { color: var(--lfk-text-3); width: 2rem; }
 .lfk .lfcmb-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; margin-bottom: 1rem; }
-.lfk .lfcmb-head h2 { margin: 0; }
+.lfk .lfcmb-head h2 { margin: 0; padding-bottom: 0; } /* o título dos resultados usa a classe do título do formulário (lfk-calc-title) */
+.lfk .lfcmb-dif-movel { display: none; font-size: var(--lfk-fs-xs); line-height: var(--lfk-lh-xs); font-weight: 400; }
 .lfk .lfcmb-so-movel, .lfk .lfcmb-so-estreito { display: none; }
 @media (max-width: 760px) {
   .lfk .lfk-table .lfcmb-esconde-m { display: none; }
@@ -27,6 +28,7 @@
 @media (max-width: 640px) {
   .lfk .lfk-table .lfcmb-esconde { display: none; }
   .lfk .lfcmb-so-movel { display: inline; }
+  .lfk .lfcmb-dif-movel { display: block; }
   .lfk .lfcmb-acoes .lfk-btn { flex: 1 1 auto; }
 }
 </style>
@@ -47,7 +49,7 @@
         <div class="lfk-field">
           <label class="lfk-label" for="lfcmb-distrito">Distrito</label>
           <select class="lfk-input" id="lfcmb-distrito" name="distrito"><option value="">Todo o país</option><option value="__perto">Perto de mim</option></select>
-          <span class="lfk-hint">"Perto de mim" pede a tua localização ao browser. Fica no teu telemóvel.</span>
+          <span class="lfk-hint">"Perto de mim" pede a tua localização ao browser. A localização não sai do teu dispositivo.</span>
         </div>
         <div class="lfk-field" id="lfcmb-campo-concelho">
           <label class="lfk-label" for="lfcmb-concelho">Concelho</label>
@@ -65,15 +67,15 @@
     </div>
 
     <div class="lfk-calc-results" id="lfcmb-resultados" hidden>
-      <div class="lfk-card">
+      <div class="lfk-calc-form"><div class="lfk-calc-inner"><!-- mesma caixa e mesma coluna do formulário, para os dois cartões ficarem alinhados -->
         <div class="lfcmb-head">
-          <h2 class="lfk-h-sm" id="lfcmb-titulo">Gasóleo simples mais barato em Portugal continental</h2>
+          <h2 class="lfk-calc-title" id="lfcmb-titulo">Gasóleo simples mais barato em Portugal continental</h2>
           <span class="lfk-tag is-sm is-ok" id="lfcmb-hora"></span>
         </div>
         <div class="lfk-kpis" id="lfcmb-kpis">
           <div class="lfk-stat lfcmb-ok"><div class="lfk-stat-l">O mais barato</div><div class="lfk-stat-v" id="lfcmb-k-min">-</div><div class="lfk-stat-s" id="lfcmb-k-min-s"></div></div>
           <div class="lfk-stat"><div class="lfk-stat-l">Preço médio afixado</div><div class="lfk-stat-v" id="lfcmb-k-media">-</div><div class="lfk-stat-s" id="lfcmb-k-media-s"></div></div>
-          <div class="lfk-stat"><div class="lfk-stat-l">Poupança num depósito de 50 L</div><div class="lfk-stat-v" id="lfcmb-k-poup">-</div><div class="lfk-stat-s" id="lfcmb-k-poup-s"></div></div>
+          <div class="lfk-stat"><div class="lfk-stat-l">Poupança em 50 litros</div><div class="lfk-stat-v" id="lfcmb-k-poup">-</div><div class="lfk-stat-s" id="lfcmb-k-poup-s"></div></div>
         </div>
         <div class="lfk-alert" id="lfcmb-sem" hidden></div>
         <div class="lfk-table-wrap" id="lfcmb-tabela-wrap" style="margin-top:1.5rem">
@@ -85,7 +87,7 @@
         <p class="lfk-hint" style="margin-top:.75rem">Clica no nome do posto para veres o caminho no Google Maps.</p>
         <p class="lfk-summary" style="margin-top:1.5rem" id="lfcmb-frase"></p>
         <p class="lfk-foot" style="margin-top:1rem" id="lfcmb-fonte">Preços comunicados pelos próprios postos ao <a href="https://precoscombustiveis.dgeg.gov.pt/" target="_blank" rel="noopener">portal Preços dos Combustíveis Online da DGEG</a> (Direção-Geral de Energia e Geologia). A ordenação, as médias e a poupança são cálculo do Literacia Financeira, não informação da DGEG.</p>
-      </div>
+      </div></div>
     </div>
   </div>
 </div>
