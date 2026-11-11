@@ -1,0 +1,17 @@
+<!-- Página /combustivel-mais-barato do literaciafinanceira.pt: embed com a ligação à página da previsão (/precos-combustiveis).
+     Fica no Webflow por baixo dos resultados e do anúncio do parceiro, antes das perguntas frequentes (cópia de referência do que está no Webflow).
+     Usa o kit (lf-kit.css já vem no embed da ferramenta, na mesma página): mesma caixa e mesma coluna dos cartões do formulário e dos resultados. -->
+<style>
+.lfk .lfcmb-prev { display: flex; flex-direction: column; align-items: flex-start; gap: .75rem; }
+.lfk .lfcmb-prev h2, .lfk .lfcmb-prev p { margin: 0; }
+.lfk .lfcmb-prev .lfk-link-btn { margin-top: .5rem; white-space: normal; } /* o link pode quebrar de linha no telemóvel */
+</style>
+<div class="lfk" id="lf-cmb-previsao">
+  <div class="lfk-calc"><div class="lfk-calc-results">
+    <div class="lfk-calc-form"><div class="lfk-calc-inner lfcmb-prev">
+      <h2 class="lfk-h-sm">Atestar hoje ou esperar pela segunda-feira?</h2>
+      <p class="lfk-text">Os preços costumam mudar à segunda-feira. Vê a nossa previsão para a próxima semana, atualizada todos os dias, e decide se compensa atestar já.</p>
+      <a class="lfk-link-btn" href="/precos-combustiveis">Ver a previsão para a próxima semana <span class="lfk-btn is-icon"><span class="lfk-ico-arrow"></span></span></a>
+    </div></div>
+  </div></div>
+</div>
