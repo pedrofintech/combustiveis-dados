@@ -1,26 +1,26 @@
 {
-  "geradoEm": "2026-11-11T21:00:31.695Z",
-  "semanaAlvo": "2026-11-09",
-  "modo": "em-vigor",
+  "geradoEm": "2026-11-12T14:17:28.714Z",
+  "semanaAlvo": "2026-11-16",
+  "modo": "previsao",
   "gasoleo": {
-    "variacao": -11.3,
-    "min": -16,
-    "max": -6.5
+    "variacao": -3.9,
+    "min": -5.5,
+    "max": -2.5
   },
   "gasolina": {
-    "variacao": -7.5,
-    "min": -9.5,
-    "max": -5.5
+    "variacao": -4.6,
+    "min": -6.5,
+    "max": -3
   },
-  "janelaCompleta": true,
+  "janelaCompleta": false,
   "kUsado": {
     "gasoleo": 1.04,
     "gasolina": 1.04
   },
-  "diasDeCotacoes": 5,
+  "diasDeCotacoes": 4,
   "deltaCotacoesCts": {
-    "gasoleo": -10.87,
-    "gasolina": -7.18
+    "gasoleo": -3.77,
+    "gasolina": -4.44
   },
   "k": {
     "gasoleo": 1.04,
@@ -35,6 +35,6 @@
     "gasoleo": -11,
     "gasolina": -12.5,
     "semanaInicio": "2026-11-09",
-    "fonte": "precocombustiveis.pt via allorigins (com ISP)"
+    "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)"
   }
 }
