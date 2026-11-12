@@ -1,16 +1,16 @@
 {
-  "geradoEm": "2026-11-12T17:42:35.802Z",
+  "geradoEm": "2026-11-12T21:39:22.804Z",
   "semanaAlvo": "2026-11-16",
   "modo": "previsao",
   "gasoleo": {
-    "variacao": -3.8,
-    "min": -5,
-    "max": -2.5
+    "variacao": -3.3,
+    "min": -4.5,
+    "max": -2
   },
   "gasolina": {
-    "variacao": -4.4,
+    "variacao": -4.2,
     "min": -6,
-    "max": -3
+    "max": -2.5
   },
   "janelaCompleta": false,
   "kUsado": {
@@ -19,15 +19,15 @@
   },
   "diasDeCotacoes": 4,
   "deltaCotacoesCts": {
-    "gasoleo": -3.63,
-    "gasolina": -4.24
+    "gasoleo": -3.16,
+    "gasolina": -4.08
   },
   "k": {
     "gasoleo": 1.04,
     "gasolina": 1.04
   },
   "fontes": {
-    "gasoleo": "yahoo HO=F",
+    "gasoleo": "yahoo HOZ26.NYM",
     "gasolina": "yahoo RBZ26.NYM",
     "cambio": "frankfurter"
   },
