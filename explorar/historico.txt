@@ -1,0 +1,45 @@
+M 2026-03-02 IISerie-038-2026-02-27Supl.pdf -> Despacho Conjunto n.º 22/2026 desde 2026-03-02 gasolina 1.567 gasoleo 1.483
+M 2026-03-09 IISerie-042-2026-03-06Supl.pdf -> Despacho Conjunto n.º 24/2026 desde 2026-03-09 gasolina 1.584 gasoleo 1.513
+M 2026-03-16 IISerie-047-2026-03-13Supl.pdf -> Despacho Conjunto n.º 26/2026 desde 2026-03-16 gasolina 1.656 gasoleo 1.7
+M 2026-03-23 IISerie-051-2026-03-20Supl.pdf -> Despacho Conjunto n.º 29/2026 desde 2026-03-23 gasolina 1.742 gasoleo 1.796
+M 2026-03-30 IISerie-055-2026-03-27Supl2.pdf -> Despacho Conjunto n.º 31/2026 desde 2026-03-30 gasolina 1.822 gasoleo 1.927
+M 2026-04-06 IISerie-058-2026-04-01Supl.pdf -> Despacho Conjunto n.º 32/2026 desde 2026-04-06 gasolina 1.817 gasoleo 1.953
+M 2026-04-13 IISerie-063-2026-04-10Supl.pdf -> Despacho Conjunto n.º 33/2026 desde 2026-04-13 gasolina 1.804 gasoleo 1.98
+M 2026-04-20 IISerie-068-2026-04-17Supl.pdf -> Despacho Conjunto n.º 35/2026 desde 2026-04-20 gasolina 1.777 gasoleo 1.933
+M 2026-04-27 IISerie-073-2026-04-24.pdf -> Despacho Conjunto n.º 36/2026 desde 2026-04-27 gasolina 1.767 gasoleo 1.834
+M 2026-05-04 IISerie-077-2026-04-30Supl2.pdf -> Despacho Conjunto n.º 37/2026 desde 2026-05-04 gasolina 1.79 gasoleo 1.808
+M 2026-05-11 IISerie-082-2026-05-08Supl.pdf -> Despacho Conjunto n.º 38/2026 desde 2026-05-11 gasolina 1.86 gasoleo 1.896
+M 2026-05-18 IISerie-087-2026-05-15Supl.pdf -> Despacho Conjunto n.º 41/2026 desde 2026-05-18 gasolina 1.849 gasoleo 1.832
+M 2026-05-25 IISerie-092-2026-05-22Supl2.pdf -> Despacho Conjunto n.º 42/2026 desde 2026-05-25 gasolina 1.881 gasoleo 1.821
+M 2026-06-01 IISerie-096-2026-05-29Supl.pdf -> Despacho Conjunto n.º 45/2026 desde 2026-06-01 gasolina 1.898 gasoleo 1.828
+M 2026-06-08 IISerie-099-2026-06-05Supl2.pdf -> Despacho Conjunto n.º 47/2026 desde 2026-06-08 gasolina 1.81 gasoleo 1.739
+M 2026-06-15 IISerie-103-2026-06-12.pdf -> Despacho Conjunto n.º 50/2026 desde 2026-06-15 gasolina 1.791 gasoleo 1.759
+M 2026-06-22 IISerie-107-2026-06-19.pdf -> Despacho Conjunto n.º 52/2026 desde 2026-06-22 gasolina 1.791 gasoleo 1.73
+M 2026-06-29 IISerie-112-2026-06-26.pdf -> Despacho Conjunto n.º 54/2026 desde 2026-06-29 gasolina 1.751 gasoleo 1.648
+M 2026-07-06 IISerie-116-2026-07-03Supl.pdf -> Despacho Conjunto n.º 58/2026 desde 2026-07-06 gasolina 1.746 gasoleo 1.638
+M 2026-07-13 IISerie-121-2026-07-10.pdf -> Despacho Conjunto n.º 59/2026 desde 2026-07-13 gasolina 1.768 gasoleo 1.666
+M 2026-07-20 IISerie-126-2026-07-17Supl2.pdf -> Despacho Conjunto n.º 60/2026 desde 2026-07-20 gasolina 1.79 gasoleo 1.733
+M 2026-07-27 IISerie-131-2026-07-24Supl.pdf -> Despacho Conjunto n.º 64/2026 desde 2026-07-27 gasolina 1.855 gasoleo 1.866
+M 2026-08-03 IISerie-135-2026-07-30Supl2.pdf -> Despacho Conjunto n.º 66/2026 desde 2026-08-03 gasolina 1.884 gasoleo 1.95
+M 2026-08-10 IISerie-140-2026-08-07Supl.pdf -> Despacho Conjunto n.º 71/2026 desde 2026-08-10 gasolina 1.873 gasoleo 1.977
+M 2026-08-17 IISerie-145-2026-08-14Supl.pdf -> Despacho Conjunto n.º 74/2026 desde 2026-08-17 gasolina 1.786 gasoleo 1.897
+M 2026-08-24 IISerie-149-2026-08-20Supl3.pdf -> Despacho Conjunto n.º 75/2026 desde 2026-08-24 gasolina 1.86 gasoleo 1.974
+M 2026-08-31 IISerie-154-2026-08-28Supl.pdf -> Despacho Conjunto n.º 78/2026 desde 2026-08-31 gasolina 1.898 gasoleo 1.999
+M 2026-09-07 IISerie-159-2026-09-04Supl2.pdf -> Despacho Conjunto n.º 82/2026 desde 2026-09-07 gasolina 1.921 gasoleo 1.951
+M 2026-09-14 IISerie-164-2026-09-11.pdf -> Despacho Conjunto n.º 84/2026 desde 2026-09-14 gasolina 2.01 gasoleo 2.036
+M 2026-09-21 IISerie-169-2026-09-18.pdf -> Despacho Conjunto n.º 86/2026 desde 2026-09-21 gasolina 1.984 gasoleo 2.077
+M 2026-09-28 IISerie-174-2026-09-25Supl3.pdf -> Despacho Conjunto n.º 89/2026 desde 2026-09-28 gasolina 2.029 gasoleo 2.148
+M 2026-10-05 IISerie-179-2026-10-02Supl.pdf -> Despacho Conjunto n.º 90/2026 desde 2026-10-05 gasolina 2.021 gasoleo 2.12
+M 2026-10-12 IISerie-183-2026-10-09Supl.pdf -> Despacho Conjunto n.º 91/2026 desde 2026-10-12 gasolina 2.003 gasoleo 2.091
+M 2026-10-19 IISerie-188-2026-10-16Supl.pdf -> Despacho Conjunto n.º 93/2026 desde 2026-10-19 gasolina 2.035 gasoleo 2.085
+M 2026-10-26 IISerie-192-2026-10-23Supl3.pdf -> Despacho Conjunto n.º 95/2026 desde 2026-10-26 gasolina 2.02 gasoleo 2.113
+M 2026-11-02 IISerie-197-2026-10-30Supl2.pdf -> Despacho Conjunto n.º 99/2026 desde 2026-11-02 gasolina 1.961 gasoleo 2.125
+M 2026-11-09 IISerie-202-2026-11-06Supl3.pdf -> Despacho Conjunto n.º 101/2026 desde 2026-11-09 gasolina 1.937 gasoleo 2.145
+M 2026-11-16 sem despacho nos ficheiros de qua-sex (4)
+Madeira: 37 de 38 semanas
+A 31-I-Despacho_Normativo-2024-10-30 -> [{"ato":"Despacho Normativo n.º 31/2024","num":"31","desde":"2024-11-01","gasolina":1.514,"gasoleo":1.404,"assinado":"2024-10-30"}]
+A 23-I-Despacho_Normativo-2024-08-28 -> [{"ato":"Despacho Normativo n.º 23/2024","num":"23","desde":"2024-09-01","gasolina":1.574,"gasoleo":1.448,"assinado":"2024-08-28"}]
+A 4-I-Despacho_Normativo-2025-01-31 -> [{"ato":"Despacho Normativo n.º 4/2025","num":"4","desde":"2025-02-01","gasolina":1.549,"gasoleo":1.479,"assinado":"2025-01-31"}]
+A 30-I-Despacho_Normativo-2026-09-28 -> [{"ato":"Despacho Normativo n.º 30/2026","num":"30","desde":"2026-10-01","gasolina":1.924,"gasoleo":1.939,"assinado":"2026-09-28"}]
+A I-2026-109-S0.pdf (QUARTA-FEIRA, 26 DE AGOSTO DE 2026) -> [{"ato":"Despacho Normativo n.º 25/2026","num":"25","desde":"2026-09-01","gasolina":1.854,"gasoleo":1.885,"assinado":"2026-08-26"}]
+A I-2026-121-S0.pdf (SEGUNDA-FEIRA, 28 DE SETEMBRO DE 2026) -> [{"ato":"Despacho Normativo n.º 30/2026","num":"30","desde":"2026-10-01","gasolina":1.924,"gasoleo":1.939,"assinado":"2026-09-28"}]
