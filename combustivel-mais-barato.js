@@ -249,16 +249,25 @@
   }
 
   /* ---------- render ---------- */
-  function rodape() {
+  /* Leitura a mostrar: a mais antiga entre os ficheiros que a vista usa. Em condições normais são todos da mesma leitura;
+     se uma das cópias de reserva estiver atrasada, a página nunca diz que os preços são mais recentes do que são. */
+  function leitura(v) {
+    var fs = [D.resumo, D.top], i, m = D.resumo;
+    if (v && (v.concelho || v.perto) && D.todos) fs.push(D.todos);
+    for (i = 0; i < fs.length; i++) if (fs[i] && fs[i].lidoEm && Date.parse(fs[i].lidoEm) < Date.parse(m.lidoEm)) m = fs[i];
+    return m;
+  }
+  function rodape(v) {
+    var l = leitura(v);
     return 'Preços comunicados pelos próprios postos ao <a href="https://precoscombustiveis.dgeg.gov.pt/" target="_blank" rel="noopener">portal Preços dos Combustíveis Online da DGEG</a> (Direção-Geral de Energia e Geologia), lidos pelo Literacia Financeira a <b>' +
-      esc(dataHoraPT(D.resumo.lidoEmLisboa)) + '</b>. A ordenação, as médias e a poupança são cálculo nosso, não informação da DGEG. A média é a média simples dos preços afixados, sem descontos de cartões, por isso fica acima do preço médio oficial da DGEG, que pondera as quantidades vendidas e inclui descontos. Só entram postos com preço atualizado nos últimos ' +
+      esc(dataHoraPT(l.lidoEmLisboa)) + '</b>. A ordenação, as médias e a poupança são cálculo nosso, não informação da DGEG. A média é a média simples dos preços afixados, sem descontos de cartões, por isso fica acima do preço médio oficial da DGEG, que pondera as quantidades vendidas e inclui descontos. Só entram postos com preço atualizado nos últimos ' +
       (estado.comb === 'gpl' ? '31' : '8') + ' dias.';
   }
   function render(v) {
     var c = COMB[estado.comb];
     $('lfcmb-titulo').textContent = v.titulo;
-    var horas = horasDesde(D.resumo.lidoEm), tag = $('lfcmb-hora');
-    tag.textContent = (horas > MAX_HORAS_AVISO ? 'Última leitura na DGEG: ' : 'Lido na DGEG ') + quando(String(D.resumo.lidoEmLisboa).replace(' ', 'T'));
+    var lida = leitura(v), horas = horasDesde(lida.lidoEm), tag = $('lfcmb-hora');
+    tag.textContent = (horas > MAX_HORAS_AVISO ? 'Última leitura na DGEG: ' : 'Lido na DGEG ') + quando(String(lida.lidoEmLisboa).replace(' ', 'T'));
     tag.className = 'lfk-tag is-sm ' + (horas > MAX_HORAS_AVISO ? 'is-warn' : 'is-ok');
 
     var tb = $('lfcmb-linhas'), aviso = $('lfcmb-sem');
@@ -267,7 +276,7 @@
       aviso.hidden = false;
       aviso.textContent = v.perto ? 'Não encontrámos postos com ' + c.art.replace(/^[oa] /, '') + ' num raio de ' + fmt(RAIO_MAX_KM, { currency: false, decimals: 0 }) + ' km. Escolhe um distrito ou um concelho.' :
         'Não há postos com preço recente de ' + c.nome.toLowerCase() + ' ' + v.onde + '.';
-      $('lfcmb-fonte').innerHTML = rodape();
+      $('lfcmb-fonte').innerHTML = rodape(v);
       return;
     }
     aviso.hidden = true; $('lfcmb-kpis').hidden = false; $('lfcmb-tabela-wrap').hidden = false; $('lfcmb-frase').hidden = false;
@@ -309,7 +318,7 @@
       frase = (c.art.charAt(0).toUpperCase() + c.art.slice(1)) + ' mais barat' + (estado.comb === 'gasolina' ? 'a' : 'o') + ' ' + v.onde + ' está a <b>' + preco(min.preco) + '</b> por litro.';
     }
     $('lfcmb-frase').innerHTML = frase;
-    $('lfcmb-fonte').innerHTML = rodape();
+    $('lfcmb-fonte').innerHTML = rodape(v);
   }
   function mostrarResultados() {
     $('lfcmb-estado').hidden = true;
@@ -460,8 +469,9 @@
     /* O resumo e o top têm de ser da mesma leitura. Se vieram de fontes diferentes e uma das cópias está atrasada,
        pedem-se os dois outra vez à fonte que está a responder; se nem assim baterem certo, segue-se com o que há. */
     function mesmaLeitura(cb) {
-      if (D.resumo.lidoEm === D.top.lidoEm || origem.resumo === origem.top) { cb(); return; }
-      var falta = 2, r = null, t = null, f = fonte;
+      if (D.resumo.lidoEm === D.top.lidoEm || FONTES.length < 2) { cb(); return; }
+      /* vieram de fontes diferentes: pede-se à que está a responder; vieram da mesma: pede-se à outra */
+      var falta = 2, r = null, t = null, f = origem.resumo === origem.top ? (origem.top + 1) % FONTES.length : fonte;
       function junta() { if (--falta) return; if (r && t && r.lidoEm === t.lidoEm) { D.resumo = r; D.top = t; } cb(); }
       pedir('postos-resumo.json', function (e, j) { if (!e) r = j; junta(); }, f);
       pedir('postos-top.json', function (e, j) { if (!e) t = j; junta(); }, f);
