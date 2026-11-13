@@ -1,21 +1,21 @@
 {
-  "atualizado": "2026-11-12",
+  "atualizado": "2026-11-13",
   "semanaInicio": "2026-11-16",
   "semanaFim": "2026-11-22",
   "gasoleo": {
     "atual": 2.135,
-    "variacao": -0.033,
+    "variacao": -0.028,
     "intervalo": {
-      "min": -4.5,
+      "min": -3.5,
       "max": -2
     }
   },
   "gasolina": {
     "atual": 1.922,
-    "variacao": -0.042,
+    "variacao": -0.041,
     "intervalo": {
-      "min": -6,
-      "max": -2.5
+      "min": -5,
+      "max": -3
     }
   },
   "isp": {
@@ -46,22 +46,22 @@
     },
     {
       "semana": "16/11",
-      "gasolina": 1.88,
-      "gasoleo": 2.102,
+      "gasolina": 1.881,
+      "gasoleo": 2.107,
       "previsto": true
     }
   ],
   "fonte": "modelo-proprio",
   "baseConfirmada": true,
   "modelo": {
-    "janelaCompleta": false,
-    "diasDeCotacoes": 4,
+    "janelaCompleta": true,
+    "diasDeCotacoes": 5,
     "k": {
       "gasoleo": 1.04,
       "gasolina": 1.04
     },
     "fontes": {
-      "gasoleo": "yahoo HOZ26.NYM",
+      "gasoleo": "yahoo HO=F",
       "gasolina": "yahoo RBZ26.NYM",
       "cambio": "frankfurter"
     }
@@ -141,23 +141,23 @@
   ],
   "fiscalidade": {
     "iva": 0.23,
-    "emVigor": "16 de novembro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
-    "portaria": "Portaria n.º 499-A/2026/1, de 2026-11-12",
+    "emVigor": "13 de novembro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
+    "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
     "gasolina": {
       "ispBase": 0.49752,
       "csr": 0.087,
       "carbono": 0.15911,
-      "desconto": 0.054630000000000005
+      "desconto": 0.05263
     },
     "gasoleo": {
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.10194
+      "desconto": 0.10094
     }
   },
   "placar": {
-    "atualizado": "2026-11-12",
+    "atualizado": "2026-11-13",
     "semanas": 11,
     "semanasComSetor": 10,
     "gasoleo": {
@@ -281,16 +281,16 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-11-12",
-    "semanaInicio": "2026-11-09",
-    "semanaFim": "2026-11-15",
+    "lidoEm": "2026-11-13",
+    "semanaInicio": "2026-11-16",
+    "semanaFim": "2026-11-22",
     "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)",
     "gasoleo": {
-      "variacao": -0.11,
+      "variacao": -0.06,
       "preco": null
     },
     "gasolina": {
-      "variacao": -0.125,
+      "variacao": -0.02,
       "preco": null
     }
   }
