@@ -1,0 +1,16 @@
+pdftotext: /bin/sh: 1: pdftotext: not found
+GET https://jo.azores.gov.pt/pdf/jornais/I-2026-139-S0.pdf -> 200 [application/pdf] 341009B 957ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-140-S0.pdf -> 200 [application/pdf] 2514507B 582ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-141-S0.pdf -> 200 [application/pdf] 1377248B 603ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-142-S0.pdf -> 200 [application/pdf] 254561B 685ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-143-S0.pdf -> 200 [application/pdf] 514173B 596ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-144-S0.pdf -> 200 [application/pdf] 1469574B 590ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-145-S0.pdf -> 200 [application/pdf] 259979B 37ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-146-S0.pdf -> 200 [application/pdf] 301631B 594ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-147-S0.pdf -> 404 [text/html] nullB 624ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-148-S0.pdf -> 404 [text/html] nullB 589ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-146-S1.pdf -> 404 [text/html] nullB 606ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-139-S1.pdf -> 404 [text/html] nullB 613ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-146-S2.pdf -> 404 [text/html] nullB 583ms
+HEAD https://jo.azores.gov.pt/pdf/jornais/I-2026-139-S2.pdf -> 404 [text/html] nullB 605ms
+GET https://jo.azores.gov.pt/pdf/atos/ -> 403 [text/html; charset=UTF-8] 5636B 49ms
