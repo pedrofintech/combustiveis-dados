@@ -2,24 +2,29 @@ name: Teste ilhas (temporário)
 on:
   push:
     branches: [ilhas-teste]
-    paths: ["explorar-ilhas.mjs", "ilhas-precos.mjs", ".github/workflows/ilhas-teste.yml"]
+    paths: ["explorar-ilhas.mjs", "ilhas-precos.mjs", "teste-ilhas-historico.mjs", ".github/workflows/ilhas-teste.yml"]
 permissions:
   contents: write
 jobs:
-  explorar:
+  testar:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: node explorar-ilhas.mjs
+      - name: pdftotext
+        run: command -v pdftotext || { sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils; }
+      - name: Teste histórico dos leitores
+        run: node teste-ilhas-historico.mjs
+      - name: Corrida a sério (sem estado nem ilhas.json)
+        run: node ilhas-precos.mjs 2>&1 | tee explorar/corrida.txt; echo "saída: ${PIPESTATUS[0]}" | tee -a explorar/corrida.txt
       - name: Gravar os resultados no ramo
         run: |
           git config user.name "combustiveis-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add -A explorar
+          git add -A explorar ilhas.json ilhas-estado.json 2>/dev/null || git add -A explorar
           git diff --cached --quiet && exit 0
-          git commit -m "Resultados da exploração das ilhas [skip ci]"
+          git commit -m "Resultados do teste das ilhas [skip ci]"
           git push
