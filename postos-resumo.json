@@ -1,34 +1,34 @@
 {
  "_nota": "Escrito pelo dgeg-postos.mjs com os preços dos postos lidos na API da DGEG. Médias e listas são cálculo do Literacia Financeira, não informação produzida pela DGEG. Na página citar a DGEG com a data e a hora da leitura (lidoEmLisboa). Médias nacionais e por marca: só Portugal continental.",
  "fonte": "DGEG - Direção-Geral de Energia e Geologia, portal Preços dos Combustíveis Online (https://precoscombustiveis.dgeg.gov.pt/)",
- "lidoEm": "2026-11-13T03:14:05.918Z",
- "lidoEmLisboa": "2026-11-13 03:14",
- "postosLidos": 3177,
+ "lidoEm": "2026-11-13T13:02:17.293Z",
+ "lidoEmLisboa": "2026-11-13 13:02",
+ "postosLidos": 3186,
  "minPostos": 20,
  "mediaOficial": {
   "data": "2026-11-09",
   "diferenca": {
-   "gasoleo": 0.0554,
-   "gasolina": 0.0399
+   "gasoleo": 0.0548,
+   "gasolina": 0.0394
   }
  },
  "gasoleo": {
   "id": 2101,
   "nome": "Gasóleo simples",
   "diasValidos": 8,
-  "postos": 2927,
+  "postos": 2932,
   "postosIlhas": 0,
-  "semPrecoRecente": 7,
+  "semPrecoRecente": 10,
   "precosImplausiveis": 0,
-  "media": 2.1904,
+  "media": 2.1898,
   "mediana": 2.209,
   "minimo": 1.929,
-  "maximo": 2.469,
+  "maximo": 2.379,
   "lista": [
    [
     "INTERMARCHÉ",
-    213,
-    2.0711
+    212,
+    2.0702
    ],
    [
     "PINGO DOCE",
@@ -52,28 +52,33 @@
    ],
    [
     "Genérico",
-    214,
-    2.1596
+    215,
+    2.1601
    ],
    [
     "CEPSA",
-    129,
-    2.1709
+    130,
+    2.1699
    ],
    [
     "MOEVE",
     102,
-    2.1716
+    2.171
    ],
    [
     "FREITAS",
-    57,
-    2.1889
+    58,
+    2.186
    ],
    [
     "OZ Energia",
     32,
     2.1971
+   ],
+   [
+    "GASPE",
+    27,
+    2.2097
    ],
    [
     "ALVES BANDEIRA",
@@ -87,108 +92,103 @@
    ],
    [
     "GALP",
-    654,
-    2.2182
+    655,
+    2.2168
    ],
    [
     "REPSOL",
-    475,
-    2.2285
-   ],
-   [
-    "GASPE",
-    29,
-    2.2289
+    479,
+    2.2286
    ],
    [
     "BP",
     469,
-    2.2419
+    2.2421
    ]
   ],
   "distritos": [
    [
     "Aveiro",
-    241,
-    2.1749,
+    242,
+    2.1746,
     1.989
    ],
    [
     "Beja",
     79,
-    2.2051,
+    2.2055,
     2.049
    ],
    [
     "Braga",
-    245,
-    2.1789,
+    246,
+    2.1788,
     1.989
    ],
    [
     "Bragança",
     77,
-    2.2058,
+    2.2053,
     2.059
    ],
    [
     "Castelo Branco",
     80,
-    2.1791,
+    2.1792,
     2.009
    ],
    [
     "Coimbra",
     142,
-    2.1932,
+    2.1912,
     2.034
    ],
    [
     "Évora",
-    74,
-    2.205,
+    75,
+    2.2067,
     2.053
    ],
    [
     "Faro",
     172,
-    2.201,
+    2.2008,
     1.929
    ],
    [
     "Guarda",
     95,
-    2.1944,
+    2.194,
     1.939
    ],
    [
     "Leiria",
     209,
-    2.1813,
+    2.1815,
     1.929
    ],
    [
     "Lisboa",
     356,
-    2.2063,
+    2.2056,
     1.949
    ],
    [
     "Portalegre",
     46,
-    2.2004,
+    2.2009,
     2.049
    ],
    [
     "Porto",
-    417,
-    2.1858,
-    1.979
+    419,
+    2.185,
+    1.969
    ],
    [
     "Santarém",
-    207,
-    2.1832,
+    209,
+    2.1824,
     1.999
    ],
    [
@@ -205,14 +205,14 @@
    ],
    [
     "Vila Real",
-    87,
-    2.2046,
+    85,
+    2.1984,
     2.059
    ],
    [
     "Viseu",
     153,
-    2.1835,
+    2.1831,
     2.049
    ]
   ]
@@ -221,12 +221,12 @@
   "id": 3201,
   "nome": "Gasolina simples 95",
   "diasValidos": 8,
-  "postos": 3086,
+  "postos": 3092,
   "postosIlhas": 0,
-  "semPrecoRecente": 8,
+  "semPrecoRecente": 11,
   "precosImplausiveis": 0,
-  "media": 1.9619,
-  "mediana": 1.977,
+  "media": 1.9614,
+  "mediana": 1.974,
   "minimo": 1.769,
   "maximo": 2.236,
   "lista": [
@@ -237,8 +237,8 @@
    ],
    [
     "INTERMARCHÉ",
-    213,
-    1.8604
+    212,
+    1.8592
    ],
    [
     "GESTROIL ENERGY",
@@ -253,32 +253,37 @@
    [
     "MOEVE",
     102,
-    1.9374
+    1.9372
    ],
    [
     "CEPSA",
-    129,
-    1.9393
+    130,
+    1.9388
    ],
    [
     "PRIO",
-    242,
-    1.944
+    243,
+    1.9438
    ],
    [
     "Genérico",
-    201,
-    1.9507
+    202,
+    1.9517
    ],
    [
     "FREITAS",
-    57,
-    1.9588
+    58,
+    1.959
+   ],
+   [
+    "GASPE",
+    27,
+    1.9787
    ],
    [
     "GALP",
-    642,
-    1.9813
+    643,
+    1.9799
    ],
    [
     "ALVES BANDEIRA",
@@ -296,110 +301,105 @@
     1.9887
    ],
    [
-    "GASPE",
-    29,
-    1.9973
-   ],
-   [
     "REPSOL",
-    473,
-    2.0001
+    477,
+    1.9999
    ],
    [
     "BP",
     464,
-    2.0029
+    2.0031
    ]
   ],
   "distritos": [
    [
     "Aveiro",
-    262,
-    1.9523,
+    264,
+    1.9526,
     1.784
    ],
    [
     "Beja",
     75,
-    1.9834,
+    1.9837,
     1.829
    ],
    [
     "Braga",
-    263,
-    1.9476,
+    264,
+    1.9473,
     1.789
    ],
    [
     "Bragança",
     75,
-    1.9776,
+    1.9771,
     1.839
    ],
    [
     "Castelo Branco",
     85,
-    1.9581,
+    1.9579,
     1.799
    ],
    [
     "Coimbra",
     148,
-    1.9646,
+    1.9626,
     1.828
    ],
    [
     "Évora",
-    77,
-    1.9722,
+    78,
+    1.9747,
     1.849
    ],
    [
     "Faro",
     179,
-    1.9674,
+    1.9671,
     1.769
    ],
    [
     "Guarda",
     98,
-    1.9709,
+    1.9705,
     1.829
    ],
    [
     "Leiria",
     222,
-    1.9576,
+    1.9578,
     1.819
    ],
    [
     "Lisboa",
     373,
-    1.9751,
+    1.9742,
     1.799
    ],
    [
     "Portalegre",
     49,
-    1.9679,
+    1.9683,
     1.849
    ],
    [
     "Porto",
-    452,
-    1.954,
-    1.779
+    454,
+    1.9533,
+    1.769
    ],
    [
     "Santarém",
-    215,
-    1.9579,
+    217,
+    1.9575,
     1.807
    ],
    [
     "Setúbal",
     194,
-    1.9631,
+    1.9632,
     1.818
    ],
    [
@@ -410,14 +410,14 @@
    ],
    [
     "Vila Real",
-    90,
-    1.9732,
+    88,
+    1.9674,
     1.819
    ],
    [
     "Viseu",
     159,
-    1.9612,
+    1.9607,
     1.829
    ]
   ]
@@ -426,11 +426,11 @@
   "id": 1120,
   "nome": "GPL Auto",
   "diasValidos": 31,
-  "postos": 439,
+  "postos": 440,
   "postosIlhas": 0,
   "semPrecoRecente": 0,
   "precosImplausiveis": 0,
-  "media": 1.0993,
+  "media": 1.0997,
   "mediana": 1.119,
   "minimo": 0.929,
   "maximo": 1.259,
@@ -463,12 +463,12 @@
    [
     "BP",
     47,
-    1.1379
+    1.1375
    ],
    [
     "REPSOL",
-    107,
-    1.1393
+    108,
+    1.1386
    ]
   ],
   "distritos": [
@@ -517,7 +517,7 @@
    [
     "Faro",
     20,
-    1.1049,
+    1.1044,
     0.999
    ],
    [
@@ -535,7 +535,7 @@
    [
     "Lisboa",
     60,
-    1.081,
+    1.0807,
     0.948
    ],
    [
@@ -547,13 +547,13 @@
    [
     "Porto",
     83,
-    1.091,
+    1.0917,
     0.996
    ],
    [
     "Santarém",
-    29,
-    1.1098,
+    30,
+    1.1121,
     0.972
    ],
    [
@@ -565,8 +565,8 @@
    [
     "Viana do Castelo",
     12,
-    1.1296,
-    1.029
+    1.1337,
+    1.06
    ],
    [
     "Vila Real",
