@@ -1,12 +1,21 @@
 {
  "_nota": "Escrito pelo ilhas-precos.mjs: preços máximos de venda ao público dos combustíveis fixados pelo Governo Regional da Madeira (todas as semanas) e dos Açores (todos os meses), lidos dos jornais oficiais. Os postos não podem vender acima destes preços. O GPL Auto não tem preço fixado nas ilhas.",
- "atualizadoEm": "2026-11-13T16:51:25.249Z",
+ "atualizadoEm": "2026-11-13T23:50:52.605Z",
  "regioes": {
   "madeira": {
    "nome": "Madeira",
    "jornal": "Jornal Oficial da Região Autónoma da Madeira",
    "periodo": "semana",
    "precos": [
+    {
+     "ato": "Despacho Conjunto n.º 104/2026",
+     "desde": "2026-11-16",
+     "gasoleo": 2.07,
+     "gasolina": 1.843,
+     "publicado": "2026-11-13",
+     "jornal": "II série, n.º 207, suplemento",
+     "url": "https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-207-2026-11-13Supl.pdf"
+    },
     {
      "ato": "Despacho Conjunto n.º 101/2026",
      "desde": "2026-11-09",
