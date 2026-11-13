@@ -1,0 +1,396 @@
+
+===== JORAM =====
+GET https://joram.madeira.gov.pt/ -> 200 [text/html] 403B 1106ms
+  title: Governo Regional da Madeira | links: 1
+  https://joram.madeira.gov.pt/joram/
+  gravado explorar/joram-ram_madeira_gov_pt_.html
+GET https://joram.madeira.gov.pt/joram/ -> 200 [text/html] 2690B 167ms
+  title: JORAM | links: 6
+  https://joram.madeira.gov.pt/joram/1serie/
+  https://joram.madeira.gov.pt/joram/2serie/
+  https://joram.madeira.gov.pt/joram/3serie/
+  https://joram.madeira.gov.pt/joram/4serie/
+  https://joram.madeira.gov.pt/joram/separatas/
+  mailto:joram@madeira.gov.pt
+  gravado explorar/joram-ram_madeira_gov_pt_joram_.html
+GET https://joram.madeira.gov.pt/joram/2serie/ -> 200 [text/html;charset=UTF-8] 8832B 176ms
+  title: Index of /joram/2serie | links: 55
+  https://joram.madeira.gov.pt/joram/
+  https://joram.madeira.gov.pt/joram/2serie/?N=A
+  https://joram.madeira.gov.pt/joram/2serie/?O=A
+  https://joram.madeira.gov.pt/joram/2serie/?C=N;O=A
+  https://joram.madeira.gov.pt/joram/2serie/?C=S;O=A
+  https://joram.madeira.gov.pt/joram/2serie/Thumbs.db
+  https://joram.madeira.gov.pt/joram/2serie/Fichas%20de%20atos%20de%20Entidades/
+  https://joram.madeira.gov.pt/joram/2serie/COVID%20-%2019%20Ano%202020/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202025/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202024/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202023/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202022/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202021/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202020/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202019/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202018/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202017/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202016/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202015/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202014/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202013/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202012/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202011/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202010/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202009/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202008/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202007/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202006/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202005/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202004/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202003/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202002/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202001/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202000/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201999/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201998/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201997/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201996/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201995/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201994/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201993/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201992/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201991/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201989/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201988/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201987/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201985/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201984/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201983/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201982/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201981/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201980/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201978/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%201977/
+  gravado explorar/joram-ram_madeira_gov_pt_joram_2serie_.html
+GET https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/ -> 200 [text/html;charset=UTF-8] 69143B 337ms
+  title: Index of /joram/2serie/Ano de 2026 | links: 471
+  https://joram.madeira.gov.pt/joram/2serie/
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/?N=A
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/?O=A
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/?C=N;O=A
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/?C=S;O=A
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-206-2026-11-12Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-206-2026-11-12.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-205-2026-11-11Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-205-2026-11-11.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-204-2026-11-10.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-203-2026-11-09.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-202-2026-11-06Supl3.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-202-2026-11-06Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-202-2026-11-06Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-202-2026-11-06.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-201-2026-11-05.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-200-2026-11-04Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-200-2026-11-04.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-199-2026-11-03Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-199-2026-11-03Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-199-2026-11-03.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-198-2026-11-02.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-197-2026-10-30Supl4.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-197-2026-10-30Supl3.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-197-2026-10-30Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-197-2026-10-30Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-197-2026-10-30.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-196-2026-10-29Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-196-2026-10-29.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-195-2026-10-28Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-195-2026-10-28.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-194-2026-10-27.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-193-2026-10-26Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-193-2026-10-26.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-192-2026-10-23Supl3.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-192-2026-10-23Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-192-2026-10-23Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-192-2026-10-23.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-191-2026-10-22Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-191-2026-10-22Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-191-2026-10-22.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-190-2026-10-21.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-189-2026-10-20Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-189-2026-10-20.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-188-2026-10-16Supl3.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-188-2026-10-16Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-188-2026-10-16Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-188-2026-10-16.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-187-2026-10-15.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-186-2026-10-14Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-186-2026-10-14.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-185-2026-10-13Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-185-2026-10-13Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-185-2026-10-13.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-184-2026-10-12.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-183-2026-10-09Supl4.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-183-2026-10-09Supl3.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-183-2026-10-09Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-183-2026-10-09Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-183-2026-10-09.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-182-2026-10-08Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-182-2026-10-08.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-181-2026-10-07Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-181-2026-10-07.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-180-2026-10-06Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-180-2026-10-06.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-179-2026-10-02Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-179-2026-10-02Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-179-2026-10-02.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-178-2026-10-01Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-178-2026-10-01Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-178-2026-10-01.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-177-2026-09-30Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-177-2026-09-30.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-176-2026-09-29.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-175-2026-09-28Supl4.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-175-2026-09-28Supl3.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-175-2026-09-28Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-175-2026-09-28Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-175-2026-09-28.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-174-2026-09-25Supl3.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-174-2026-09-25Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-174-2026-09-25Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-174-2026-09-25.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-173-2026-09-24Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-173-2026-09-24Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-173-2026-09-24.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-172-2026-09-23Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-172-2026-09-23.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-171-2026-09-22Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-171-2026-09-22.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-170-2026-09-21Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-170-2026-09-21.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-169-2026-09-18Supl3.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-169-2026-09-18Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-169-2026-09-18Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-169-2026-09-18.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-168-2026-09-17Supl4.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-168-2026-09-17Supl3.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-168-2026-09-17Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-168-2026-09-17Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-168-2026-09-17.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-167-2026-09-16Supl4.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-167-2026-09-16Supl3.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-167-2026-09-16Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-167-2026-09-16Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-167-2026-09-16.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-166-2026-09-15.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-165-2026-09-14.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-164-2026-09-11Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-164-2026-09-11.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-163-2026-09-10Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-163-2026-09-10Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-163-2026-09-10.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-162-2026-09-09.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-161-2026-09-08.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-160-2026-09-07Supl2.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-160-2026-09-07Supl.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-160-2026-09-07.pdf
+  https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-159-2026-09-04Supl4.pdf
+  gravado explorar/joram-ram_madeira_gov_pt_joram_2serie_Ano_20de_202026_.html
+GET https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/ -> 200 [text/html;charset=UTF-8] 69145B 170ms
+  title: Index of /joram/IIserie/Ano de 2026 | links: 471
+  https://joram.madeira.gov.pt/joram/IIserie/
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/?N=A
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/?O=A
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/?C=N;O=A
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/?C=S;O=A
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-206-2026-11-12Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-206-2026-11-12.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-205-2026-11-11Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-205-2026-11-11.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-204-2026-11-10.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-203-2026-11-09.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-202-2026-11-06Supl3.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-202-2026-11-06Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-202-2026-11-06Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-202-2026-11-06.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-201-2026-11-05.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-200-2026-11-04Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-200-2026-11-04.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-199-2026-11-03Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-199-2026-11-03Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-199-2026-11-03.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-198-2026-11-02.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-197-2026-10-30Supl4.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-197-2026-10-30Supl3.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-197-2026-10-30Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-197-2026-10-30Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-197-2026-10-30.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-196-2026-10-29Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-196-2026-10-29.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-195-2026-10-28Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-195-2026-10-28.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-194-2026-10-27.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-193-2026-10-26Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-193-2026-10-26.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-192-2026-10-23Supl3.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-192-2026-10-23Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-192-2026-10-23Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-192-2026-10-23.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-191-2026-10-22Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-191-2026-10-22Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-191-2026-10-22.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-190-2026-10-21.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-189-2026-10-20Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-189-2026-10-20.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-188-2026-10-16Supl3.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-188-2026-10-16Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-188-2026-10-16Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-188-2026-10-16.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-187-2026-10-15.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-186-2026-10-14Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-186-2026-10-14.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-185-2026-10-13Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-185-2026-10-13Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-185-2026-10-13.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-184-2026-10-12.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-183-2026-10-09Supl4.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-183-2026-10-09Supl3.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-183-2026-10-09Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-183-2026-10-09Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-183-2026-10-09.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-182-2026-10-08Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-182-2026-10-08.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-181-2026-10-07Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-181-2026-10-07.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-180-2026-10-06Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-180-2026-10-06.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-179-2026-10-02Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-179-2026-10-02Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-179-2026-10-02.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-178-2026-10-01Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-178-2026-10-01Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-178-2026-10-01.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-177-2026-09-30Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-177-2026-09-30.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-176-2026-09-29.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-175-2026-09-28Supl4.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-175-2026-09-28Supl3.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-175-2026-09-28Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-175-2026-09-28Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-175-2026-09-28.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-174-2026-09-25Supl3.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-174-2026-09-25Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-174-2026-09-25Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-174-2026-09-25.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-173-2026-09-24Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-173-2026-09-24Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-173-2026-09-24.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-172-2026-09-23Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-172-2026-09-23.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-171-2026-09-22Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-171-2026-09-22.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-170-2026-09-21Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-170-2026-09-21.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-169-2026-09-18Supl3.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-169-2026-09-18Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-169-2026-09-18Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-169-2026-09-18.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-168-2026-09-17Supl4.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-168-2026-09-17Supl3.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-168-2026-09-17Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-168-2026-09-17Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-168-2026-09-17.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-167-2026-09-16Supl4.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-167-2026-09-16Supl3.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-167-2026-09-16Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-167-2026-09-16Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-167-2026-09-16.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-166-2026-09-15.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-165-2026-09-14.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-164-2026-09-11Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-164-2026-09-11.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-163-2026-09-10Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-163-2026-09-10Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-163-2026-09-10.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-162-2026-09-09.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-161-2026-09-08.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-160-2026-09-07Supl2.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-160-2026-09-07Supl.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-160-2026-09-07.pdf
+  https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-159-2026-09-04Supl4.pdf
+  gravado explorar/joram-ram_madeira_gov_pt_joram_IIserie_Ano_20de_202026_.html
+GET https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-202-2026-11-06Supl3.pdf -> 200 [application/pdf] 237008B 330ms
+  gravado explorar/joram-202-supl3.pdf
+HEAD https://joram.madeira.gov.pt/joram/IIserie/Ano%20de%202026/IISerie-202-2026-11-06Supl3.pdf -> 500 [text/html] 0B 167ms
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-203-2026-11-12.pdf -> 500 35697
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-203-2026-11-12Supl.pdf -> 500 35701
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-203-2026-11-12Supl2.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-203-2026-11-12Supl3.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-203-2026-11-13.pdf -> 500 35697
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-203-2026-11-13Supl.pdf -> 500 35701
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-203-2026-11-13Supl2.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-203-2026-11-13Supl3.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-204-2026-11-12.pdf -> 500 35697
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-204-2026-11-12Supl.pdf -> 500 35701
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-204-2026-11-12Supl2.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-204-2026-11-12Supl3.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-204-2026-11-13.pdf -> 500 35697
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-204-2026-11-13Supl.pdf -> 500 35701
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-204-2026-11-13Supl2.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-204-2026-11-13Supl3.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-205-2026-11-12.pdf -> 500 35697
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-205-2026-11-12Supl.pdf -> 500 35701
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-205-2026-11-12Supl2.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-205-2026-11-12Supl3.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-205-2026-11-13.pdf -> 500 35697
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-205-2026-11-13Supl.pdf -> 500 35701
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-205-2026-11-13Supl2.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-205-2026-11-13Supl3.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-206-2026-11-12.pdf -> 500 35697
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-206-2026-11-12Supl.pdf -> 500 35701
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-206-2026-11-12Supl2.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-206-2026-11-12Supl3.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-206-2026-11-13.pdf -> 500 35697
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-206-2026-11-13Supl.pdf -> 500 35701
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-206-2026-11-13Supl2.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-206-2026-11-13Supl3.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-207-2026-11-12.pdf -> 500 35697
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-207-2026-11-12Supl.pdf -> 500 35701
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-207-2026-11-12Supl2.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-207-2026-11-12Supl3.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-207-2026-11-13.pdf -> 500 35697
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-207-2026-11-13Supl.pdf -> 500 35701
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-207-2026-11-13Supl2.pdf -> 500 35702
+HEAD https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-207-2026-11-13Supl3.pdf -> 500 35702
+
+===== DREC =====
+GET https://www.madeira.gov.pt/drec -> 200 [text/html; charset=utf-8] 91909B 1364ms
+  links relevantes: 5 
+  https://www.madeira.gov.pt/Portals/_default/skins/grm_portaisdirecoes/skin.css?cdv=849
+  https://www.madeira.gov.pt/Portals/_default/Containers/GRM_PortaisDirecoes/container.css?cdv=849
+  https://www.madeira.gov.pt/Portals/_default/Containers/GRM_PortaisDirecoes/MulticatalogoBrancoAzul.css?cdv=849
+  https://www.madeira.gov.pt/Portals/_default/Containers/GRM_PortaisDirecoes/LinksMenuAzulAlignMult.css?cdv=849
+  https://www.madeira.gov.pt/Portals/_default/Containers/GRM_PortaisDirecoes/FundoAzulClaro_ComTitulo.css?cdv=849
+  gravado explorar/drec-w_madeira_gov_pt_drec.html
+GET https://www.madeira.gov.pt/drec/Estrutura/Com%C3%A9rcio -> 200 [text/html; charset=utf-8] 92067B 1993ms final=https://www.madeira.gov.pt/drec/Estrutura/DRCIQ/Com%C3%A9rcio
+  links relevantes: 6 
+  https://www.madeira.gov.pt/Portals/_default/skins/grm_portaisdirecoes/skin.css?cdv=849
+  https://www.madeira.gov.pt/Portals/_default/Containers/GRM_PortaisDirecoes/container.css?cdv=849
+  https://www.madeira.gov.pt/Portals/_default/Containers/GRM_PortaisDirecoes/MulticatalogoBrancoAzul.css?cdv=849
+  https://www.madeira.gov.pt/Portals/_default/Containers/GRM_PortaisDirecoes/LinksMenuAzulAlignMult.css?cdv=849
+  https://www.madeira.gov.pt/Portals/_default/Containers/GRM_PortaisDirecoes/FundoAzulClaro_ComTitulo.css?cdv=849
+  https://www.madeira.gov.pt/drec/Login?returnurl=%2Fdrec%2FEstrutura%2FDRCIQ%2FCom%C3%A9rcio
+  gravado explorar/drec-w_madeira_gov_pt_drec_Estrutura_Com_C3_A9r.html
+
+===== JO Açores =====
+GET https://jo.azores.gov.pt/api/public/search/jornal?page=1&pageSize=100 -> 403 [text/html; charset=UTF-8] 5814B 212ms
+GET https://jo.azores.gov.pt/api/public/search/ato?searchText=pre%C3%A7os+m%C3%A1ximos+de+venda+ao+p%C3%BAblico&tipoAto=e9d5f7b5-f417-4f5a-9591-f25da52ecd54&page=1&pageSize=8&ordenacao=0 -> 403 [text/html; charset=UTF-8] 6347B 31ms
+GET https://jo.azores.gov.pt/api/public/search/ato?searchText=pre%C3%A7os+m%C3%A1ximos+de+venda+ao+p%C3%BAblico&tipoAto=e9d5f7b5-f417-4f5a-9591-f25da52ecd54&page=1&pageSize=8&ordenacao=1 -> 403 [text/html; charset=UTF-8] 6347B 35ms
+GET https://jo.azores.gov.pt/api/public/search/ato?searchText=pre%C3%A7os+m%C3%A1ximos+de+venda+ao+p%C3%BAblico&tipoAto=e9d5f7b5-f417-4f5a-9591-f25da52ecd54&page=1&pageSize=8&ordenacao=2 -> 403 [text/html; charset=UTF-8] 6347B 31ms
+GET https://jo.azores.gov.pt/api/public/search/ato?searchText=pre%C3%A7os+m%C3%A1ximos+de+venda+ao+p%C3%BAblico&tipoAto=e9d5f7b5-f417-4f5a-9591-f25da52ecd54&page=1&pageSize=8&ordenacao=3 -> 403 [text/html; charset=UTF-8] 6347B 41ms
+GET https://jo.azores.gov.pt/api/public/search/ato?searchText=combust%C3%ADveis&tipoAto=e9d5f7b5-f417-4f5a-9591-f25da52ecd54&page=1&pageSize=8&ordenacao=0&fromDate=2026-10-01&toDate=2026-11-13 -> 403 [text/html; charset=UTF-8] 6395B 32ms
+GET https://jo.azores.gov.pt/api/public/search/ato?searchText=combust%C3%ADveis&tipoAto=e9d5f7b5-f417-4f5a-9591-f25da52ecd54&page=1&pageSize=8&ordenacao=0&fromDate=01-10-2026&toDate=13-11-2026 -> 403 [text/html; charset=UTF-8] 6395B 38ms
+GET https://jo.azores.gov.pt/api/public/search/ato?searchText=combust%C3%ADveis&tipoAto=e9d5f7b5-f417-4f5a-9591-f25da52ecd54&page=1&pageSize=8&ordenacao=0&fromDate=2026-10-01T00%3A00%3A00Z&toDate=2026-11-13T23%3A59%3A59Z -> 403 [text/html; charset=UTF-8] 6522B 39ms
+GET https://jo.azores.gov.pt/api/public/search/ato?searchText=combust%C3%ADveis&tipoAto=e9d5f7b5-f417-4f5a-9591-f25da52ecd54&page=1&pageSize=8&ordenacao=0&fromDate=1790812800000&toDate=1794528000000 -> 403 [text/html; charset=UTF-8] 6435B 67ms
+GET https://jo.azores.gov.pt/pdf/atos/33-I-Despacho_Normativo-2026-10-30.pdf -> 200 [application/pdf] 40142B 987ms
+  gravado explorar/jo-dn33-2026.pdf
+GET https://jo.azores.gov.pt/pdf/atos/32-I-Despacho_Normativo-2026-10-30.pdf -> 200 [application/pdf] 40599B 935ms
+  gravado explorar/jo-dn32-2026.pdf
