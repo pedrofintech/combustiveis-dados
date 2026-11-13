@@ -7,6 +7,9 @@
    - postos-top.json     os 10 postos mais baratos de cada distrito e a lista de concelhos de cada distrito
    - postos-todos.json   todos os postos com preço recente e coordenadas; só se carrega para o filtro por concelho e para
                          "Perto de mim" (uns 80 KB comprimidos)
+   - ilhas.json          preços máximos dos Açores e da Madeira (escrito pelo ilhas-precos.mjs a partir dos jornais oficiais).
+                         A DGEG só tem os postos do continente; nas ilhas o preço é um máximo fixado pelo Governo Regional,
+                         por isso as duas regiões aparecem no campo Distrito com esse preço em vez de uma lista de postos.
    O HTML da ferramenta está no embed da página (cópia em combustivel-mais-barato.html) e usa o LF kit (lf-site-assets/kit).
    Condições da DGEG: citar a DGEG com a data e a hora da leitura e dizer que a ordenação, as médias e a poupança são
    cálculo nosso. Os textos que o fazem estão em rodape() e no HTML do embed. */
@@ -36,8 +39,17 @@
   };
   var CONTINENTE = ['Aveiro', 'Beja', 'Braga', 'Bragança', 'Castelo Branco', 'Coimbra', 'Évora', 'Faro', 'Guarda', 'Leiria', 'Lisboa',
     'Portalegre', 'Porto', 'Santarém', 'Setúbal', 'Viana do Castelo', 'Vila Real', 'Viseu'];
+  /* Açores e Madeira: preço máximo fixado pelo Governo Regional (Madeira todas as semanas, Açores todos os meses).
+     lat/lon: caixa à volta de cada arquipélago, para "Perto de mim" (as Selvagens contam como Madeira). */
+  var ILHAS = {
+    acores: { nome: 'Açores', em: 'nos Açores', Em: 'Nos Açores', fuso: 'Atlantic/Azores', quando: 'todos os meses', periodo: 'deste mês',
+      jornal: 'Jornal Oficial da Região Autónoma dos Açores', link: 'https://jo.azores.gov.pt/', lat: [36.5, 40.2], lon: [-31.7, -24.2] },
+    madeira: { nome: 'Madeira', em: 'na Madeira', Em: 'Na Madeira', fuso: 'Atlantic/Madeira', quando: 'todas as semanas', periodo: 'desta semana',
+      jornal: 'Jornal Oficial da Região Autónoma da Madeira', link: 'https://joram.madeira.gov.pt/joram/2serie/', lat: [29.8, 33.4], lon: [-17.7, -15.5] }
+  };
+  var ESPERA_ILHAS_MS = 1500; /* a ferramenta não espera mais do que isto pelo ilhas.json; se chegar depois, as ilhas entram nessa altura */
 
-  var D = { resumo: null, top: null, todos: null, todosPedido: null };
+  var D = { resumo: null, top: null, todos: null, todosPedido: null, ilhas: null, ilhasPronto: false };
   var estado = { comb: 'gasoleo', distrito: '', concelho: '', geo: null };
   var el = {};
 
@@ -90,7 +102,7 @@
   };
   function emLocal(c) { var a = ARTIGO[c]; return (a ? 'n' + a + ' ' : 'em ') + c; }
   function deLocal(c) { var a = ARTIGO[c]; return (a ? 'd' + a + ' ' : 'de ') + c; }
-  function noDistrito(d) { return ehIlha(d) ? 'na ' + nomeDistrito(d) : 'no distrito ' + deDistrito(d); }
+  function noDistrito(d) { return ehIlha(d) ? (regiaoIlha(d) ? ILHAS[regiaoIlha(d)].em : 'em ' + d) : 'no distrito ' + deDistrito(d); }
   /* nomes que a API devolve todos em maiúsculas passam a Título */
   function nome(s) {
     s = String(s || '').replace(/\s+/g, ' ').trim();
@@ -121,6 +133,43 @@
       else { try { window.scrollTo({ top: top, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, top); } }
     }, 0);
   }
+
+  /* ---------- ilhas ---------- */
+  function regiaoIlha(d) { return /madeira/i.test(d || '') ? 'madeira' : /a[çc]ores/i.test(d || '') ? 'acores' : null; }
+  function regiaoDaPosicao(lat, lon) {
+    for (var r in ILHAS) if (Object.prototype.hasOwnProperty.call(ILHAS, r) && lat >= ILHAS[r].lat[0] && lat <= ILHAS[r].lat[1] && lon >= ILHAS[r].lon[0] && lon <= ILHAS[r].lon[1]) return r;
+    return null;
+  }
+  function despachoValido(p) { return !!p && /^\d{4}-\d{2}-\d{2}$/.test(p.desde) && p.gasoleo > 0 && p.gasolina > 0 && !!p.ato; }
+  function despachosIlha(r) {
+    var reg = D.ilhas && D.ilhas.regioes && D.ilhas.regioes[r];
+    return reg && reg.precos && reg.precos.filter ? reg.precos.filter(despachoValido) : [];
+  }
+  function ilhasComPrecos() { return ['acores', 'madeira'].filter(function (r) { return despachosIlha(r).length > 0; }); }
+  function hojeEm(fuso) {
+    try { return new Intl.DateTimeFormat('en-CA', { timeZone: fuso, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); } catch (e) { return hojeLisboa(); }
+  }
+  function diasEntre(a, b) { return Math.round((Date.parse(b + 'T12:00:00Z') - Date.parse(a + 'T12:00:00Z')) / 864e5); }
+  function mesesEntre(a, b) { return (+b.slice(0, 4) - +a.slice(0, 4)) * 12 + (+b.slice(5, 7) - +a.slice(5, 7)); }
+  /* O despacho em vigor hoje (o mais recente que já entrou em vigor) e o seguinte, se já foi publicado. O preço pode estar
+     desatualizado quando falta o despacho do período em curso: na Madeira, o que está em vigor tem 7 dias ou mais; nos
+     Açores, é de um mês anterior. Com duas semanas ou dois meses de atraso deixa de se mostrar o preço. */
+  function situacaoIlha(r) {
+    var dia = hojeEm(ILHAS[r].fuso), lista = despachosIlha(r).slice().sort(function (a, b) { return a.desde < b.desde ? 1 : a.desde > b.desde ? -1 : 0; });
+    var s = { dia: dia, atual: null, proximo: null, atrasado: false, semPreco: true };
+    for (var i = 0; i < lista.length; i++) { if (lista[i].desde <= dia) { s.atual = lista[i]; break; } s.proximo = lista[i]; }
+    if (s.atual) {
+      if (r === 'madeira') { var d = diasEntre(s.atual.desde, dia); s.atrasado = d >= 7; s.semPreco = d >= 14; }
+      else { var m = mesesEntre(s.atual.desde, dia); s.atrasado = m >= 1; s.semPreco = m >= 2; }
+    }
+    return s;
+  }
+  function dataCurta(iso) { return parseInt(iso.slice(8, 10), 10) + ' ' + MESES_CURTOS[parseInt(iso.slice(5, 7), 10) - 1]; }
+  function dataLonga(iso, comAno) { return parseInt(iso.slice(8, 10), 10) + ' de ' + MESES[parseInt(iso.slice(5, 7), 10) - 1] + (comAno ? ' de ' + iso.slice(0, 4) : ''); }
+  var DIAS_SEMANA = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+  function diaSemana(iso) { return DIAS_SEMANA[new Date(iso + 'T12:00:00Z').getUTCDay()]; }
+  /* só se segue um link para um jornal oficial das regiões */
+  function linkOficial(u) { return /^https:\/\/(joram\.madeira\.gov\.pt|jo\.azores\.gov\.pt)\//.test(u || '') ? u : null; }
 
   /* ---------- dados ---------- */
   function pedirUrl(url, cb) {
@@ -185,11 +234,15 @@
     return { id: linha[0], nome: nome(linha[1]), marca: linha[2], municipio: linha[3], distrito: linha[4], lat: linha[5], lon: linha[6], preco: pc[0], atualizado: pc[1] };
   }
   function indiceComb(c) { return { gasoleo: 7, gasolina: 8, gpl: 9 }[c]; }
+  /* os distritos do continente (com postos na leitura da DGEG) e, no fim, os Açores e a Madeira, se o ilhas.json tiver preços */
   function distritos() {
-    var lista = [];
-    for (var k in D.top[estado.comb]) if (Object.prototype.hasOwnProperty.call(D.top[estado.comb], k)) lista.push(k);
+    var lista = [], ilhas = ilhasComPrecos().map(function (r) { return ILHAS[r].nome; });
+    for (var k in D.top[estado.comb]) if (Object.prototype.hasOwnProperty.call(D.top[estado.comb], k)) {
+      if (ehIlha(k) && ilhas.indexOf(nomeDistrito(k)) !== -1) continue; /* a região já entra com o preço máximo */
+      lista.push(k);
+    }
     lista.sort(function (a, b) { var ia = ehIlha(a), ib = ehIlha(b); return ia !== ib ? (ia ? 1 : -1) : a.localeCompare(b, 'pt'); });
-    return lista;
+    return lista.concat(ilhas);
   }
   function resumoDistrito(d) {
     var r = D.resumo[estado.comb].distritos || [];
@@ -206,7 +259,11 @@
     }
     var r = D.resumo[estado.comb];
     return { titulo: COMB[estado.comb].nome + ' ' + maisBarato() + ' em Portugal continental', onde: 'do país', lista: ordenar(lista).slice(0, TOP),
-      media: r.media, mediaOnde: 'em Portugal continental', postos: r.postos, mostraDistrito: true };
+      media: r.media, mediaOnde: 'em Portugal continental', postos: r.postos, mostraDistrito: true, pais: true };
+  }
+  /* Açores ou Madeira: o preço máximo em vigor em vez da lista de postos (perto: escolhido por "Perto de mim") */
+  function vistaIlha(r, perto) {
+    return { ilha: r, perto: !!perto, situacao: situacaoIlha(r), titulo: COMB[estado.comb].nome + ' ' + ILHAS[r].em, lista: [] };
   }
   function vistaDistrito(d) {
     var top = D.top[estado.comb][d] || [], lista = [];
@@ -263,17 +320,34 @@
       esc(dataHoraPT(l.lidoEmLisboa)) + '</b>. A ordenação, as médias e a poupança são cálculo nosso, não informação da DGEG. A média é a média simples dos preços afixados, sem descontos de cartões, por isso fica acima do preço médio oficial da DGEG, que pondera as quantidades vendidas e inclui descontos. Só entram postos com preço atualizado nos últimos ' +
       (estado.comb === 'gpl' ? '31' : '8') + ' dias.';
   }
+  /* textos curtos por baixo dos indicadores, numa linha em computador (classe lfcmb-1l): o sítio já está no título.
+     O texto completo fica no title, para os nomes de posto compridos que o ecrã corta com reticências. */
+  function sub(id, txt) { var e = $(id); e.textContent = txt; e.title = txt; e.classList.add('lfcmb-1l'); }
+  /* A vista das ilhas troca os rótulos dos indicadores, a cor do primeiro e esconde a dica da tabela; as outras vistas repõem. */
+  var ROTULOS = null;
+  function rotulos(lista) {
+    var ls = document.querySelectorAll('#lfcmb-kpis .lfk-stat-l'), i;
+    if (!ROTULOS) { ROTULOS = []; for (i = 0; i < ls.length; i++) ROTULOS.push(ls[i].textContent); }
+    for (i = 0; i < ls.length; i++) ls[i].textContent = (lista || ROTULOS)[i];
+  }
+  function dicaTabela() { return $('lfcmb-tabela-wrap').nextElementSibling; } /* "Clica no nome do posto para veres o caminho no Google Maps." */
   function render(v) {
-    var c = COMB[estado.comb];
+    if (v.ilha) { renderIlha(v); return; }
+    var c = COMB[estado.comb], stats = document.querySelectorAll('#lfcmb-kpis .lfk-stat');
+    rotulos(null);
+    if (stats[0]) stats[0].classList.add('lfcmb-ok');
+    if (stats[1]) stats[1].classList.remove('lfcmb-ok');
     $('lfcmb-titulo').textContent = v.titulo;
     var lida = leitura(v), horas = horasDesde(lida.lidoEm), tag = $('lfcmb-hora');
+    tag.hidden = false;
     tag.textContent = (horas > MAX_HORAS_AVISO ? 'Última leitura na DGEG: ' : 'Lido na DGEG ') + quando(String(lida.lidoEmLisboa).replace(' ', 'T'));
     tag.className = 'lfk-tag is-sm ' + (horas > MAX_HORAS_AVISO ? 'is-warn' : 'is-ok');
 
-    var tb = $('lfcmb-linhas'), aviso = $('lfcmb-sem');
+    var tb = $('lfcmb-linhas'), aviso = $('lfcmb-sem'), dica = dicaTabela();
+    if (dica) dica.hidden = !v.lista.length;
     if (!v.lista.length) {
       $('lfcmb-kpis').hidden = true; $('lfcmb-tabela-wrap').hidden = true; $('lfcmb-frase').hidden = true;
-      aviso.hidden = false;
+      aviso.hidden = false; aviso.className = 'lfk-alert';
       aviso.textContent = v.perto ? 'Não encontrámos postos com ' + c.art.replace(/^[oa] /, '') + ' num raio de ' + fmt(RAIO_MAX_KM, { currency: false, decimals: 0 }) + ' km. Escolhe um distrito ou um concelho.' :
         'Não há postos com preço recente de ' + c.nome.toLowerCase() + ' ' + v.onde + '.';
       $('lfcmb-fonte').innerHTML = rodape(v);
@@ -282,9 +356,6 @@
     aviso.hidden = true; $('lfcmb-kpis').hidden = false; $('lfcmb-tabela-wrap').hidden = false; $('lfcmb-frase').hidden = false;
     var min = v.lista[0], temMedia = v.media != null;
     $('lfcmb-k-min').textContent = preco(min.preco);
-    /* textos curtos por baixo dos indicadores, numa linha em computador (classe lfcmb-1l): o sítio já está no título.
-       O texto completo fica no title, para os nomes de posto compridos que o ecrã corta com reticências. */
-    function sub(id, txt) { var e = $(id); e.textContent = txt; e.title = txt; e.classList.add('lfcmb-1l'); }
     sub('lfcmb-k-min-s', v.perto ? 'a ' + fmt(min.km, { currency: false, decimals: 1 }) + ' km, ' + emLocal(min.municipio) :
       v.concelho ? 'em ' + min.nome : emLocal(min.municipio));
     $('lfcmb-k-media').textContent = temMedia ? preco(v.media) : '-';
@@ -317,8 +388,69 @@
     } else {
       frase = (c.art.charAt(0).toUpperCase() + c.art.slice(1)) + ' mais barat' + (estado.comb === 'gasolina' ? 'a' : 'o') + ' ' + v.onde + ' está a <b>' + preco(min.preco) + '</b> por litro.';
     }
+    if (v.pais && ilhasComPrecos().length) frase += ' Nos Açores e na Madeira o preço é um máximo fixado pelo Governo Regional: escolhe a região no campo Distrito.';
     $('lfcmb-frase').innerHTML = frase;
     $('lfcmb-fonte').innerHTML = rodape(v);
+  }
+
+  /* Açores ou Madeira: preço máximo em vigor, diferença para a média dos postos do continente, custo de 50 litros e, se já
+     foi publicado, o preço seguinte. Sem lista de postos (a DGEG não os tem) e sem GPL Auto (não tem preço fixado). */
+  function renderIlha(v) {
+    var c = COMB[estado.comb], r = v.ilha, I = ILHAS[r], s = v.situacao, a = s.atual, k = estado.comb;
+    var kpis = $('lfcmb-kpis'), stats = kpis.querySelectorAll('.lfk-stat'), aviso = $('lfcmb-sem'), tag = $('lfcmb-hora'), dica = dicaTabela();
+    var l = leitura(v), med = D.resumo[k] ? D.resumo[k].media : null;
+    $('lfcmb-titulo').textContent = v.titulo;
+    $('lfcmb-tabela-wrap').hidden = true;
+    if (dica) dica.hidden = true;
+    function despacho(p) {
+      var u = linkOficial(p.url), nomeAto = esc(p.ato);
+      return (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + nomeAto + '</a>' : nomeAto) +
+        ' (' + esc(I.jornal) + (p.jornal ? ', ' + esc(p.jornal) : '') + (p.publicado ? ', de ' + esc(dataLonga(p.publicado, true)) : '') + ')';
+    }
+    var dgeg = 'A média do continente é a média simples dos preços afixados nos postos, comunicados ao <a href="https://precoscombustiveis.dgeg.gov.pt/" target="_blank" rel="noopener">portal Preços dos Combustíveis Online da DGEG</a> e lidos pelo Literacia Financeira a <b>' +
+      esc(dataHoraPT(l.lidoEmLisboa)) + '</b>. A diferença e o custo do depósito são cálculo nosso, não informação da DGEG nem do Governo Regional.';
+    var jornalLink = '<a href="' + esc(I.link) + '" target="_blank" rel="noopener">' + esc(I.jornal) + '</a>';
+
+    if (k === 'gpl' || s.semPreco) {
+      kpis.hidden = true; $('lfcmb-frase').hidden = true; tag.hidden = true;
+      aviso.hidden = false;
+      if (k === 'gpl') {
+        aviso.className = 'lfk-alert';
+        aviso.textContent = I.Em + ' o GPL Auto não tem preço máximo fixado pelo Governo Regional, e a DGEG só tem os preços dos postos de Portugal continental. Por isso não temos preços de GPL Auto ' + I.em + '.';
+        $('lfcmb-fonte').innerHTML = 'Os preços máximos dos Açores e da Madeira são fixados pelos Governos Regionais e publicados nos jornais oficiais. Abrangem a gasolina 95 e o gasóleo, mas não o GPL Auto.';
+      } else {
+        aviso.className = 'lfk-alert is-warn';
+        aviso.innerHTML = 'Ainda não encontrámos o preço máximo ' + I.periodo + ' ' + I.em + '. Confirma no ' + jornalLink + '.';
+        $('lfcmb-fonte').innerHTML = I.Em + ' o preço dos combustíveis é um máximo fixado ' + I.quando + ' pelo Governo Regional e publicado no ' + esc(I.jornal) + '.';
+      }
+      return;
+    }
+
+    kpis.hidden = false; aviso.hidden = true; $('lfcmb-frase').hidden = false; tag.hidden = false;
+    rotulos(['Preço máximo', 'Face à média do continente', 'Atestar ' + DEPOSITO_L + ' litros']);
+    var p = a[k], d = med != null ? p - med : null;
+    if (stats[0]) stats[0].classList.remove('lfcmb-ok');
+    if (stats[1]) stats[1].classList.toggle('lfcmb-ok', d != null && Math.round(d * 1000) < 0); /* a verde quando fica mais barato */
+    $('lfcmb-k-min').textContent = preco(p);
+    sub('lfcmb-k-min-s', 'fixado pelo Governo Regional');
+    $('lfcmb-k-media').textContent = d == null ? '-' : dif(d);
+    sub('lfcmb-k-media-s', med != null ? 'média afixada: ' + preco(med) : '');
+    $('lfcmb-k-poup').textContent = fmt(p * DEPOSITO_L);
+    sub('lfcmb-k-poup-s', 'ao preço máximo');
+    tag.textContent = (s.atrasado ? 'Último preço encontrado: ' : 'Em vigor desde ') + dataCurta(a.desde);
+    tag.className = 'lfk-tag is-sm ' + (s.atrasado ? 'is-warn' : 'is-ok');
+
+    var frase = (v.perto ? 'Pela tua localização, estás ' + I.em + '. Aqui' : I.Em) + ' não há lista de postos: o preço é o máximo fixado ' + I.quando +
+      ' pelo Governo Regional, e a DGEG só tem os postos de Portugal continental. Os postos podem vender abaixo deste preço, mas não acima.';
+    if (d != null && Math.round(Math.abs(d) * 1000) > 0) frase += ' ' + c.art.charAt(0).toUpperCase() + c.art.slice(1) + ' fica <b>' + cent(d) + (d < 0 ? ' abaixo' : ' acima') + '</b> da média afixada nos postos do continente.';
+    if (s.atrasado) frase += ' Ainda não encontrámos o preço ' + I.periodo + ' no ' + jornalLink + ': este entrou em vigor a ' + dataLonga(a.desde) + ' e pode já ter mudado.';
+    if (s.proximo) {
+      var q = s.proximo[k], dq = q - p, quandoMuda = r === 'madeira' ? diaSemana(s.proximo.desde) + ', ' + dataLonga(s.proximo.desde) : dataLonga(s.proximo.desde);
+      frase += ' <b>A partir de ' + quandoMuda + ', ' + (Math.round(Math.abs(dq) * 1000) === 0 ? 'mantém-se em ' + preco(q) + '</b>.' :
+        'passa a ' + preco(q) + '</b> (' + (dq < 0 ? 'menos ' : 'mais ') + cent(dq) + ').');
+    }
+    $('lfcmb-frase').innerHTML = frase;
+    $('lfcmb-fonte').innerHTML = 'Preço máximo de venda ao público fixado pelo ' + despacho(a) + (s.proximo ? '. O preço seguinte é do ' + despacho(s.proximo) : '') + '. ' + dgeg;
   }
   function mostrarResultados() {
     $('lfcmb-estado').hidden = true;
@@ -391,8 +523,8 @@
     var h = '#' + estado.comb + (estado.distrito ? '/' + slug(estado.distrito) + (estado.concelho ? '/' + slug(estado.concelho) : '') : '');
     try { history.replaceState(null, '', location.pathname + location.search + (h === '#gasoleo' ? '' : h)); } catch (e) { /* sem history: fica como está */ }
   }
-  function lerHash() {
-    var p = (location.hash || '').replace(/^#/, '').split('/');
+  function lerHash(h) {
+    var p = (h == null ? location.hash || '' : h).replace(/^#/, '').split('/');
     if (!COMB[p[0]]) return;
     estado.comb = p[0];
     var ds = distritos();
@@ -418,6 +550,9 @@
        escondido debaixo do menu, como nas outras calculadoras */
     function pronto(v) { render(v); mostrarResultados(); escreverHash(); if (rolar) rolarAte($('lfcmb-resultados').firstElementChild || $('lfcmb-resultados')); }
     if (estado.geo) {
+      /* nos Açores e na Madeira não há postos na lista da DGEG: mostra o preço máximo da região */
+      var rg = regiaoDaPosicao(estado.geo.lat, estado.geo.lon);
+      if (rg && despachosIlha(rg).length) { pronto(vistaIlha(rg, true)); return; }
       carregarTodos(function (e) {
         if (e) { aviso('Não conseguimos carregar a lista completa dos postos. Tenta outra vez daqui a pouco.', 'is-err'); return; }
         pronto(vistaPerto(estado.geo.lat, estado.geo.lon));
@@ -433,6 +568,8 @@
       });
       return;
     }
+    var ri = regiaoIlha(estado.distrito);
+    if (ri && despachosIlha(ri).length) { pronto(vistaIlha(ri)); return; }
     pronto(estado.distrito ? vistaDistrito(estado.distrito) : vistaPais());
   }
 
@@ -465,7 +602,7 @@
   function iniciar() {
     el.comb = $('lfcmb-comb'); el.distrito = $('lfcmb-distrito'); el.concelho = $('lfcmb-concelho'); el.ver = $('lfcmb-ver');
     if (!el.comb || !el.distrito || !el.ver) return;
-    var faltam = 2, origem = {}, falhou = false;
+    var faltam = 2, origem = {}, falhou = false, arrancou = false, esperaIlhas = null, mexeu = false, hashInicial = location.hash || '';
     /* O resumo e o top têm de ser da mesma leitura. Se vieram de fontes diferentes e uma das cópias está atrasada,
        pedem-se os dois outra vez à fonte que está a responder; se nem assim baterem certo, segue-se com o que há. */
     function mesmaLeitura(cb) {
@@ -477,21 +614,45 @@
       pedir('postos-top.json', function (e, j) { if (!e) t = j; junta(); }, f);
     }
     function arrancar() {
+      if (arrancou) return;
+      arrancou = true;
       if (!D.resumo[estado.comb] || !D.top[estado.comb]) { erro('Ainda não há preços de postos para mostrar.'); return; }
       lerHash();
       preencherDistritos();
       sincronizarFormulario();
       aplicar(false);
     }
+    /* o resumo e o top chegaram: arranca já se o ilhas.json também chegou; senão espera por ele, no máximo ESPERA_ILHAS_MS */
+    function seguir() {
+      if (D.ilhasPronto) { mesmaLeitura(arrancar); return; }
+      esperaIlhas = setTimeout(function () { esperaIlhas = null; mesmaLeitura(arrancar); }, ESPERA_ILHAS_MS);
+    }
     function depois(e) {
       /* 404: a DGEG ainda não deu a primeira leitura (o ficheiro só existe depois dela). A API abre às 3h, 13h e 20h. */
       if (e) { falhou = true; erro(e.status === 404 ? 'Ainda não temos os preços dos postos. A DGEG dá acesso aos dados às 3h, às 13h e às 20h. A lista aparece aqui logo a seguir à próxima leitura.' : 'Não conseguimos carregar os preços dos postos. Tenta outra vez daqui a pouco.'); return; }
       if (--faltam || falhou) return;
-      mesmaLeitura(arrancar);
+      seguir();
     }
     pedir('postos-resumo.json', function (e, j, f) { if (!e) { D.resumo = j; origem.resumo = f; } depois(e); });
     pedir('postos-top.json', function (e, j, f) { if (!e) { D.top = j; origem.top = f; } depois(e); });
+    /* Açores e Madeira: se o ficheiro falhar, a ferramenta funciona na mesma, só sem as ilhas */
+    pedir('ilhas.json', function (e, j) {
+      D.ilhas = !e && j && j.regioes ? j : null;
+      D.ilhasPronto = true;
+      if (esperaIlhas) { clearTimeout(esperaIlhas); esperaIlhas = null; mesmaLeitura(arrancar); return; }
+      if (!arrancou || falhou || !D.ilhas || !D.resumo || !D.top) return;
+      /* chegou depois de a ferramenta arrancar: junta as ilhas ao campo Distrito e, se o link pedia uma delas e ainda
+         ninguém mexeu no formulário, mostra-a */
+      preencherDistritos();
+      var p = hashInicial.replace(/^#/, '').split('/');
+      if (!mexeu && COMB[p[0]] && regiaoIlha(p[1])) { lerHash(hashInicial); sincronizarFormulario(); aplicar(false); }
+    });
 
+    function marcar() { mexeu = true; }
+    el.distrito.addEventListener('input', marcar);
+    el.concelho.addEventListener('input', marcar);
+    el.comb.addEventListener('click', marcar);
+    el.ver.addEventListener('click', marcar);
     el.distrito.addEventListener('input', aoEscolherDistrito);
     el.distrito.addEventListener('change', preencherConcelhos);
     el.concelho.addEventListener('change', aoMudarConcelho);

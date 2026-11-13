@@ -15,11 +15,16 @@ jobs:
         with:
           node-version: 20
       - name: pdftotext
-        run: command -v pdftotext || { sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils; }
+        run: |
+          command -v pdftotext || { sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils; }
       - name: Teste histórico dos leitores
         run: node teste-ilhas-historico.mjs
       - name: Corrida a sério (sem estado nem ilhas.json)
-        run: node ilhas-precos.mjs 2>&1 | tee explorar/corrida.txt; echo "saída: ${PIPESTATUS[0]}" | tee -a explorar/corrida.txt
+        run: |
+          set +e
+          node ilhas-precos.mjs > explorar/corrida.txt 2>&1
+          echo "codigo de saida $?" >> explorar/corrida.txt
+          cat explorar/corrida.txt
       - name: Gravar os resultados no ramo
         run: |
           git config user.name "combustiveis-bot"
