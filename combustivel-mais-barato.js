@@ -15,7 +15,17 @@
   if (window.__lfCombBarato) return;
   window.__lfCombBarato = true;
 
-  var BASE = window.__lfCombBaratoDados || 'https://raw.githubusercontent.com/pedrofintech/combustiveis-dados/main/';
+  /* Fontes dos dados, por ordem. O raw.githubusercontent.com tem a versão mais recente (5 minutos de cache), mas o GitHub
+     limita os pedidos anónimos por IP e às vezes responde com erro (429) ou nem responde. Quando falha, a página vai buscar
+     os mesmos ficheiros ao jsDelivr, a CDN que já serve o kit e este ficheiro; o workflow "Ler postos DGEG" manda o jsDelivr
+     atualizar a cópia a seguir a cada leitura. window.__lfCombBaratoDados troca as fontes (texto ou lista): usa-se no staging. */
+  var FONTES = window.__lfCombBaratoDados ? [].concat(window.__lfCombBaratoDados) : [
+    'https://raw.githubusercontent.com/pedrofintech/combustiveis-dados/main/',
+    'https://cdn.jsdelivr.net/gh/pedrofintech/combustiveis-dados@main/'
+  ];
+  var ESPERA_MS = 6000;     /* fonte que não começa a responder neste tempo conta como falhada e passa-se à seguinte */
+  var ESPERA_TOTAL_MS = 30000; /* limite para o pedido inteiro (ligações muito lentas) */
+  var NOVA_VOLTA_MS = 1200; /* pausa antes de voltar a tentar todas as fontes (faz-se uma segunda volta antes de mostrar o erro) */
   var RAIO_KM = 15, RAIO_MAX_KM = 40, TOP = 10, DEPOSITO_L = 50;
   var MAX_HORAS_AVISO = 30; /* leitura com mais horas do que isto: aviso de que os preços podem estar desatualizados */
   var PERTO = '__perto'; /* valor da opção "Perto de mim" no select do distrito: usa a localização do browser */
@@ -113,17 +123,46 @@
   }
 
   /* ---------- dados ---------- */
-  function pedir(ficheiro, cb) {
-    var x = new XMLHttpRequest();
-    var h = new Date();
-    x.open('GET', BASE + ficheiro + '?v=' + h.getUTCFullYear() + (h.getUTCMonth() + 1) + h.getUTCDate() + '-' + h.getUTCHours(), true);
+  function pedirUrl(url, cb) {
+    var x = new XMLHttpRequest(), feito = false, relogio;
+    function fim(e, j) { if (feito) return; feito = true; clearTimeout(relogio); cb(e, j); }
+    x.open('GET', url, true);
+    x.timeout = ESPERA_TOTAL_MS;
     x.onreadystatechange = function () {
+      if (x.readyState >= 2) clearTimeout(relogio); /* o servidor já respondeu: uma ligação lenta não conta como falha */
       if (x.readyState !== 4) return;
-      if (x.status >= 200 && x.status < 300) { try { cb(null, JSON.parse(x.responseText)); return; } catch (e) { cb(e); return; } }
-      var e = new Error('HTTP ' + x.status); e.status = x.status; cb(e);
+      if (x.status >= 200 && x.status < 300) {
+        var j;
+        try { j = JSON.parse(x.responseText); } catch (e) { fim(new Error('resposta inválida')); return; } /* inclui a resposta vazia */
+        fim(null, j); return;
+      }
+      var e = new Error(x.status ? 'HTTP ' + x.status : 'sem resposta'); e.status = x.status; fim(e);
     };
-    x.onerror = function () { cb(new Error('rede')); };
+    x.onerror = function () { fim(new Error('sem resposta')); };
+    x.ontimeout = function () { fim(new Error('demorou demasiado')); };
+    relogio = setTimeout(function () { if (x.readyState < 2) { fim(new Error('sem resposta em ' + ESPERA_MS / 1000 + ' s')); try { x.abort(); } catch (e) {} } }, ESPERA_MS);
     x.send();
+  }
+  /* Pede um ficheiro de dados: tenta as fontes por ordem, a começar pela que respondeu da última vez, e dá duas voltas antes
+     de desistir. cb(erro, dados, índice da fonte). Com soFonte, tenta só essa fonte, uma vez. */
+  var fonte = 0;
+  function pedir(ficheiro, cb, soFonte) {
+    var h = new Date();
+    var v = '?v=' + h.getUTCFullYear() + (h.getUTCMonth() + 1) + h.getUTCDate() + '-' + h.getUTCHours();
+    var ordem = [], volta, i, n = 0, so404 = true;
+    if (soFonte != null) ordem.push(soFonte);
+    else for (volta = 0; volta < 2; volta++) for (i = 0; i < FONTES.length; i++) ordem.push((fonte + i) % FONTES.length);
+    (function tentar() {
+      var f = ordem[n], segundaVolta = n >= FONTES.length;
+      pedirUrl(FONTES[f] + ficheiro + v + (segundaVolta ? '&r=1' : ''), function (e, j) {
+        if (!e) { if (soFonte == null) fonte = f; cb(null, j, f); return; }
+        if (e.status !== 404) so404 = false;
+        if (window.console && console.warn) console.warn('[combustivel-mais-barato] ' + ficheiro + ' falhou em ' + String(FONTES[f]).split('/')[2] + ': ' + e.message);
+        n++;
+        if (n >= ordem.length) { var fim = new Error('sem dados'); if (so404) fim.status = 404; cb(fim); return; }
+        if (n === FONTES.length) setTimeout(tentar, NOVA_VOLTA_MS); else tentar();
+      });
+    })();
   }
   function carregarTodos(cb) {
     if (D.todos) return cb(null, D.todos);
@@ -417,19 +456,31 @@
   function iniciar() {
     el.comb = $('lfcmb-comb'); el.distrito = $('lfcmb-distrito'); el.concelho = $('lfcmb-concelho'); el.ver = $('lfcmb-ver');
     if (!el.comb || !el.distrito || !el.ver) return;
-    var faltam = 2;
-    function depois(e) {
-      /* 404: a DGEG ainda não deu a primeira leitura (o ficheiro só existe depois dela). A API abre às 3h, 13h e 20h. */
-      if (e) { erro(e.status === 404 ? 'Ainda não temos os preços dos postos. A DGEG dá acesso aos dados às 3h, às 13h e às 20h. A lista aparece aqui logo a seguir à próxima leitura.' : 'Não conseguimos carregar os preços dos postos. Tenta outra vez daqui a pouco.'); return; }
-      if (--faltam) return;
+    var faltam = 2, origem = {}, falhou = false;
+    /* O resumo e o top têm de ser da mesma leitura. Se vieram de fontes diferentes e uma das cópias está atrasada,
+       pedem-se os dois outra vez à fonte que está a responder; se nem assim baterem certo, segue-se com o que há. */
+    function mesmaLeitura(cb) {
+      if (D.resumo.lidoEm === D.top.lidoEm || origem.resumo === origem.top) { cb(); return; }
+      var falta = 2, r = null, t = null, f = fonte;
+      function junta() { if (--falta) return; if (r && t && r.lidoEm === t.lidoEm) { D.resumo = r; D.top = t; } cb(); }
+      pedir('postos-resumo.json', function (e, j) { if (!e) r = j; junta(); }, f);
+      pedir('postos-top.json', function (e, j) { if (!e) t = j; junta(); }, f);
+    }
+    function arrancar() {
       if (!D.resumo[estado.comb] || !D.top[estado.comb]) { erro('Ainda não há preços de postos para mostrar.'); return; }
       lerHash();
       preencherDistritos();
       sincronizarFormulario();
       aplicar(false);
     }
-    pedir('postos-resumo.json', function (e, j) { if (!e) D.resumo = j; depois(e); });
-    pedir('postos-top.json', function (e, j) { if (!e) D.top = j; depois(e); });
+    function depois(e) {
+      /* 404: a DGEG ainda não deu a primeira leitura (o ficheiro só existe depois dela). A API abre às 3h, 13h e 20h. */
+      if (e) { falhou = true; erro(e.status === 404 ? 'Ainda não temos os preços dos postos. A DGEG dá acesso aos dados às 3h, às 13h e às 20h. A lista aparece aqui logo a seguir à próxima leitura.' : 'Não conseguimos carregar os preços dos postos. Tenta outra vez daqui a pouco.'); return; }
+      if (--faltam || falhou) return;
+      mesmaLeitura(arrancar);
+    }
+    pedir('postos-resumo.json', function (e, j, f) { if (!e) { D.resumo = j; origem.resumo = f; } depois(e); });
+    pedir('postos-top.json', function (e, j, f) { if (!e) { D.top = j; origem.top = f; } depois(e); });
 
     el.distrito.addEventListener('input', aoEscolherDistrito);
     el.distrito.addEventListener('change', preencherConcelhos);
