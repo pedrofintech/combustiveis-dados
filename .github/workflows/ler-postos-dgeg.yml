@@ -47,6 +47,8 @@ jobs:
   ler:
     runs-on: ubuntu-latest
     timeout-minutes: 200
+    outputs:
+      mudou: ${{ steps.gravar.outputs.mudou }}
     steps:
       - uses: actions/checkout@v4
 
@@ -63,6 +65,7 @@ jobs:
         run: node dgeg-postos.mjs
 
       - name: Commit e push (só se houver alterações)
+        id: gravar
         run: |
           git config user.name "combustiveis-bot"
           git config user.email "bot@users.noreply.github.com"
@@ -73,8 +76,48 @@ jobs:
           # tiver gravado os mesmos ficheiros (aconteceu a 10 nov, dois pushes com 30 s de intervalo), ficam os nossos,
           # que são a leitura mais recente (num rebase, "theirs" é o commit que se está a aplicar, ou seja, o nosso).
           for i in 1 2 3; do
-            git pull --rebase -X theirs && git push && exit 0
+            git pull --rebase -X theirs && git push && { echo "mudou=1" >> "$GITHUB_OUTPUT"; exit 0; }
             git rebase --abort 2>/dev/null || true
             sleep 15
           done
           exit 1
+
+  # A página /combustivel-mais-barato vai buscar estes ficheiros ao jsDelivr quando o raw.githubusercontent.com falha
+  # (o GitHub limita os pedidos anónimos por IP). O jsDelivr guarda cada ficheiro do ramo main até 12 horas, por isso
+  # manda-se limpar a cópia a seguir a cada leitura. Medido a 13 nov 2026: nos primeiros minutos depois de um push o
+  # jsDelivr ainda devolve a versão anterior (e volta a guardá-la), e ao fim de umas 5 limpezas seguidas do mesmo
+  # ficheiro recusa mais limpezas durante uma hora. Por isso: esperar 8 minutos, limpar uma vez, confirmar a leitura e,
+  # se ainda não for a nova, repetir de 15 em 15 minutos, no máximo 3 vezes. É um job à parte para não contar para o
+  # tempo máximo da leitura (que pode esperar horas pela janela da DGEG) e nunca faz falhar o workflow.
+  cdn:
+    needs: ler
+    if: needs.ler.outputs.mudou == '1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Atualizar a cópia dos dados no jsDelivr (reserva da página)
+        run: |
+          novo=$(node -p "require('./postos-resumo.json').lidoEm")
+          base="gh/${GITHUB_REPOSITORY}@main"
+          sleep 480
+          for i in 1 2 3; do
+            for f in postos-resumo.json postos-top.json postos-todos.json; do
+              curl -sS -m 30 "https://purge.jsdelivr.net/$base/$f" | tr -d '\n ' | cut -c1-300 || true
+              echo
+            done
+            sleep 30
+            certos=0
+            for f in postos-resumo.json postos-top.json postos-todos.json; do
+              tem=$(curl -sS -m 60 "https://cdn.jsdelivr.net/$base/$f" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{console.log(JSON.parse(s).lidoEm)}catch(e){console.log('erro')}})" || true)
+              [ "$tem" = "$novo" ] && certos=$((certos+1))
+            done
+            echo "tentativa $i: $certos de 3 ficheiros com a leitura $novo"
+            [ "$certos" = "3" ] && exit 0
+            [ "$i" = "3" ] || sleep 900
+          done
+          echo "::warning::O jsDelivr ainda não tem a leitura $novo. A página lê primeiro do raw.githubusercontent.com e mostra sempre a hora da leitura que está a usar."

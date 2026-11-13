@@ -1,0 +1,103 @@
+name: Ler preços das ilhas
+
+# Preços máximos dos combustíveis nos Açores e na Madeira, lidos dos jornais oficiais das duas regiões pelo ilhas-precos.mjs.
+# A DGEG só tem os postos de Portugal continental; nas ilhas o preço é um máximo fixado pelo Governo Regional. A Madeira
+# fixa-o todas as semanas (despacho conjunto na II série do JORAM, normalmente à sexta, em vigor na segunda) e os Açores
+# todos os meses (despacho normativo na I série do Jornal Oficial, nos últimos dias do mês, em vigor no dia 1).
+# Escreve ilhas.json (lido pela página /combustivel-mais-barato) e ilhas-estado.json (os PDFs que já viu).
+#
+# O cron do GitHub chega atrasado e salta corridas; com quatro tentativas por dia, o despacho da Madeira entra na sexta à
+# noite ou no sábado. O run falha, e o GitHub avisa por email, quando um despacho não passa nas verificações do
+# ilhas-precos.mjs ou quando uma região fica sem o preço do período em curso (Madeira a partir de terça, Açores a partir
+# do dia 3). Falhas de rede passageiras só ficam no registo da corrida.
+#
+# Atenção ao cron: o GitHub corre as leituras agendadas em nome de quem fez a última alteração a este ficheiro. Se essa
+# pessoa não tiver acesso ao repositório (por exemplo um commit do Claude feito por git), o agendamento fica mudo sem
+# avisar. Alterações a este ficheiro devem ser feitas pela conta do Pedro (GitHub MCP), como no "Ler postos DGEG".
+
+on:
+  schedule:
+    - cron: "41 8,13,18,22 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "ilhas-precos.mjs"
+      - ".github/workflows/ler-ilhas.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ler-ilhas
+  cancel-in-progress: false
+
+jobs:
+  ler:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      mudou: ${{ steps.gravar.outputs.mudou }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar o pdftotext
+        run: |
+          command -v pdftotext || { sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils; }
+
+      - name: Ler os jornais oficiais dos Açores e da Madeira
+        id: ler
+        run: node ilhas-precos.mjs
+
+      # Grava o que leu mesmo quando o passo anterior falhou: um despacho recusado não impede os outros nem o estado.
+      - name: Commit e push (só se houver alterações)
+        id: gravar
+        if: always() && steps.ler.outcome != 'skipped'
+        run: |
+          git config user.name "combustiveis-bot"
+          git config user.email "bot@users.noreply.github.com"
+          mudou=0
+          [ -n "$(git status --porcelain -- ilhas.json)" ] && mudou=1
+          for f in ilhas.json ilhas-estado.json; do [ -f "$f" ] && git add "$f" || true; done
+          git diff --cached --quiet && exit 0
+          git commit -m "Atualiza preços das ilhas [skip ci]"
+          for i in 1 2 3; do
+            git pull --rebase -X theirs && git push && { echo "mudou=$mudou" >> "$GITHUB_OUTPUT"; exit 0; }
+            git rebase --abort 2>/dev/null || true
+            sleep 15
+          done
+          exit 1
+
+  # A página vai buscar o ilhas.json ao jsDelivr quando o raw.githubusercontent.com falha, e o jsDelivr guarda cada ficheiro
+  # do ramo main até 12 horas: a seguir a cada mudança manda-se limpar a cópia, como no "Ler postos DGEG" (esperar 8
+  # minutos depois do push, limpar, confirmar e repetir de 15 em 15 minutos, no máximo 3 vezes). Nunca faz falhar o workflow.
+  cdn:
+    needs: ler
+    if: always() && needs.ler.outputs.mudou == '1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Atualizar a cópia do ilhas.json no jsDelivr (reserva da página)
+        run: |
+          novo=$(node -p "require('./ilhas.json').atualizadoEm")
+          url="gh/${GITHUB_REPOSITORY}@main/ilhas.json"
+          sleep 480
+          for i in 1 2 3; do
+            curl -sS -m 30 "https://purge.jsdelivr.net/$url" | tr -d '\n ' | cut -c1-300 || true
+            echo
+            sleep 30
+            tem=$(curl -sS -m 60 "https://cdn.jsdelivr.net/$url" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{console.log(JSON.parse(s).atualizadoEm)}catch(e){console.log('erro')}})" || true)
+            echo "tentativa $i: o jsDelivr tem $tem (novo: $novo)"
+            [ "$tem" = "$novo" ] && exit 0
+            [ "$i" = "3" ] || sleep 900
+          done
+          echo "::warning::O jsDelivr ainda não tem o ilhas.json de $novo. A página lê primeiro do raw.githubusercontent.com."
