@@ -1,0 +1,57 @@
+browser: firefox 159.0
+11) Voltar atrás e avançar no browser
+  ok  chegada: index.html (2 entradas no histórico)
+  ok  pesquisar Lisboa cria uma entrada no histórico: index.html#gasoleo/lisboa (3)
+  ok  pesquisar GPL na Amadora cria outra: index.html#gpl/lisboa/amadora (4)
+  ok  carregar outra vez em "Ver" com a mesma pesquisa não cria entrada (4)
+  ok  voltar atrás: lista de Lisboa, formulário acertado (Lisboa, -, gasoleo)
+  ok  o dropdown do kit acompanha: Lisboa
+  ok  voltar atrás outra vez: todo o país (index.html)
+  ok  avançar duas vezes: GPL na Amadora (Lisboa, Lisboa|Amadora, gpl)
+  ok  à terceira vez para trás sai para a página de onde a pessoa veio
+  ok  e ao avançar de novo volta à página, em todo o país
+  ok  "Perto de mim": endereço sem localização (index.html), 1 pedido de localização
+  ok  a localização fica no estado da entrada do histórico
+  ok  voltar atrás de "Perto de mim": todo o país
+  ok  avançar: "Perto de mim" outra vez, sem voltar a pedir a localização (1 pedido)
+  ok  mudar o combustível em "Perto de mim" cria entrada e não volta a pedir a localização: index.html#gasolina
+  ok  recarregar a página mantém "Perto de mim" sem pedir a localização: Gasolina simples 95 mais barata num raio de 15 km
+  ok  localização guardada há mais de uma hora já não se usa: Gasolina simples 95 mais barata em Portugal continental
+  ok  uma âncora da página não mexe na ferramenta: index.html#perguntas-frequentes
+  ok  voltar da âncora: a mesma lista (index.html#gasoleo/porto)
+  ok  endereço escrito à mão (#gasolina/braga) mostra essa lista
+  ok  e voltar atrás repõe o Porto
+  ok  Madeira entra no histórico: index.html#gasoleo/madeira
+  ok  voltar da Madeira: Porto, com a tabela e o botão normal
+  ok  avançar: Madeira
+  FALHA link #gpl/lisboa/amadora: abre na Amadora sem criar entradas (2, as mesmas da chegada normal)
+  ok  voltar atrás sai logo para a página anterior
+  ok  telemóvel: "Ver" desce até à lista (385 -> 707) e voltar atrás repõe a posição do formulário (385)
+  ok  avançar repõe a posição da lista (707)
+12) Concelhos com poucos postos: postos de concelhos vizinhos
+  ok  Amadora, GPL: 1 posto do concelho e 7 de concelhos vizinhos, os mesmos do cálculo independente 
+  ok  linha de separação: Noutros concelhos, a menos de 3 km da Amadora
+  ok  o destaque e o indicador "O mais barato" continuam a ser do concelho: 0,999€ em AUCHAN Amadora (UBBO)
+  ok  o Auchan de Alfragide aparece, com o concelho onde a DGEG o regista: AUCHAN Alfragide (Oeiras) 0,999€
+  ok  frase: .... Como o concelho tem só 1 posto, a comparação é com a média do distrito. A lista mostra também 7 postos de concelhos vizinhos, a menos de 3 km da Amadora. O mais barato deles está a 0,979€.
+  ok  todas as linhas comparam com a mesma média: -8,2 cênt. -10,2 cênt. -8,2 cênt. -8,2 cênt. +2,8 cênt. +2,8 cênt. +3,8 cênt. +3,8 cênt.
+   AUCHAN Amadora (UBBO) (Amadora) 0,999€
+   Oz Energia - Massamá (Sintra) 0,979€
+   AUCHAN Alfragide (Oeiras) 0,999€
+   Posto de Abastecimento - Intermarché de Famões (Odivelas) 0,999€
+   ES CASA PIA - Gespost - Gestão e Administração de Postos de Abastecimento Unipessoal LDA (Lisboa) 1,109€
+   GALP Carnaxide (Qta. do Minote) (Oeiras) 1,109€
+   ES REPSOL Benfica B - Estádio da Luz (Lisboa) 1,119€
+   GALP A.S. Telheiras - Eixo Norte-Sul (S/N) (Lisboa) 1,119€
+  ok  Amadora, gasóleo (13 postos): só os 10 do concelho, sem vizinhos
+  ok  concelho sem postos de GPL mas com vizinhos: só a lista dos vizinhos (3) 
+  ok  aviso: Não há postos com preço recente de GPL Auto em Porto de Mós. Na lista estão os de concelhos vizinhos, a menos de 3 km.
+  ok  sem média do concelho, a coluna "Face à média" fica vazia
+  ok  concelho sem GPL e sem vizinhos: só o aviso (Não há postos com preço recente de GPL Auto em Arraiolos.)
+  ok  poucos postos e nenhum vizinho a 3 km: lista só do concelho (1)
+  ok  63 concelhos com vizinhos e 61 sem vizinhos iguais ao cálculo independente 
+  ok  telemóvel: a linha de separação cabe na tabela, sem scroll horizontal (375 vs 375), só o posto do concelho tem número
+consola: []
+
+FALHAS: 1
+codigo de saida 1
