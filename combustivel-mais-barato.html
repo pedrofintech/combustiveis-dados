@@ -20,6 +20,8 @@
 .lfk .lfcmb-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; margin-bottom: 1rem; }
 .lfk .lfcmb-head h2 { margin: 0; }
 .lfk .lfcmb-tabela .lfcmb-rank, .lfk .lfcmb-tabela th:first-child { width: 1%; white-space: nowrap; } /* coluna do número só com a largura do número */
+/* linha que separa os postos do concelho dos postos de concelhos vizinhos (concelhos com poucos postos) */
+.lfk .lfcmb-tabela tr.lfcmb-grupo td, .lfk .lfcmb-tabela tbody tr.lfcmb-grupo:hover td { padding-top: .5rem; padding-bottom: .5rem; white-space: normal; background: var(--lfk-bg-2); color: var(--lfk-text-3); font-size: var(--lfk-fs-xs); line-height: var(--lfk-lh-xs); font-weight: 500; }
 .lfk .lfcmb-dif-movel { display: none; font-size: var(--lfk-fs-xs); line-height: var(--lfk-lh-xs); font-weight: 400; }
 .lfk .lfcmb-so-movel, .lfk .lfcmb-so-estreito { display: none; }
 @media (min-width: 641px) {
