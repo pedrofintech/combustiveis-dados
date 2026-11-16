@@ -7,7 +7,7 @@ permissions:
   contents: write
 jobs:
   testar:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -16,10 +16,16 @@ jobs:
           node-version: 20
       - name: Playwright (Chromium, Firefox e WebKit)
         run: |
+          set +e
+          mkdir -p resultados
           npm init -y >/dev/null
-          npm i -s playwright@1.49.1
-          npx playwright install --with-deps chromium firefox webkit >/dev/null
+          npm i -s playwright@latest > resultados/instalar.txt 2>&1
+          npx playwright --version >> resultados/instalar.txt 2>&1
+          npx playwright install --with-deps chromium firefox webkit >> resultados/instalar.txt 2>&1
+          echo "codigo de saida $?" >> resultados/instalar.txt
+          tail -15 resultados/instalar.txt
       - name: Página de teste local
+        if: always()
         run: |
           mkdir -p site/esboco site/combustiveis-dados
           cp -r teste-pagina site/esboco/real
@@ -27,6 +33,7 @@ jobs:
           cd site && (python3 -m http.server 8792 --bind 127.0.0.1 >/dev/null 2>&1 &)
           sleep 2
       - name: Histórico do browser e concelhos vizinhos, nos três browsers
+        if: always()
         run: |
           set +e
           mkdir -p resultados
@@ -38,6 +45,7 @@ jobs:
             echo "== $b"; grep -E "browser:|FALHA|Tudo ok|FALHAS|codigo|consola:|Error" "$GITHUB_WORKSPACE/resultados/$b.txt" | head -40
           done
       - name: Gravar os resultados no ramo
+        if: always()
         run: |
           git config user.name "combustiveis-bot"
           git config user.email "bot@users.noreply.github.com"
