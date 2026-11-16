@@ -426,7 +426,8 @@
       frase = (c.art.charAt(0).toUpperCase() + c.art.slice(1)) + ' mais barat' + (estado.comb === 'gasolina' ? 'a' : 'o') + ' ' + v.onde + ' está a <b>' + preco(min.preco) + '</b> por litro' +
         (v.media > min.preco ? ', <b>' + cent(v.media - min.preco) + ' abaixo da média afixada</b> ' + v.mediaOnde : '') + '. Num depósito de ' + DEPOSITO_L + ' litros são <b>' + fmt(Math.max(0, v.media - min.preco) * DEPOSITO_L) + '</b> a menos do que num posto na média' +
         (v.lista.length > 1 && caro.preco > min.preco ? ' e <b>' + fmt((caro.preco - min.preco) * DEPOSITO_L) + '</b> a menos do que no ' + v.lista.length + '.º posto desta lista.' : '.');
-      if (v.poucos != null) frase += ' Como o concelho tem ' + (v.poucos ? 'só ' + v.poucos + ' posto' + (v.poucos === 1 ? '' : 's') : 'poucos postos') + ', a comparação é com a média do distrito.';
+      /* "posto com preço recente de GPL Auto", e não só "posto": o concelho pode ter muitos postos e poucos com este combustível */
+      if (v.poucos != null) frase += ' Como o concelho tem ' + (v.poucos ? 'só ' + v.poucos + ' posto' + (v.poucos === 1 ? '' : 's') : 'poucos postos') + ' com preço recente de ' + c.art.replace(/^[oa] /, '') + ', a comparação é com a média do distrito.';
     } else {
       frase = (c.art.charAt(0).toUpperCase() + c.art.slice(1)) + ' mais barat' + (estado.comb === 'gasolina' ? 'a' : 'o') + ' ' + v.onde + ' está a <b>' + preco(min.preco) + '</b> por litro.';
     }
