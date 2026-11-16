@@ -1,0 +1,29 @@
+browser: webkit 27.2 | página: https://literacia-financeira-staging.webflow.io/combustivel-mais-barato
+localização de teste (dados fictícios): {"latitude":37.78446,"longitude":-8.08964} | 59 postos de gasóleo a 15 km
+1) histórico do browser (computador)
+   script: https://cdn.jsdelivr.net/gh/pedrofintech/combustiveis-dados@794875bf5207a66a0fae701b3e1eb1fd3323e79f/combustivel-mais-barato.js | lenis: object
+  ok  a página carrega o script do commit 794875b
+  ok  chegada: Gasóleo simples mais barato em Portugal continental (3 entradas)
+  ok  pesquisar Lisboa cria uma entrada: /combustivel-mais-barato#gasoleo/lisboa (4)
+  ok  pesquisar GPL em Amadora cria outra: /combustivel-mais-barato#gpl/lisboa/amadora (5)
+  ok  voltar atrás: lista de Lisboa e formulário acertado (Lisboa, -, gasoleo, 10)
+  ok  voltar atrás outra vez: todo o país, na posição do formulário (340 -> 778 -> 340)
+  FALHA avançar: Lisboa, na posição da lista (64 vs 778)
+  ok  avançar outra vez: GPL em Amadora
+  ok  à terceira vez para trás sai para a página anterior (/precos-combustiveis)
+  ok  e avançar volta à página, em todo o país
+  ok  "Perto de mim": Gasóleo simples mais barato num raio de 15 km (endereço /combustivel-mais-barato, 1 pedido(s) de localização)
+  ok  voltar atrás de "Perto de mim": todo o país
+  ok  avançar: "Perto de mim" sem voltar a pedir a localização (1)
+  ok  recarregar mantém "Perto de mim" sem pedir a localização: Gasóleo simples mais barato num raio de 15 km
+2) histórico do browser (telemóvel, 375 px)
+  ok  "Ver" desce até à lista (479 -> 801) e voltar atrás repõe o formulário (479)
+  ok  avançar repõe a lista (801)
+4) perguntas frequentes e estilos do embed
+  ok  FAQ do filtro por concelho explica os concelhos vizinhos
+  ok  o embed da ferramenta tem o estilo da linha de separação
+consola: ["pageerror: /cdn.prod.website-files.com/66acf8dd84f31fcaca05d57a/66acf8dd84f31fcaca05d5a5_Menu.lottie due to access control checks.","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","pageerror: /cdn.prod.website-files.com/66acf8dd84f31fcaca05d57a/66acf8dd84f31fcaca05d5a5_Menu.lottie due to access control checks.","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","pageerror: /cdn.prod.website-files.com/66acf8dd84f31fcaca05d57a/66acf8dd84f31fcaca05d5a5_Menu.lottie due to access control checks.","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404"]
+  FALHA sem erros de JavaScript na página
+
+FALHAS: 2
+codigo de saida 1
