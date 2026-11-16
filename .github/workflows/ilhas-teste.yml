@@ -2,7 +2,7 @@ name: Teste da página (temporário)
 on:
   push:
     branches: [ilhas-teste]
-    paths: ["teste-pagina/**", "combustivel-mais-barato.js", ".github/workflows/ilhas-teste.yml"]
+    paths: ["verificacao/**", ".github/workflows/ilhas-teste.yml"]
 permissions:
   contents: write
 jobs:
@@ -24,25 +24,22 @@ jobs:
           npx playwright install --with-deps chromium firefox webkit >> resultados/instalar.txt 2>&1
           echo "codigo de saida $?" >> resultados/instalar.txt
           tail -15 resultados/instalar.txt
-      - name: Página de teste local
-        if: always()
-        run: |
-          mkdir -p site/esboco site/combustiveis-dados
-          cp -r teste-pagina site/esboco/real
-          cp combustivel-mais-barato.js site/combustiveis-dados/
-          cd site && (python3 -m http.server 8792 --bind 127.0.0.1 >/dev/null 2>&1 &)
-          sleep 2
-      - name: Histórico do browser e concelhos vizinhos, nos três browsers
+      - name: Página publicada, nos três browsers
         if: always()
         run: |
           set +e
-          mkdir -p resultados
           export NODE_PATH="$GITHUB_WORKSPACE/node_modules"
-          cd site/esboco/real
-          for b in chromium firefox webkit; do
-            BROWSER=$b timeout 600 node teste-historico.cjs > "$GITHUB_WORKSPACE/resultados/$b.txt" 2>&1
-            echo "codigo de saida $?" >> "$GITHUB_WORKSPACE/resultados/$b.txt"
-            echo "== $b"; grep -E "browser:|FALHA|Tudo ok|FALHAS|codigo|consola:|Error" "$GITHUB_WORKSPACE/resultados/$b.txt" | head -40
+          alvo="$(head -1 verificacao/alvo.txt | tr -d '[:space:]')"
+          nome="$(echo "$alvo" | sed -e 's#^https*://##' -e 's#[^A-Za-z0-9.-]#_#g')"
+          saida="$GITHUB_WORKSPACE/resultados/pagina/$nome"
+          rm -rf "$saida"
+          mkdir -p "$saida"
+          date -u > "$saida/quando.txt"
+          for b in chromium webkit firefox; do
+            URL_BASE="$alvo" BROWSER=$b SAIDA="$saida" timeout 540 node verificacao/verificar-pagina.cjs > "$saida/$b.txt" 2>&1
+            echo "codigo de saida $?" >> "$saida/$b.txt"
+            echo "== $b"
+            grep -E "browser:|FALHA|Tudo ok|FALHAS|codigo|consola:|Error" "$saida/$b.txt" | head -40
           done
       - name: Gravar os resultados no ramo
         if: always()
@@ -51,5 +48,6 @@ jobs:
           git config user.email "bot@users.noreply.github.com"
           git add -A resultados
           git diff --cached --quiet && exit 0
-          git commit -m "Resultados do teste da página [skip ci]"
+          git commit -m "Resultados da verificação da página [skip ci]"
+          git pull -q --rebase origin ilhas-teste || true
           git push
