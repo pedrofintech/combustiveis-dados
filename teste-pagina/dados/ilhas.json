@@ -1,0 +1,19 @@
+{
+ "_nota": "Dados de teste da página: os despachos reais em vigor a 13 nov 2026 e um despacho fictício da Madeira para 16 nov (só para testar o 'preço seguinte').",
+ "atualizadoEm": "2026-11-13T17:00:00.000Z",
+ "regioes": {
+  "madeira": {
+   "nome": "Madeira", "jornal": "Jornal Oficial da Região Autónoma da Madeira", "periodo": "semana",
+   "precos": [
+    { "ato": "Despacho Conjunto n.º 104/2026", "desde": "2026-11-16", "gasoleo": 2.159, "gasolina": 1.937, "publicado": "2026-11-13", "jornal": "II série, n.º 207, 2.º suplemento", "url": "https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-207-2026-11-13Supl2.pdf" },
+    { "ato": "Despacho Conjunto n.º 101/2026", "desde": "2026-11-09", "gasoleo": 2.145, "gasolina": 1.937, "publicado": "2026-11-06", "jornal": "II série, n.º 202, 3.º suplemento", "url": "https://joram.madeira.gov.pt/joram/2serie/Ano%20de%202026/IISerie-202-2026-11-06Supl3.pdf" }
+   ]
+  },
+  "acores": {
+   "nome": "Açores", "jornal": "Jornal Oficial da Região Autónoma dos Açores", "periodo": "mês",
+   "precos": [
+    { "ato": "Despacho Normativo n.º 33/2026", "desde": "2026-11-01", "gasoleo": 1.994, "gasolina": 1.934, "publicado": "2026-10-30", "jornal": "I série, n.º 139", "url": "https://jo.azores.gov.pt/pdf/atos/33-I-Despacho_Normativo-2026-10-30.pdf" }
+   ]
+  }
+ }
+}

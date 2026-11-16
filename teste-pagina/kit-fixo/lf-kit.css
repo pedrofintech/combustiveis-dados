@@ -1,0 +1,796 @@
+/* LF kit v2: estilos para ferramentas embebidas (calculadoras, comparadores, simuladores).
+   Igual as calculadoras live dos cinco sites (Literacia, EUPF, BrokerMatch, Rahatarkus, Educacao Financeira):
+   cada valor vem das classes do Webflow (form_input, form_label, button, table-results_wrapper, graph_wrapper,
+   resultados_component, help-text_wrapper, badge, tabelas das calculadoras) e usa as mesmas variaveis, por isso
+   cada site fica com as suas cores, letras e tamanhos por breakpoint. Fora do Webflow usa os valores da Literacia.
+   Uso: <link rel="stylesheet" href=".../kit/lf-kit.css"> e tudo dentro de <div class="lfk">...</div>.
+   Graficos: kit/lf-kit.js. Exemplos em kit/demo.html; regras para o Claude em kit/README.md. */
+
+.lfk{
+  /* Letras */
+  --lfk-font:var(--font--primary-family,Inter,Arial,sans-serif);
+  --lfk-font-display:var(--font--secondary-family,"Tiempos Headline",Georgia,sans-serif);
+  /* Cores (variaveis do Webflow; o valor a seguir a virgula e o da Literacia) */
+  /* Botao principal e hover iguais ao "Calcular" de cada site: BrokerMatch usa o verde dos botoes; Rahatarkus tem
+     --colors--button-bg-hover; Literacia e Educacao Financeira usam --colors--brand-600 (que nos outros sites ficou
+     laranja, herdado do template). Na EUPF o hover e cinzento: o lf-kit.js corrige quando o hover sai igual ao botao. */
+  --lfk-brand:var(--colors--button-primary-green,var(--colors--bg-brand,#ff5a1f));
+  --lfk-brand-hover:var(--colors--button-primary-green-hover,var(--colors--button-bg-hover,var(--colors--brand-600,#f03406)));
+  --lfk-on-brand:var(--colors--text-on-color-primary,#f9fafb);
+  --lfk-text:var(--colors--text-primary,#202432);
+  --lfk-text-2:var(--colors--text-secondary,#3a4454);
+  --lfk-text-3:var(--colors--text-tertiary,#4f5969);
+  --lfk-text-4:var(--colors--text-color-quarterary,#697386);
+  --lfk-placeholder:var(--colors--text-placeholder,#697386);
+  --lfk-link:var(--colors--text-link,#2970ff);
+  --lfk-blue:var(--colors--text-blue,#155eef);
+  --lfk-blue-soft:var(--colors--bg-soft-blue,#eff4ff);
+  --lfk-bg:var(--colors--bg-white,#fff);
+  --lfk-bg-2:var(--colors--bg-secondary,#f9fafb);
+  --lfk-bg-3:var(--colors--bg-tertiary,#f2f4f7);
+  --lfk-dark:var(--colors--text-primary,#202432);              /* nao usar --colors--button-bg-default: na Educacao Financeira e #ebefed (claro) */
+  --lfk-dark-hover:var(--colors--grey-700,#3a4454);
+  --lfk-tooltip:var(--colors--bg-primary-dark,#121721);
+  --lfk-tooltip-text:var(--colors--text-on-color-tertiary,#ced5df);
+  --lfk-border:var(--colors--border-primary,#ced5df);
+  --lfk-border-2:var(--colors--border-secondary,#e9ecf1);
+  --lfk-border-3:var(--colors--border-tertiary,#f2f4f7);
+  --lfk-border-hover:var(--colors--border-hover,#3a4454);
+  --lfk-focus:var(--colors--border-focus,#d1e0ff);
+  --lfk-focus-border:var(--colors--border-focus-dark,#84adff);
+  --lfk-surface:var(--colors--bg-primary,#fcfcfd);              /* fundo dos cartoes do design system */
+  --lfk-blue-200:var(--colors--blue-200,#b2ccff);
+  --lfk-err-600:var(--colors--text-error-primary,#d92d20);
+  --lfk-icon:var(--colors--icon-grey-light,#96a0b0);
+  --lfk-icon-hover:var(--colors--icon-grey-base,#697386);
+  --lfk-ok:var(--colors--text-success-700,#067647);--lfk-ok-bg:var(--colors--badge-bg-green-200,#a9efc5);
+  --lfk-warn:var(--colors--text-warning-700,#93370d);--lfk-warn-bg:var(--colors--bg-warning,#fffaeb);--lfk-warn-border:var(--colors--border-warning,#fef0c7);
+  --lfk-err:var(--colors--text-error-500,#f04438);--lfk-err-bg:#fef3f2;--lfk-err-border:var(--colors--border-error,#fda29b);
+  --lfk-disabled-bg:var(--colors--bg-disabled-soft,#f9fafb);--lfk-disabled-border:var(--colors--border-disabled,#e9ecf1);--lfk-disabled-text:var(--colors--text-disabled,#697386);
+  /* Cores dos graficos */
+  --lfk-c1:var(--colors--accent-orange,#fd8d2b);
+  --lfk-c2:var(--colors--accent-blue,#2970ff);
+  --lfk-c3:var(--colors--accent-green,#31af89);
+  --lfk-c4:var(--colors--accent-yellow,#fec84b);
+  --lfk-c5:var(--colors--accent-purple,#9b8afb);
+  /* Tipografia FIXA, igual nos cinco sites (valores da Literacia). Nao usa as variaveis do Webflow de proposito:
+     o tracking do texto e dos titulos difere entre sites (ex.: --body--letter-spacing -.008em na EUPF/BM/Rahatarkus). */
+  --lfk-fs-xs:.75rem;--lfk-lh-xs:1.5em;--lfk-ls-xs:-.008em;
+  --lfk-fs-s:.875rem;--lfk-lh-s:1.42857em;--lfk-ls-s:-.014em;
+  --lfk-fs-m:1rem;--lfk-lh-m:1.5em;--lfk-ls-m:-.0125em;
+  --lfk-fs-l:1.125rem;--lfk-lh-l:1.44em;--lfk-ls-l:-.016em;
+  --lfk-fs-xl:1.25rem;--lfk-lh-xl:1.5em;--lfk-ls-xl:-.02em;
+  --lfk-title-fs:2.5rem;--lfk-title-lh:1.35em;--lfk-title-ls:-.005em;   /* heading-style-h2 */
+  --lfk-h-fs:1.5rem;--lfk-h-lh:1.5em;--lfk-h-ls:0em;                    /* h4 */
+  --lfk-r-sm:8px;--lfk-r-tab:.625rem;--lfk-r:.75rem;--lfk-r-xl:1.25rem;--lfk-r-full:100vw;
+  font-family:var(--lfk-font);font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);letter-spacing:var(--lfk-ls-m);font-weight:400;color:var(--lfk-text);
+  text-align:left;-webkit-text-size-adjust:100%;text-size-adjust:100%;
+  /* igual ao embed global dos cinco sites ("Make text look crisper") */
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility
+}
+.lfk,.lfk *,.lfk *::before,.lfk *::after{box-sizing:border-box}
+.lfk :where(h1,h2,h3,h4,h5,h6,p,ul,ol,figure){margin:0}
+/* os h1-h6 do Webflow trazem letra e tamanho proprios; dentro do kit so contam as classes lfk-* */
+.lfk :where(h1,h2,h3,h4,h5,h6){font-family:inherit;font-size:inherit;line-height:inherit;letter-spacing:inherit;font-weight:inherit;text-align:inherit}
+.lfk :where(button,input,select,textarea){font:inherit;color:inherit}
+.lfk :where(button){letter-spacing:inherit;text-rendering:inherit}  /* no site os botoes sao <a> e herdam do body */
+.lfk :where(img,svg){max-width:100%}
+.lfk .lfk-num{font-variant-numeric:tabular-nums}
+.lfk [hidden],.lfk[hidden]{display:none!important}
+
+/* ---------- Texto ---------- */
+/* Titulo da pagina = heading-style-h2; titulo de secao = h4; titulo de cartao = "Resultados" (text-size-extra-large medium) */
+.lfk .lfk-title{font-family:var(--lfk-font-display);font-size:var(--lfk-title-fs);line-height:var(--lfk-title-lh);letter-spacing:var(--lfk-title-ls);font-weight:400;color:var(--lfk-text)}
+.lfk .lfk-h{font-family:var(--lfk-font-display);font-size:var(--lfk-h-fs);line-height:var(--lfk-h-lh);letter-spacing:var(--lfk-h-ls);font-weight:400;color:var(--lfk-text)}
+.lfk .lfk-h-sm{font-size:var(--lfk-fs-xl);line-height:var(--lfk-lh-xl);letter-spacing:var(--lfk-ls-xl);font-weight:500;color:var(--lfk-text)}
+.lfk .lfk-eyebrow{font-size:var(--lfk-fs-xs);line-height:var(--lfk-lh-xs);letter-spacing:.01em;font-weight:500;text-transform:uppercase;color:var(--lfk-text-4)}
+.lfk .lfk-lead{font-size:var(--lfk-fs-l);line-height:var(--lfk-lh-l);letter-spacing:var(--lfk-ls-l);color:var(--lfk-text-2)}
+.lfk .lfk-text{font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);letter-spacing:var(--lfk-ls-m);color:var(--lfk-text-2)}
+.lfk .lfk-small{font-size:var(--lfk-fs-s);line-height:var(--lfk-lh-s);letter-spacing:var(--lfk-ls-s);color:var(--lfk-text-2)}
+.lfk .lfk-xs{font-size:var(--lfk-fs-xs);line-height:var(--lfk-lh-xs);letter-spacing:var(--lfk-ls-xs);color:var(--lfk-text-4)}
+.lfk .lfk-muted{color:var(--lfk-text-4)}
+.lfk .lfk-strong{font-weight:600;color:var(--lfk-text)}
+.lfk .lfk-pos{color:var(--lfk-ok)}
+.lfk .lfk-neg{color:var(--lfk-err)}
+.lfk .lfk-link{color:var(--lfk-link);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+
+/* ---------- Disposicao ---------- */
+.lfk .lfk-stack{display:flex;flex-direction:column;gap:1.5rem}           /* spacer-1-5 entre campos */
+.lfk .lfk-stack.is-sm{gap:.4375rem}
+.lfk .lfk-stack.is-lg{gap:2rem}                                          /* spacer-2 antes do botao */
+.lfk .lfk-row{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem}
+.lfk .lfk-row.is-between{justify-content:space-between}
+.lfk .lfk-grid{display:grid;gap:1.5rem 2rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.lfk .lfk-grid.is-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.lfk .lfk-grid.is-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.lfk .lfk-grid > *{min-width:0}
+.lfk .lfk-divider{height:1px;border:0;margin:0;background:var(--lfk-border-2)}
+.lfk .lfk-or{display:flex;align-items:center;gap:.75rem;font-size:var(--lfk-fs-s);line-height:var(--lfk-lh-s);color:var(--lfk-text-4)}
+.lfk .lfk-or::before,.lfk .lfk-or::after{content:"";flex:1;height:1px;background:var(--lfk-border-2)}
+
+/* ---------- Cartoes (table-results_wrapper / graph_wrapper) ---------- */
+.lfk .lfk-card{padding:2.5rem;border:4px solid var(--lfk-border-3);border-radius:var(--lfk-r-xl);background:var(--lfk-bg)}
+.lfk .lfk-card.is-soft{border-color:transparent;background:var(--lfk-bg-2)}
+.lfk .lfk-card.is-raised{border-color:var(--lfk-border-3)}
+.lfk .lfk-card.is-brand{border-color:var(--lfk-brand)}
+.lfk .lfk-card.is-sm{padding:1.5rem}
+.lfk .lfk-card-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem;margin-bottom:2rem}
+
+/* ---------- Botoes (.button) ---------- */
+/* Principal = button is-form-submit; escuro = button is-small; secundario = is-small is-secondary; pequeno = is-small */
+/* Botoes: design system do Figma (LF Design system > buttons).
+   Tamanhos: is-sm 36px, normal 40px, is-lg 46px. Tipos: principal (cor do site), is-dark (cinzento escuro),
+   is-secondary (contorno), is-on-dark (em cima de fundo escuro), is-ghost. Estados: hover, foco (:focus-visible) e disabled.
+   Icone: <svg> ou <span class="lfk-ico-arrow"></span> antes ou depois do texto. */
+.lfk .lfk-btn{display:inline-flex;align-items:center;justify-content:center;gap:.375rem;margin:0;padding:.5rem 1.125rem;border:0;border-radius:var(--lfk-r);background:var(--lfk-brand);color:var(--lfk-on-brand);font-family:var(--lfk-font);font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);letter-spacing:var(--lfk-ls-m);font-weight:500;text-align:center;text-decoration:none;white-space:nowrap;cursor:pointer;transition:border-color .3s,background-color .3s,color .3s,box-shadow .3s}
+.lfk .lfk-btn:hover{background:var(--lfk-brand-hover);color:var(--lfk-on-brand)}
+.lfk .lfk-btn:focus-visible{background:var(--lfk-brand-hover)}
+.lfk .lfk-btn.is-dark{background:var(--lfk-dark);color:#fff}
+.lfk .lfk-btn.is-dark:is(:hover,:focus-visible){background:linear-gradient(196deg,var(--colors--grey-700,#3a4454) 0%,var(--colors--grey-500,#697386) 100%)}
+.lfk .lfk-btn.is-secondary{border:1px solid var(--lfk-border);padding-top:calc(.5rem - 1px);padding-bottom:calc(.5rem - 1px);background:var(--lfk-bg);color:var(--colors--button-fb-primary,#3a4454)}
+.lfk .lfk-btn.is-secondary:is(:hover,:focus-visible){border-color:var(--lfk-border-hover);background:var(--lfk-bg);color:var(--colors--button-fb-primary,#3a4454)}
+.lfk .lfk-btn.is-on-dark{background:#fcfcfd29;color:#fff}
+.lfk .lfk-btn.is-on-dark:is(:hover,:focus-visible){background:#fcfcfd4d;color:#fff}
+.lfk .lfk-btn.is-ghost{background:transparent;color:var(--lfk-text-4)}
+.lfk .lfk-btn.is-ghost:hover{background:var(--lfk-blue-soft);color:var(--lfk-blue)}
+.lfk .lfk-btn.is-sm{gap:.25rem;padding-left:.875rem;padding-right:.875rem;font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:var(--lfk-ls-s)}
+.lfk .lfk-btn.is-lg{gap:.5rem;padding:.625rem 1.375rem;font-size:var(--lfk-fs-l);line-height:1.625rem;letter-spacing:var(--lfk-ls-l)}
+.lfk .lfk-btn.is-lg.is-secondary{padding-top:calc(.625rem - 1px);padding-bottom:calc(.625rem - 1px)}
+.lfk .lfk-btn.is-block{display:flex;width:100%}
+.lfk .lfk-btn svg,.lfk .lfk-btn .lfk-ico-arrow{width:1.25rem;height:1.25rem;flex-shrink:0}
+.lfk .lfk-btn.is-lg svg,.lfk .lfk-btn.is-lg .lfk-ico-arrow{width:1.5rem;height:1.5rem}
+/* Desativado: fundo e letra cinzentos (nao transparente) */
+.lfk .lfk-btn:disabled,.lfk .lfk-btn.is-disabled{background:var(--colors--bg-disabled,#e9ecf1);color:var(--lfk-icon);pointer-events:none}
+.lfk .lfk-btn.is-secondary:is(:disabled,.is-disabled){border-color:var(--lfk-border-2);background:var(--lfk-bg)}
+.lfk .lfk-btn.is-on-dark:is(:disabled,.is-disabled){background:#fcfcfd1a;color:#fffcfa99}
+/* So icone, redondo: is-icon (28px), com is-sm (24px) ou is-lg (32px). Com is-secondary fica quadrado com contorno (36px). */
+.lfk .lfk-btn.is-icon{width:1.75rem;height:1.75rem;padding:.25rem;gap:0;border-radius:var(--lfk-r-full)}
+.lfk .lfk-btn.is-icon.is-sm{width:1.5rem;height:1.5rem;padding:.25rem}
+.lfk .lfk-btn.is-icon.is-lg{width:2rem;height:2rem;padding:.25rem}
+.lfk .lfk-btn.is-icon.is-sm :is(svg,.lfk-ico-arrow){width:1rem;height:1rem}
+.lfk .lfk-btn.is-icon.is-dark:is(:hover,:focus-visible){background:var(--lfk-dark-hover)}
+.lfk .lfk-btn.is-icon.is-secondary{width:2.25rem;height:2.25rem;padding:calc(.5rem - 1px);border-radius:var(--lfk-r);color:var(--colors--button-fb-primary,#3a4454)}
+/* Seta do design system (icons/arrow-right-*.svg). Fica com a cor do texto do botao. */
+.lfk .lfk-ico-arrow{display:inline-block;flex:none;width:1.25rem;height:1.25rem;background:currentColor;-webkit-mask:url("icons/arrow-right-20.svg") center/100% 100% no-repeat;mask:url("icons/arrow-right-20.svg") center/100% 100% no-repeat}
+.lfk .is-sm > .lfk-ico-arrow,.lfk .lfk-btn.is-icon.is-sm .lfk-ico-arrow{-webkit-mask-image:url("icons/arrow-right-16.svg");mask-image:url("icons/arrow-right-16.svg")}
+.lfk .is-lg > .lfk-ico-arrow,.lfk .lfk-btn.is-icon.is-lg .lfk-ico-arrow{-webkit-mask-image:url("icons/arrow-right-24.svg");mask-image:url("icons/arrow-right-24.svg")}
+/* Link com seta redonda: <a class="lfk-link-btn">Texto <span class="lfk-btn is-icon"><span class="lfk-ico-arrow"></span></span></a>
+   is-secondary: seta escura. is-lg: texto 16px e seta de 32px. No hover a seta afasta-se do texto. */
+.lfk .lfk-link-btn{display:inline-flex;align-items:center;gap:.5rem;padding:0;border:0;border-radius:var(--lfk-r-full);background:none;color:var(--colors--button-fb-primary-link,#202432);font-family:var(--lfk-font);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:var(--lfk-ls-s);font-weight:500;text-decoration:none;white-space:nowrap;cursor:pointer;transition:gap .3s,color .3s,box-shadow .3s}
+.lfk .lfk-link-btn > .lfk-btn{pointer-events:none}
+.lfk .lfk-link-btn:is(:hover,:focus-visible){gap:.75rem;color:var(--lfk-brand)}
+.lfk .lfk-link-btn:focus-visible{outline:none;background:var(--colors--bg-primary,#fcfcfd);box-shadow:0 0 0 4px var(--lfk-focus)}
+.lfk .lfk-link-btn.is-secondary > .lfk-btn{background:var(--lfk-dark)}
+.lfk .lfk-link-btn.is-secondary:is(:hover,:focus-visible){color:var(--colors--button-fb-primary-link,#202432)}
+.lfk .lfk-link-btn.is-secondary:hover > .lfk-btn{background:var(--lfk-dark-hover)}
+.lfk .lfk-link-btn.is-lg{gap:.75rem;font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);letter-spacing:var(--lfk-ls-m)}
+.lfk .lfk-link-btn.is-lg:is(:hover,:focus-visible){gap:1rem}
+.lfk .lfk-link-btn:is(:disabled,.is-disabled){color:var(--lfk-icon);pointer-events:none}
+.lfk .lfk-link-btn:is(:disabled,.is-disabled) > .lfk-btn{background:var(--colors--bg-disabled,#e9ecf1);color:var(--lfk-icon)}
+/* Botao de rede social (20px): <a class="lfk-social is-linkedin" href="..." aria-label="LinkedIn"></a> */
+.lfk .lfk-social{display:inline-flex;flex:none;width:1.75rem;height:1.75rem;padding:.25rem;border-radius:var(--lfk-r-sm);background-origin:content-box;background-size:1.25rem 1.25rem;background-repeat:no-repeat;background-position:center}
+.lfk .lfk-social.is-linkedin{background-image:url("icons/linkedin.svg")}
+.lfk .lfk-social.is-linkedin:is(:hover,:focus-visible){background-image:url("icons/linkedin-hover.svg")}
+.lfk .lfk-social:focus-visible{outline:none;box-shadow:0 0 0 4px var(--lfk-focus)}
+
+/* ---------- Campos (form_field-wrapper / form_label / form_input is-normal) ---------- */
+/* Campos (Figma > inputs): etiqueta 14/20, campo de 44px (is-sm 40px), texto 16/24, ajuda 14/20 por baixo. Foco: contorno azul + anel de 4px. Erro: contorno vermelho claro. */
+.lfk .lfk-field{display:flex;flex-direction:column;gap:.375rem;min-width:0}
+.lfk .lfk-label{display:flex;align-items:center;gap:.375rem;margin:0;font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;font-weight:500;color:var(--lfk-text-2)}
+.lfk .lfk-hint{font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;color:var(--lfk-text-3)}
+.lfk .lfk-error{display:none;font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;color:var(--lfk-err-600)}
+.lfk .lfk-field.is-error .lfk-error{display:block}
+.lfk .lfk-input{display:block;width:100%;height:2.75rem;margin:0;padding:.625rem .75rem;border:1px solid var(--lfk-border);border-radius:var(--lfk-r);background:var(--lfk-bg);color:var(--lfk-text);font-family:var(--lfk-font);font-size:var(--lfk-fs-m);line-height:1.5rem;letter-spacing:-.2px;outline:0;box-shadow:none;-webkit-appearance:none;appearance:none;transition:border-color .2s,box-shadow .2s}
+.lfk .lfk-input.is-sm{height:2.5rem;padding:.5rem .75rem}
+.lfk textarea.lfk-input{height:8rem;padding:.75rem;resize:vertical;box-shadow:0 1px 2px #1018280d}
+.lfk .lfk-input::placeholder{color:var(--lfk-placeholder);opacity:1}
+.lfk .lfk-input:focus,.lfk textarea.lfk-input:focus{border-color:var(--lfk-focus-border);box-shadow:0 0 0 4px var(--lfk-focus)}
+.lfk .lfk-field.is-error .lfk-input,.lfk .lfk-input.is-error{border-color:var(--lfk-err-border)}
+.lfk .lfk-field.is-error .lfk-input:focus,.lfk .lfk-input.is-error:focus{border-color:var(--lfk-err-border);box-shadow:0 0 0 4px var(--colors--border-error-focus,#fee4e2)}
+.lfk .lfk-input:disabled,.lfk .lfk-input.is-disabled{border-color:var(--lfk-border-2);background:var(--lfk-disabled-bg);color:var(--lfk-text-4);box-shadow:none;pointer-events:none}
+/* Campo em fundo escuro (theme dark do Figma) */
+.lfk .is-on-dark .lfk-label{color:var(--lfk-tooltip-text)}
+.lfk .is-on-dark .lfk-hint{color:var(--lfk-icon)}
+.lfk .is-on-dark .lfk-input{border-color:var(--colors--border-on-color-secondary,#2d3543);background:#fcfcfd0a;color:var(--colors--text-on-color-primary,#f9fafb)}
+.lfk .is-on-dark .lfk-input:focus{border-color:var(--colors--border-focus-on-color,#528bff);box-shadow:0 0 0 4px #d1e0ff3d}
+.lfk .is-on-dark .lfk-input:disabled{border-color:var(--colors--border-on-color-primary,#202432);color:var(--lfk-text-3)}
+.lfk .is-on-dark.is-error .lfk-input{border-color:#f97066}
+.lfk .is-on-dark.is-error .lfk-error{color:#f97066}
+.lfk .lfk-input[type=number]{-moz-appearance:textfield}
+.lfk .lfk-input::-webkit-outer-spin-button,.lfk .lfk-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+/* Unidade dentro do campo (input-text-position + text-color-placeholder) */
+.lfk .lfk-input-wrap{position:relative}
+.lfk .lfk-input-wrap .lfk-input{padding-right:3.5rem}
+.lfk .lfk-unit{position:absolute;top:50%;right:.75rem;transform:translateY(-50%);font-size:var(--lfk-fs-m);line-height:1.5rem;letter-spacing:-.2px;color:var(--lfk-placeholder);pointer-events:none}
+/* Lista = dropdown das calculadoras (dropdown-general-calculadora + dropdown-toggle + dropdown-list-caulculadora).
+   lf-kit.js troca cada <select class="lfk-input"> por este dropdown e deixa o <select> escondido e sincronizado.
+   Sem JavaScript o <select> fica com o mesmo aspeto fechado. */
+.lfk select.lfk-input{padding:.25rem 2.5rem .25rem .75rem;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%23697386' stroke-width='1.67' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right .75rem center;color:#222;line-height:var(--lfk-lh-m);letter-spacing:var(--lfk-ls-m);cursor:pointer}
+.lfk select.lfk-input::-ms-expand{display:none}
+.lfk select.lfk-input option{color:#222;background:#fff}
+.lfk select.lfk-dd-native{position:absolute;width:1px;height:1px;min-height:0;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;opacity:0;pointer-events:none}
+.lfk .lfk-dd{position:relative;z-index:1;width:100%;text-align:left}
+/* Abaixo da navbar fixa do site (z-index 100), para a lista aberta nao a tapar quando se faz scroll da pagina */
+.lfk .lfk-dd.is-open{z-index:99}
+/* Lista (Figma > dropdowns): o botao e igual a um campo; a lista abre 4px por baixo com sombra */
+.lfk .lfk-dd-toggle{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:center;gap:.5rem;width:100%;height:2.75rem;padding:.625rem .75rem;border:1px solid var(--lfk-border);border-radius:var(--lfk-r);background:var(--lfk-bg);color:var(--lfk-text);font-size:var(--lfk-fs-m);line-height:1.5rem;letter-spacing:-.2px;cursor:pointer;user-select:none;transition:border-color .2s,box-shadow .2s}
+.lfk .lfk-dd-toggle > div:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lfk .lfk-dd.is-open .lfk-dd-toggle{border-color:var(--lfk-focus-border);box-shadow:0 0 0 4px var(--lfk-focus)}
+.lfk .lfk-dd-toggle:focus{outline:0}
+.lfk .lfk-dd-toggle:focus-visible{border-color:var(--lfk-focus-border);box-shadow:0 0 0 4px var(--lfk-focus)}
+.lfk .lfk-dd.is-disabled .lfk-dd-toggle{border-color:var(--lfk-border-2);background:var(--lfk-disabled-bg);color:var(--lfk-text-4);pointer-events:none}
+.lfk .lfk-dd-arrow{display:flex;flex:none;justify-content:center;align-items:center;width:1.25rem;color:var(--lfk-text-4);transition:transform .2s}
+.lfk .lfk-dd.is-open .lfk-dd-arrow{transform:rotate(180deg)}
+.lfk .lfk-dd-arrow svg{display:block;width:100%;height:auto}
+.lfk .lfk-dd-list{position:absolute;top:100%;left:0;display:none;min-width:100%;max-height:20rem;overflow-y:auto;margin-top:4px;padding:.375rem 0;border:1px solid var(--lfk-border-2);border-radius:var(--lfk-r);background:var(--lfk-bg);box-shadow:0 12px 16px -4px #10182814,0 4px 6px -2px #10182808}
+.lfk .lfk-dd.is-open .lfk-dd-list{display:block}
+.lfk .lfk-dd-item{display:flex;align-items:center;gap:.5rem;margin:0 .375rem;padding:.625rem .625rem .625rem .5rem;border-radius:var(--lfk-r);color:var(--lfk-text-2);font-size:var(--lfk-fs-m);line-height:1.5rem;letter-spacing:-.2px;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background-color .2s,color .2s}
+.lfk .lfk-dd-item:hover,.lfk .lfk-dd-item.is-focus{background:var(--lfk-bg-2);color:var(--lfk-text)}
+.lfk .lfk-dd-item[aria-selected=true]::after{content:"";flex:none;width:1.25rem;height:1.25rem;margin-left:auto;background:var(--lfk-link);-webkit-mask:url("icons/checkbox-check-14.svg") center/1.0625rem no-repeat;mask:url("icons/checkbox-check-14.svg") center/1.0625rem no-repeat}
+.lfk .lfk-dd-item[aria-disabled=true]{color:var(--lfk-text-4);pointer-events:none}
+.lfk .lfk-dd-item[aria-disabled=true][aria-selected=true]::after{background:var(--lfk-icon)}
+/* Lista pequena: is-sm no <select> */
+.lfk .lfk-dd.is-sm .lfk-dd-toggle{height:2.25rem;padding:.5rem .625rem .5rem .75rem;font-size:var(--lfk-fs-s);line-height:1.25rem}
+.lfk .lfk-dd.is-sm .lfk-dd-arrow{width:1rem}
+.lfk .lfk-dd.is-sm .lfk-dd-list{margin-top:2px}
+.lfk .lfk-dd.is-sm .lfk-dd-item{font-size:var(--lfk-fs-s);line-height:1.25rem}
+
+/* Escolha em botoes = button is-graph (Grafico / Tabela): <div class="lfk-toggle"><button class="lfk-tab is-active"> */
+.lfk .lfk-toggle{display:flex;flex-wrap:wrap;gap:.375rem}
+.lfk .lfk-toggle.is-fill{display:grid;grid-auto-columns:minmax(0,1fr);grid-auto-flow:column}
+/* Tabs (Figma > tabs): normal, is-input (com icone, contorno) e is-cat (titulo + descricao, cor da categoria) */
+.lfk .lfk-tab{display:inline-flex;align-items:center;justify-content:center;gap:.25rem;padding:.5rem .75rem;border:0;border-radius:.625rem;background:transparent;color:var(--lfk-text-4);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;font-weight:500;white-space:nowrap;cursor:pointer;transition:background-color .3s,color .3s,border-color .3s,box-shadow .3s}
+.lfk .lfk-tab:is(:hover,:focus-visible){background:var(--lfk-bg);color:var(--lfk-text-2)}
+.lfk .lfk-tab:is(.is-active,[aria-pressed=true],[aria-selected=true]){background:var(--lfk-blue-soft);color:var(--lfk-blue)}
+.lfk .lfk-tab.is-input{gap:.5rem;height:2.75rem;padding:calc(.75rem - 1px);border:1px solid var(--lfk-border-2);border-radius:var(--lfk-r);background:var(--lfk-bg)}
+.lfk .lfk-tab.is-input:is(.is-active,[aria-pressed=true],[aria-selected=true]){padding:calc(.75rem - 2px);border:2px solid var(--lfk-focus);background:var(--lfk-blue-soft)}
+.lfk .lfk-tab.is-input:is(.is-active,[aria-pressed=true],[aria-selected=true]):focus-visible{box-shadow:0 0 0 2px var(--lfk-focus)}
+.lfk .lfk-tab .lfk-tab-icon{flex:none;width:1rem;height:1rem;background:currentColor;opacity:.75;-webkit-mask:url("icons/tabs-help-circle-16-grey.svg") center/100% no-repeat;mask:url("icons/tabs-help-circle-16-grey.svg") center/100% no-repeat}
+.lfk .lfk-tab:not(.is-active) .lfk-tab-icon{color:var(--lfk-icon);opacity:1}
+.lfk .lfk-tab.is-active .lfk-tab-icon{color:var(--lfk-link);opacity:1}
+.lfk .lfk-tab.is-cat{flex-direction:column;flex:1;gap:.125rem;padding:calc(.5rem - 1px) calc(.75rem - 1px);border:1px solid var(--lfk-border-2);border-radius:var(--lfk-r);background:var(--lfk-bg);color:var(--lfk-text-4);white-space:normal;text-align:center}
+.lfk .lfk-tab.is-cat:hover{background:var(--lfk-bg);color:var(--lfk-text-4)}
+.lfk .lfk-tab.is-cat small{display:block;font-size:.75rem;line-height:1.125rem;letter-spacing:-.1px;font-weight:400}
+.lfk .lfk-tab.is-cat:is(.is-ok,.is-warn,.is-err){padding:calc(.5rem - 2px) calc(.75rem - 2px);border-width:2px}
+.lfk .lfk-tab.is-cat.is-ok{border-color:var(--colors--success-200,#a9efc5);background:var(--colors--success-100,#dcfae6);color:var(--lfk-ok)}
+.lfk .lfk-tab.is-cat.is-warn{border-color:var(--colors--warning-200,#fedf89);background:var(--colors--warning-100,#fef0c7);color:var(--colors--text-warning-primary,#b54708)}
+.lfk .lfk-tab.is-cat.is-err{border-color:var(--colors--border-error,#fda29b);background:var(--colors--error-50,#fef3f2);color:var(--lfk-err-600)}
+
+/* Filtros em pilula (badge): <button class="lfk-chip is-on"> */
+.lfk .lfk-chips{display:flex;flex-wrap:wrap;gap:.375rem}
+.lfk .lfk-chip{display:inline-flex;align-items:center;justify-content:center;gap:.375rem;height:2rem;padding:.375rem .75rem;border:0;border-radius:var(--lfk-r-full);background:var(--lfk-bg-3);color:var(--lfk-text-3);font-size:.875rem;line-height:1.25rem;letter-spacing:-.02em;font-weight:500;white-space:nowrap;cursor:pointer;transition:background-color .3s,color .3s}
+.lfk .lfk-chip:hover{background:var(--lfk-border-2);color:var(--lfk-text)}
+.lfk .lfk-chip.is-on,.lfk .lfk-chip[aria-pressed=true]{background:var(--lfk-dark);color:#fff}
+
+/* Checkbox e radio (Figma > checkbox). Tamanho normal = md (caixa 20px, texto 16/24); is-sm = caixa 16px, texto 14/20.
+   <label class="lfk-check"><input type="checkbox"> <span>Texto <small>Texto de apoio</small></span></label>
+   <div class="lfk-radios"><label class="lfk-radio"><input type="radio" name="x" checked> <span>S&amp;P 500</span></label>...</div>
+   Marcado: fundo cinzento escuro (#3A4454). Foco: anel de 2px. Desativado: fundo claro e visto cinzento. */
+.lfk :is(.lfk-check,.lfk-radio){display:inline-flex;align-items:flex-start;gap:.75rem;margin:0;color:var(--lfk-text);font-size:var(--lfk-fs-m);line-height:1.5rem;letter-spacing:-.2px;font-weight:500;cursor:pointer}
+.lfk :is(.lfk-check,.lfk-radio) > span{display:flex;flex-direction:column;gap:.125rem;min-width:0}
+.lfk :is(.lfk-check,.lfk-radio) small{display:block;color:var(--lfk-text-3);font-size:inherit;line-height:inherit;font-weight:400}
+.lfk :is(.lfk-check,.lfk-radio) input{flex:none;width:1.25rem;height:1.25rem;margin:.125rem 0 0;border:1px solid var(--lfk-border);border-radius:6px;background:transparent no-repeat center;-webkit-appearance:none;appearance:none;cursor:pointer;transition:border-color .2s,background-color .2s,box-shadow .2s}
+.lfk .lfk-radio input{border-radius:50%}
+.lfk :is(.lfk-check,.lfk-radio) input:hover{border-color:var(--lfk-border-hover)}
+.lfk :is(.lfk-check,.lfk-radio) input:focus{outline:0}
+.lfk :is(.lfk-check,.lfk-radio) input:focus-visible{background-color:var(--lfk-surface);box-shadow:0 0 0 2px var(--lfk-focus)}
+.lfk .lfk-check input:is(:checked,:indeterminate){border-color:transparent;background-color:var(--lfk-dark-hover);background-image:url("icons/checkbox-check-14.svg");background-size:.875rem}
+.lfk .lfk-check input:indeterminate{background-image:url("icons/checkbox-minus-14.svg")}
+.lfk .lfk-radio input:checked{border-color:transparent;background:var(--lfk-dark-hover) radial-gradient(circle,#fff 0 3.6px,transparent 4.1px)}
+.lfk :is(.lfk-check,.lfk-radio) input:disabled{border-color:var(--lfk-border);background-color:var(--lfk-disabled-bg);cursor:default}
+.lfk .lfk-check input:disabled:is(:checked,:indeterminate){background-image:url("icons/checkbox-check-16-disabled.svg");background-size:1rem}
+.lfk .lfk-check input:disabled:indeterminate{background-image:url("icons/checkbox-minus-16-disabled.svg")}
+.lfk .lfk-radio input:disabled:checked{background:var(--lfk-disabled-bg) radial-gradient(circle,var(--lfk-border) 0 3.6px,transparent 4.1px)}
+.lfk :is(.lfk-check,.lfk-radio):has(input:disabled){cursor:default}
+/* Pequeno */
+.lfk :is(.lfk-check,.lfk-radio).is-sm{gap:.5rem;font-size:var(--lfk-fs-s);line-height:1.25rem}
+.lfk :is(.lfk-check,.lfk-radio).is-sm > span{gap:0}
+.lfk :is(.lfk-check,.lfk-radio).is-sm input{width:1rem;height:1rem;border-radius:4px}
+.lfk .lfk-radio.is-sm input{border-radius:50%}
+.lfk .lfk-check.is-sm input:is(:checked,:indeterminate){background-image:url("icons/checkbox-check-12.svg");background-size:.75rem}
+.lfk .lfk-check.is-sm input:indeterminate{background-image:url("icons/checkbox-minus-12.svg")}
+.lfk .lfk-check.is-sm input:disabled:is(:checked,:indeterminate){background-image:url("icons/checkbox-check-12-disabled.svg");background-size:.75rem}
+.lfk .lfk-check.is-sm input:disabled:indeterminate{background-image:url("icons/checkbox-minus-12-disabled.svg")}
+.lfk .lfk-radio.is-sm input:checked{background-image:radial-gradient(circle,#fff 0 2.6px,transparent 3.1px)}
+.lfk .lfk-radio.is-sm input:disabled:checked{background-image:radial-gradient(circle,var(--lfk-border) 0 2.6px,transparent 3.1px)}
+/* Opcoes em linha (S&P 500 / MSCI World): caixa e texto alinhados ao centro */
+.lfk .lfk-radios{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:.5rem 1.25rem}
+.lfk .lfk-radios :is(.lfk-radio,.lfk-check){align-items:center;gap:.5rem}
+.lfk .lfk-radios :is(.lfk-radio,.lfk-check) input{margin:0}
+/* Lista de filtros com titulo e "Limpar filtros" */
+.lfk .lfk-check-list{display:flex;flex-direction:column;gap:1.25rem}
+.lfk .lfk-check-list-title{color:var(--lfk-text);font-size:var(--lfk-fs-m);line-height:1.5rem;letter-spacing:-.2px;font-weight:500}
+.lfk .lfk-check-list-items{display:flex;flex-direction:column;gap:.75rem;margin-bottom:1.25rem}
+.lfk .lfk-clear{align-self:flex-start;padding:0;border:0;border-radius:4px;background:var(--lfk-surface);color:var(--lfk-text);font-family:var(--lfk-font);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;font-weight:500;text-decoration:underline;text-underline-position:from-font;white-space:nowrap;cursor:pointer;transition:color .2s,box-shadow .2s}
+.lfk .lfk-clear:hover{color:var(--lfk-text-3)}
+.lfk .lfk-clear:focus-visible{outline:0;padding:0 2px;box-shadow:0 0 0 4px var(--lfk-focus)}
+.lfk .lfk-clear:disabled{color:var(--lfk-text-4);cursor:default}
+
+/* Interruptor (Figma > toggles): <label class="lfk-switch"><input type="checkbox" role="switch"> <span>Texto</span></label>
+   Pista 36x20, bola 16px que anda 16px. Ligado: pista #3A4454 (hover #202432). Foco: anel de 4px. */
+.lfk .lfk-switch{display:inline-flex;align-items:center;gap:.5rem;margin:0;color:var(--lfk-text-4);font-size:.75rem;line-height:1.125rem;letter-spacing:-.1px;font-weight:500;white-space:nowrap;cursor:pointer;transition:color .2s}
+.lfk .lfk-switch:has(input:checked){color:var(--lfk-text-2)}
+.lfk .lfk-switch > span{display:inline-flex;align-items:center;gap:.375rem}
+.lfk .lfk-switch input{position:relative;flex:none;width:2.25rem;height:1.25rem;margin:0;border:0;border-radius:.75rem;background:var(--lfk-bg-3);-webkit-appearance:none;appearance:none;cursor:pointer;transition:background-color .2s,box-shadow .2s}
+.lfk .lfk-switch input::before{content:"";position:absolute;top:2px;left:2px;width:1rem;height:1rem;border-radius:50%;background:#fff;box-shadow:0 1px 3px #1018281a,0 1px 2px #1018280f;transition:transform .2s,background-color .2s}
+.lfk .lfk-switch input:checked{background:var(--lfk-dark-hover)}
+.lfk .lfk-switch input:checked::before{transform:translateX(1rem)}
+.lfk .lfk-switch input:checked:hover{background:var(--colors--bg-secondary-dark,#202432)}
+.lfk .lfk-switch input:focus{outline:0}
+.lfk .lfk-switch input:focus-visible{box-shadow:0 0 0 4px var(--lfk-focus)}
+.lfk .lfk-switch input:disabled,.lfk .lfk-switch input:disabled:checked{background:var(--lfk-bg-3);cursor:default}
+.lfk .lfk-switch input:disabled::before{background:var(--lfk-surface)}
+/* Escolha entre 2 ou 3 opcoes curtas (Figma > toggle-group): <div class="lfk-segment"><button aria-pressed="true">A</button><button>B</button></div> ; is-sm */
+.lfk .lfk-segment{display:inline-flex;align-items:center;padding:2px;border-radius:var(--lfk-r);background:var(--lfk-bg-3)}
+.lfk .lfk-segment > button{display:inline-flex;align-items:center;justify-content:center;gap:.25rem;margin:0;padding:.375rem .75rem;border:0;border-radius:var(--lfk-r);background:transparent;color:var(--lfk-text-4);font-family:var(--lfk-font);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;font-weight:500;white-space:nowrap;cursor:pointer;transition:background-color .2s,color .2s}
+.lfk .lfk-segment > button:is([aria-pressed=true],.is-on){border-radius:.625rem;background:var(--lfk-dark-hover);color:var(--colors--text-on-color-primary,#f9fafb)}
+.lfk .lfk-segment > button:focus-visible{outline:0;box-shadow:0 0 0 4px var(--lfk-focus)}
+.lfk .lfk-segment.is-sm > button{font-size:.75rem;line-height:1.125rem;letter-spacing:-.1px}
+
+/* Barra deslizante */
+.lfk .lfk-range{display:block;width:100%;height:24px;margin:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer;--lfk-fill:0%}
+.lfk .lfk-range::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(to right,var(--lfk-dark) var(--lfk-fill),var(--lfk-border-2) var(--lfk-fill))}
+.lfk .lfk-range::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;margin-top:-7px;border:2px solid var(--lfk-dark);border-radius:50%;background:#fff}
+.lfk .lfk-range::-moz-range-track{height:6px;border-radius:999px;background:var(--lfk-border-2)}
+.lfk .lfk-range::-moz-range-progress{height:6px;border-radius:999px;background:var(--lfk-dark)}
+.lfk .lfk-range::-moz-range-thumb{width:16px;height:16px;border:2px solid var(--lfk-dark);border-radius:50%;background:#fff}
+.lfk .lfk-range:focus-visible{outline:none}
+.lfk .lfk-range:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 4px var(--lfk-focus)}
+
+/* Ajuda ao lado da etiqueta (help-icon + help-text_wrapper): <span class="lfk-help" tabindex="0" data-tip="Texto"></span>
+   Desktop: caixa a direita do icone, com triangulo. Telemovel: por cima. */
+.lfk .lfk-help{position:relative;display:inline-flex;flex-shrink:0;width:1rem;height:1rem;color:var(--lfk-icon);cursor:pointer;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.05967 5.99992C6.21641 5.55436 6.52578 5.17866 6.93298 4.93934C7.34018 4.70002 7.81894 4.61254 8.28446 4.69239C8.74998 4.77224 9.17222 5.01427 9.47639 5.3756C9.78057 5.73694 9.94705 6.19427 9.94634 6.66659C9.94634 7.99992 7.94634 8.66659 7.94634 8.66659M7.99967 11.3333H8.00634M14.6663 7.99992C14.6663 11.6818 11.6816 14.6666 7.99967 14.6666C4.31778 14.6666 1.33301 11.6818 1.33301 7.99992C1.33301 4.31802 4.31778 1.33325 7.99967 1.33325C11.6816 1.33325 14.6663 4.31802 14.6663 7.99992Z'/%3E%3C/svg%3E") no-repeat center/1rem;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.05967 5.99992C6.21641 5.55436 6.52578 5.17866 6.93298 4.93934C7.34018 4.70002 7.81894 4.61254 8.28446 4.69239C8.74998 4.77224 9.17222 5.01427 9.47639 5.3756C9.78057 5.73694 9.94705 6.19427 9.94634 6.66659C9.94634 7.99992 7.94634 8.66659 7.94634 8.66659M7.99967 11.3333H8.00634M14.6663 7.99992C14.6663 11.6818 11.6816 14.6666 7.99967 14.6666C4.31778 14.6666 1.33301 11.6818 1.33301 7.99992C1.33301 4.31802 4.31778 1.33325 7.99967 1.33325C11.6816 1.33325 14.6663 4.31802 14.6663 7.99992Z'/%3E%3C/svg%3E") no-repeat center/1rem;transition:color .25s}
+.lfk .lfk-help:hover,.lfk .lfk-help:focus,.lfk .lfk-help-wrap:hover > .lfk-help{color:var(--lfk-icon-hover)}
+/* a mascara apaga o ::after, por isso a caixa vive num elemento irmao gerado pelo wrapper: usar <span class="lfk-help-wrap"> */
+.lfk .lfk-help-wrap{position:relative;display:inline-flex;align-items:center}
+/* Tooltip (Figma > tooltip): por cima do icone, com seta; 4px entre a ponta da seta e o icone.
+   Texto curto: so o titulo. Com <b class="lfk-help-title">Titulo</b> + texto: caixa de 320px e texto de apoio cinzento.
+   Outras posicoes: is-bottom, is-left, is-right na lfk-help-wrap. */
+.lfk .lfk-help-wrap > .lfk-help-box{position:absolute;bottom:calc(100% + 10px);left:50%;z-index:100;display:flex;flex-direction:column;gap:.25rem;width:max-content;max-width:min(20rem,calc(100vw - 2rem));padding:.5rem .75rem;border-radius:.75rem;background:var(--lfk-tooltip);color:#fff;font-size:.75rem;line-height:1.125rem;letter-spacing:-.1px;font-weight:500;text-align:center;text-transform:none;white-space:normal;transform:translateX(calc(-50% + var(--lfk-tip-dx,0px)));filter:drop-shadow(0 12px 8px #12172114) drop-shadow(0 4px 3px #12172108);opacity:0;pointer-events:none;transition:opacity .2s}
+.lfk .lfk-help-wrap > .lfk-help-box:has(.lfk-help-title){width:20rem;padding:.75rem;color:var(--lfk-tooltip-text);text-align:left}
+.lfk .lfk-help-box .lfk-help-title{color:#fff;font-weight:500}
+.lfk .lfk-help-wrap > .lfk-help-box::before{content:"";position:absolute;top:calc(100% - 2.5147px);left:calc(50% - 8px - var(--lfk-tip-dx,0px));width:16px;height:8.5147px;background:url("icons/tooltip-arrow-bottom-center.svg") center/100% 100% no-repeat}
+.lfk .lfk-help-wrap.is-bottom > .lfk-help-box{top:calc(100% + 10px);bottom:auto}
+.lfk .lfk-help-wrap.is-bottom > .lfk-help-box::before{top:auto;bottom:calc(100% - 2.5147px);transform:rotate(180deg)}
+.lfk .lfk-help-wrap:is(.is-left,.is-right) > .lfk-help-box{top:50%;bottom:auto;transform:translateY(-50%)}
+.lfk .lfk-help-wrap.is-right > .lfk-help-box{left:calc(100% + 10px)}
+.lfk .lfk-help-wrap.is-left > .lfk-help-box{left:auto;right:calc(100% + 10px)}
+.lfk .lfk-help-wrap:is(.is-left,.is-right) > .lfk-help-box::before{top:calc(50% - 4.257px)}
+.lfk .lfk-help-wrap.is-right > .lfk-help-box::before{left:-9.74px;transform:rotate(90deg)}
+.lfk .lfk-help-wrap.is-left > .lfk-help-box::before{left:auto;right:-9.74px;transform:rotate(-90deg)}
+.lfk .lfk-help-wrap:hover > .lfk-help-box,.lfk .lfk-help-wrap:focus-within > .lfk-help-box{opacity:1}
+.lfk .lfk-help:focus-visible{outline:none;border-radius:50%;box-shadow:0 0 0 3px var(--lfk-focus)}
+
+/* ---------- Resultados ---------- */
+/* Numero em destaque: <div class="lfk-stat"><div class="lfk-stat-l">..</div><div class="lfk-stat-v">..</div><div class="lfk-stat-s">..</div></div> */
+.lfk .lfk-stat{min-width:0}
+.lfk .lfk-stat-l{font-size:var(--lfk-fs-s);line-height:var(--lfk-lh-s);letter-spacing:var(--lfk-ls-s);color:var(--lfk-text-4)}
+.lfk .lfk-stat-v{margin-top:.25rem;font-size:1.5rem;line-height:2rem;letter-spacing:-.3px;font-weight:600;color:var(--lfk-text);font-variant-numeric:tabular-nums}
+.lfk .lfk-stat-s{margin-top:.125rem;font-size:var(--lfk-fs-s);line-height:var(--lfk-lh-s);letter-spacing:var(--lfk-ls-s);color:var(--lfk-text-2)}
+.lfk .lfk-stat.is-sm .lfk-stat-v{font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);letter-spacing:var(--lfk-ls-m)}
+.lfk .lfk-stat.is-brand .lfk-stat-v{color:var(--lfk-brand)}
+.lfk .lfk-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem}
+/* Linhas nome / valor (resultados_component) */
+/* Valor sempre na mesma linha do texto, tambem em mobile: o texto passa a duas linhas, o valor fica a direita */
+.lfk .lfk-kv{display:flex;flex-wrap:nowrap;justify-content:space-between;align-items:center;gap:.5rem;padding:.75rem 0;border-bottom:1px solid var(--lfk-border-2);font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);letter-spacing:var(--lfk-ls-m)}
+.lfk .lfk-kv > :first-child{display:flex;align-items:center;gap:.3rem;flex:1 1 auto;min-width:0;color:var(--lfk-text-2)}
+.lfk .lfk-kv > :last-child{flex-shrink:0;white-space:nowrap;text-align:right;color:var(--lfk-text);font-weight:600;font-variant-numeric:tabular-nums}
+.lfk .lfk-kv.is-total > :first-child{color:var(--lfk-text);font-weight:600}
+/* Frase de resumo (data-disclaimer: text-size-small text-color-secondary) */
+.lfk .lfk-summary{font-size:var(--lfk-fs-s);line-height:var(--lfk-lh-s);letter-spacing:var(--lfk-ls-s);color:var(--lfk-text-2)}
+.lfk .lfk-summary b,.lfk .lfk-summary strong{font-weight:600}
+
+/* Tabela (CSS das tabelas das calculadoras): <div class="lfk-table-wrap"><table class="lfk-table"> ; numeros com class="is-num" */
+.lfk .lfk-table-wrap{position:relative;width:100%;max-width:100%;overflow-x:auto}
+.lfk .lfk-table{width:100%;margin:0;border-collapse:separate;border-spacing:0;font-size:var(--lfk-fs-s);line-height:var(--lfk-lh-s);letter-spacing:var(--lfk-ls-s);color:var(--lfk-text);text-align:left}
+.lfk .lfk-table th{padding:12px;font-weight:500;color:var(--lfk-text-3);white-space:normal;word-break:break-word;vertical-align:top;background:none;border:0;text-align:left}
+.lfk .lfk-table td{padding:12px;white-space:nowrap;background:transparent}
+.lfk .lfk-table tbody tr:not(:last-child) td{border-bottom:1px solid var(--lfk-border-2)}
+.lfk .lfk-table tbody td:first-child{border-left:1px solid var(--lfk-border-2)}
+.lfk .lfk-table tbody td:last-child{border-right:1px solid var(--lfk-border-2)}
+.lfk .lfk-table tbody tr:first-child td{border-top:1px solid var(--lfk-border-2)}
+.lfk .lfk-table tbody tr:last-child td{border-bottom:1px solid var(--lfk-border-2)}
+.lfk .lfk-table tbody tr:first-child td:first-child{border-top-left-radius:8px}
+.lfk .lfk-table tbody tr:first-child td:last-child{border-top-right-radius:8px}
+.lfk .lfk-table tbody tr:last-child td:first-child{border-bottom-left-radius:8px}
+.lfk .lfk-table tbody tr:last-child td:last-child{border-bottom-right-radius:8px}
+.lfk .lfk-table .is-num{font-variant-numeric:tabular-nums}            /* como no site: numeros alinhados a esquerda */
+.lfk .lfk-table th:first-child,.lfk .lfk-table td:first-child{min-width:4rem}
+.lfk .lfk-table tbody tr:hover td{background:var(--lfk-bg-2)}
+.lfk .lfk-table tr.is-on td,.lfk .lfk-table tbody tr.is-on:hover td{background:var(--lfk-bg-3)}
+.lfk .lfk-table td .lfk-cell-help{display:inline-flex;align-items:center;gap:.375rem}
+/* Tabela dos artigos (Figma > table, Page=Articles): cabecalho escuro colado ao corpo */
+.lfk .lfk-table.is-dark th{background:var(--lfk-tooltip);color:var(--colors--text-on-color-secondary,#f2f4f7)}
+.lfk .lfk-table.is-dark th:first-child{border-top-left-radius:8px}
+.lfk .lfk-table.is-dark th:last-child{border-top-right-radius:8px}
+.lfk .lfk-table.is-dark tbody tr:first-child td:first-child,.lfk .lfk-table.is-dark tbody tr:first-child td:last-child{border-top-left-radius:0;border-top-right-radius:0}
+.lfk .lfk-table-more{display:flex;justify-content:center;padding-top:1.25rem}
+/* Icone a seguir ao texto num botao (button-icon do site): <span class="lfk-btn-icon"><svg>..</svg></span> */
+.lfk .lfk-btn-icon{display:flex;flex:none;justify-content:center;align-items:center;width:1.25rem;height:1.25rem;color:var(--lfk-text)}
+.lfk .lfk-btn-icon svg,.lfk .lfk-btn .lfk-btn-icon svg{display:block;width:100%;height:100%}
+
+/* ---------- Graficos (graph_wrapper): ver lf-kit.js ---------- */
+.lfk .lfk-chart-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:1.5rem}
+.lfk .lfk-chart{position:relative;width:100%;height:18rem}
+.lfk .lfk-chart.is-sm{height:14.375rem}
+.lfk .lfk-chart canvas{display:block}
+.lfk [data-lfk-view][hidden]{display:none!important}
+/* Menu do grafico (graph-settings-dropdown): botao com tres pontos a direita dos separadores.
+   <div class="lfk-menu"><button class="lfk-menu-toggle" aria-label="Opcoes"></button><div class="lfk-menu-list">
+     <button class="lfk-menu-item" data-lfk-action="download-chart">..</button> <hr class="lfk-menu-line"> ...</div></div>
+   Os icones e o comportamento vem do lf-kit.js (LFK.menus). */
+.lfk .lfk-chart-head{position:relative}
+.lfk .lfk-menu{position:relative;z-index:3;display:flex;align-items:center;justify-content:center}
+.lfk .lfk-menu.is-open{z-index:900}
+.lfk .lfk-menu-toggle{display:flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin:0;padding:0;border:0;background:none;color:var(--lfk-icon);cursor:pointer;transition:color .25s}
+.lfk .lfk-menu-toggle:hover,.lfk .lfk-menu.is-open .lfk-menu-toggle{color:var(--colors--icon-dark-secondary,#3a4454)}
+.lfk .lfk-menu-toggle svg,.lfk .lfk-menu-icon svg{display:block;width:100%;height:100%}
+.lfk .lfk-menu-list{position:absolute;top:2.1rem;right:0;z-index:5;display:none;width:15rem;padding:.25rem 0;border:1px solid var(--lfk-border-2);border-radius:var(--lfk-r);background:var(--lfk-bg);box-shadow:0 4px 6px -2px #10182808,0 12px 16px -4px #10182814}
+.lfk .lfk-menu.is-open .lfk-menu-list{display:block}
+.lfk .lfk-menu-item{display:flex;align-items:center;justify-content:flex-start;gap:.5rem;width:calc(100% - .75rem);min-height:3rem;margin:0 .375rem;padding:.625rem;border:0;border-radius:0;background:none;color:var(--lfk-icon-hover);font-size:var(--lfk-fs-s);line-height:var(--lfk-lh-s);letter-spacing:var(--lfk-ls-m);font-weight:500;text-align:left;cursor:pointer;transition:color .3s}
+.lfk .lfk-menu-item > span:last-child{color:var(--lfk-text-2);letter-spacing:var(--lfk-ls-s)}
+.lfk .lfk-menu-icon{display:flex;flex:none;align-items:center;justify-content:center;width:1rem;height:1rem}
+.lfk .lfk-menu-item.is-done .lfk-menu-icon{color:#17b26a}
+.lfk .lfk-menu-line{height:1px;margin:.25rem 0;border:0;background:var(--lfk-border-2)}
+.lfk .lfk-menu-item:focus{outline:0}
+.lfk .lfk-menu-item:focus-visible,.lfk .lfk-menu-toggle:focus-visible{outline:.125rem solid #4d65ff;outline-offset:.125rem}
+/* Donut com valor ao centro e legenda em lista (depositos a prazo) */
+.lfk .lfk-donut{position:relative;width:100%;max-width:19.5rem;aspect-ratio:1;margin:0 auto}
+.lfk .lfk-donut-center{position:absolute;top:50%;left:50%;text-align:center;transform:translate(-50%,-50%);pointer-events:none}
+.lfk .lfk-donut-value{font-size:1.5rem;line-height:2rem;letter-spacing:-.3px;font-weight:600;color:var(--lfk-text);font-variant-numeric:tabular-nums}
+.lfk .lfk-donut-label{font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.1px;color:var(--lfk-text-4)}
+.lfk .lfk-legend{display:flex;flex-direction:column;margin-top:1rem}
+.lfk .lfk-legend-item{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.5rem 0;border-bottom:1px solid var(--lfk-border-2)}
+.lfk .lfk-legend-item:last-child{border-bottom:0}
+.lfk .lfk-legend-name{display:flex;align-items:center;gap:6px;font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.1px;color:var(--lfk-text-2)}
+.lfk .lfk-legend-dot{flex-shrink:0;width:12px;height:12px;border-radius:50%;background:var(--lfk-dot,var(--lfk-c1))}
+.lfk .lfk-legend-val{display:flex;align-items:center;gap:4px;font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.1px;font-weight:600;color:var(--lfk-text);font-variant-numeric:tabular-nums}
+.lfk .lfk-legend-val small{font-size:11px;font-weight:400;color:var(--lfk-text-4)}
+
+/* ---------- Pagina da calculadora (section_hero-calculadora) ----------
+   <section class="lfk-hero">
+     <div class="lfk-hero-head"><h1 class="lfk-title">Calculadora ...</h1><p class="lfk-lead">Subtitulo</p></div>
+     <div class="lfk-calc">
+       <div class="lfk-calc-form"><div class="lfk-calc-inner"><div class="lfk-calc-title">Simulador ...</div> ...campos... </div></div>
+       <div class="lfk-calc-results"> ...cartoes de resultados e graficos... </div>
+     </div>
+   </section>
+   Em desktop o formulario fica num cartao e os resultados por baixo, numa coluna de 52.625rem (como no site). */
+.lfk.lfk-hero,.lfk .lfk-hero{padding:5rem 5rem;background:var(--lfk-bg-2)}
+.lfk .lfk-hero-head{display:flex;flex-direction:column;align-items:center;gap:.75rem;margin:0 auto 4rem;text-align:center}
+.lfk .lfk-hero-head .lfk-lead{max-width:37.5rem}
+.lfk .lfk-calc{width:52.625rem;max-width:100%;margin:0 auto}
+.lfk .lfk-calc-form{padding:2.5rem 0;border:4px solid var(--lfk-border-3);border-radius:var(--lfk-r-xl);background:var(--lfk-bg)}
+.lfk .lfk-calc-inner{width:38.875rem;max-width:100%;margin:0 auto}
+.lfk .lfk-calc-title{padding-bottom:2rem;font-size:var(--lfk-fs-l);line-height:var(--lfk-lh-l);letter-spacing:var(--lfk-ls-l);font-weight:500;color:var(--lfk-text)}
+.lfk .lfk-calc-results{display:flex;flex-direction:column;gap:1.5rem;padding-top:1.5rem}
+
+/* ---------- Barra com zonas (calculadora de taxa de esforco) ----------
+   <div class="lfk-zones" data-value="60" data-max="100" data-zones="35:Saudável:ok,45:Aceitável:warn,100:Preocupante:err"></div>
+   O lf-kit.js desenha a barra, o marcador e a etiqueta; a linha de classificacao fica em lfk-zones-result. */
+.lfk .lfk-zones{position:relative;padding:3.25rem 0 .25rem}
+.lfk .lfk-zones-bar{display:flex;gap:3px;height:8px}
+.lfk .lfk-zones-seg{height:8px;border-radius:999px;background:var(--lfk-zone,#17b26a)}
+.lfk .lfk-zones-seg.is-ok,.lfk .lfk-zones-dot.is-ok{--lfk-zone:#17b26a}
+.lfk .lfk-zones-seg.is-warn,.lfk .lfk-zones-dot.is-warn{--lfk-zone:#eaaa08}
+.lfk .lfk-zones-seg.is-err,.lfk .lfk-zones-dot.is-err{--lfk-zone:#f04438}
+.lfk .lfk-zones-dot{position:absolute;top:2.75rem;width:22px;height:22px;border:2px solid var(--lfk-zone,#17b26a);border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12);transform:translateX(-50%);transition:left .3s}
+.lfk .lfk-zones-tip{position:absolute;top:0;padding:6px 14px;border-radius:8px;background:#1f242f;color:#fff;font-size:.875rem;line-height:1.25rem;letter-spacing:-.1px;font-weight:600;white-space:nowrap;transform:translateX(-50%);transition:left .3s}
+.lfk .lfk-zones-tip::after{content:"";position:absolute;top:100%;left:50%;border:6px solid transparent;border-top-color:#1f242f;border-bottom:0;transform:translateX(-50%)}
+.lfk .lfk-zones-result{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding:1.5rem 0 1rem;font-size:1.25rem;line-height:1.75rem;letter-spacing:-.3px;font-weight:600;color:var(--lfk-text)}
+.lfk .lfk-zones-result .is-ok{color:#17b26a}
+.lfk .lfk-zones-result .is-warn{color:#eaaa08}
+.lfk .lfk-zones-result .is-err{color:#f04438}
+.lfk .lfk-zones-text{padding-top:1rem;border-top:1px solid var(--lfk-border-2);color:var(--lfk-text-2)}
+.lfk .lfk-zones-text a{font-weight:600;color:inherit}
+
+/* ---------- Questionario por passos (calculadora de perfil de investidor) ----------
+   <div class="lfk-steps" data-name="perfil">
+     <div class="lfk-step"><span class="lfk-label is-strong">Pergunta?</span>
+       <div class="lfk-options"><button class="lfk-option" data-value="1">Resposta</button>...</div></div> ...</div>
+   O lf-kit.js mostra um passo de cada vez, com a contagem, a barra de progresso e Anterior / Seguinte. */
+.lfk .lfk-steps-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:8px;font-size:13px;line-height:20px;color:var(--lfk-text-3)}
+.lfk .lfk-steps-top strong{font-weight:600;color:var(--lfk-text)}
+.lfk .lfk-steps-bar{height:6px;margin-bottom:24px;border-radius:999px;background:var(--lfk-border-2);overflow:hidden}
+.lfk .lfk-steps-fill{width:0;height:100%;border-radius:999px;background:var(--lfk-c2);transition:width .25s ease}
+.lfk .lfk-steps-stage{display:grid}
+.lfk .lfk-step{grid-area:1/1;display:flex;flex-direction:column;gap:.4375rem;transition:opacity .2s,transform .2s,visibility .2s}
+.lfk .lfk-steps.is-ready .lfk-step:not(.is-current){opacity:0;visibility:hidden;pointer-events:none;transform:translateY(6px)}
+.lfk .lfk-label.is-strong{font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);color:var(--lfk-text)}
+.lfk .lfk-options{display:flex;flex-direction:column;gap:8px}
+.lfk .lfk-option{display:flex;align-items:center;width:100%;min-height:44px;margin:0;padding:10px 14px;border:1px solid #d0d5dd;border-radius:var(--lfk-r);background:#fff;color:var(--lfk-text-2);font-size:.875rem;line-height:1.25rem;letter-spacing:-.2px;font-weight:400;text-align:left;cursor:pointer;user-select:none}
+.lfk .lfk-option:hover{border-color:#98a2b3}
+.lfk .lfk-option.is-active,.lfk .lfk-option[aria-pressed=true]{border-color:var(--lfk-c2);background:color-mix(in srgb,var(--lfk-c2) 5%,#fff);color:var(--lfk-c2);font-weight:500}
+.lfk .lfk-steps-nav{display:flex;justify-content:space-between;align-items:center;min-height:36px;margin-top:16px}
+.lfk .lfk-steps-nav button{padding:8px 0;border:0;background:none;color:var(--lfk-text-3);font-size:.875rem;line-height:1.25rem;cursor:pointer}
+.lfk .lfk-steps-nav button:hover{color:var(--lfk-text)}
+.lfk .lfk-steps-nav button.is-next{color:var(--lfk-c2);font-weight:500}
+.lfk .lfk-steps-nav button[hidden]{display:block;visibility:hidden}
+/* Medidor em segmentos (resultado do perfil): <div class="lfk-meter" data-value="3" data-max="5"></div> */
+.lfk .lfk-meter{display:flex;gap:4px}
+.lfk .lfk-meter > span{flex:1 1 0;height:8px;border-radius:999px;background:var(--lfk-border-2)}
+.lfk .lfk-meter > span.is-on{background:var(--lfk-c2)}
+
+/* ---------- Linhas de resultado com nota (inflacao, depositos, perfil) ----------
+   <div class="lfk-line"><div class="lfk-line-main"><span class="lfk-line-label">Nome</span><span class="lfk-line-value">Valor</span></div>
+     <div class="lfk-line-note">Explicacao curta</div></div> ; valor a vermelho com class="lfk-line is-down" */
+.lfk .lfk-line{padding:14px 0;border-bottom:1px dotted var(--lfk-border-2)}
+.lfk .lfk-line-main{display:flex;justify-content:space-between;align-items:baseline}
+.lfk .lfk-line-label{padding-right:16px;font-size:.875rem;line-height:1.25rem;color:var(--lfk-text-3)}
+.lfk .lfk-line-value{font-size:.875rem;line-height:1.25rem;font-weight:600;color:var(--lfk-text);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.lfk .lfk-line-note{margin-top:4px;font-size:.75rem;line-height:1.5;color:#98a2b3}
+.lfk .lfk-line-note:empty{display:none}
+.lfk .lfk-line.is-down .lfk-line-value{color:#b42318}
+.lfk .lfk-subtitle{margin:24px 0 8px;font-size:13px;line-height:20px;font-weight:500;color:var(--lfk-text)}
+
+/* Texto por baixo das opcoes (descricao do indice escolhido) e nota da tabela */
+.lfk .lfk-desc{font-size:var(--lfk-fs-xs);line-height:var(--lfk-lh-xs);letter-spacing:var(--lfk-ls-xs);color:var(--lfk-text-2)}
+.lfk .lfk-table-note{margin-top:1rem;font-size:var(--lfk-fs-s);line-height:var(--lfk-lh-s);color:var(--lfk-text-3)}
+
+/* ---------- Bloco de parceiro (table-results_wrapper is-pub) ----------
+   <div class="lfk-partner"><a href="/visita/..." target="_blank" rel="sponsored noopener noreferrer">
+     <div class="lfk-partner-left"><div class="lfk-partner-brand"><span class="lfk-partner-ad">Anúncio</span><img|svg class="lfk-partner-logo"></div>
+       <span class="lfk-partner-line"></span>
+       <div class="lfk-partner-copy"><div class="lfk-partner-title">Titulo</div><div class="lfk-partner-small">Condicoes</div></div></div>
+     <div class="lfk-partner-cta"><span>Sabe mais</span><span class="lfk-arrow"></span></div></a></div>
+   Links SEMPRE pelos /visita/ do site (o tracking de afiliados depende disso). */
+.lfk .lfk-partner{border:4px solid var(--lfk-border-3);border-radius:var(--lfk-r-xl);background:var(--lfk-bg)}
+.lfk .lfk-partner > a{position:relative;display:flex;justify-content:space-between;align-items:center;gap:1rem;width:100%;padding:.75rem 1rem;color:var(--lfk-text);text-decoration:none;transition:color .3s}
+.lfk .lfk-partner-left{display:flex;align-items:center;align-self:stretch;gap:1rem;min-width:0}
+.lfk .lfk-partner-brand{display:flex;flex:none;flex-direction:column;gap:.625rem}
+.lfk .lfk-partner-ad{font-size:.625rem;line-height:.75rem;letter-spacing:1px;font-weight:500;text-transform:uppercase;color:var(--lfk-text-4)}
+.lfk .lfk-partner-logo{display:block;width:5rem;height:auto}
+.lfk .lfk-partner-line{flex:none;align-self:stretch;width:1px;background:var(--lfk-border-2)}
+.lfk .lfk-partner-copy{display:flex;flex-direction:column;gap:.25rem;min-width:0}
+.lfk .lfk-partner-title{font-size:var(--lfk-fs-l);line-height:var(--lfk-lh-l);letter-spacing:var(--lfk-ls-l);font-weight:600;color:var(--lfk-text)}
+.lfk .lfk-partner-small{max-width:31rem;font-size:.6875rem;line-height:1.45em;color:var(--lfk-text-3)}
+.lfk .lfk-partner-cta{display:flex;flex:none;align-items:center;gap:.5rem;font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;font-weight:500;color:var(--lfk-text);white-space:nowrap;transition:color .3s}
+.lfk .lfk-partner > a:hover .lfk-partner-cta{color:var(--lfk-brand)}
+.lfk .lfk-arrow{display:flex;flex:none;align-items:center;justify-content:center;width:1.75rem;height:1.75rem;border-radius:100vw;background:var(--lfk-brand)}
+.lfk .lfk-arrow::before{content:"";width:1.25rem;height:1.25rem;background:var(--lfk-on-brand);-webkit-mask:url("icons/arrow-right-20.svg") center/100% no-repeat;mask:url("icons/arrow-right-20.svg") center/100% no-repeat}
+/* Banner largo dos artigos (Page=Articles): faixa a toda a largura, fundo cinzento e linha por baixo */
+.lfk .lfk-partner.is-bar{border:0;border-bottom:1px solid var(--lfk-border-2);border-radius:0;background:var(--lfk-bg-2)}
+.lfk .lfk-partner.is-bar > a{max-width:66.375rem;margin:0 auto;padding:.75rem 0}
+
+/* ---------- FAQ / Glossario das calculadoras (section_glossario) ----------
+   <section class="lfk-faq"><h2 class="lfk-title">Glossário</h2>
+     <div class="lfk-faq-item"><h3 class="lfk-faq-q">Pergunta?</h3><div class="lfk-faq-a"><p>Resposta.</p></div></div> ...</section>
+   Lista aberta (nao e acordeao), coluna de 39rem ao centro, como no site. */
+.lfk .lfk-faq{width:39rem;max-width:100%;margin-left:auto;margin-right:auto}
+.lfk .lfk-faq > .lfk-title{margin-bottom:1.5rem}
+.lfk .lfk-faq-item + .lfk-faq-item{margin-top:2.5rem}
+.lfk .lfk-faq-q{font-family:var(--lfk-font);font-size:var(--lfk-fs-l);line-height:1.5em;letter-spacing:-.02em;font-weight:600;color:var(--lfk-text)}
+.lfk .lfk-faq-a{margin-top:.625rem;font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);letter-spacing:var(--lfk-ls-m);color:var(--lfk-text-2)}
+.lfk .lfk-faq-a > * + *{margin-top:.75rem}
+.lfk .lfk-faq-a :where(ul,ol){padding-left:1.25rem}
+.lfk .lfk-faq-a :where(li + li){margin-top:.25rem}
+.lfk .lfk-faq-a :where(a){color:var(--lfk-link);text-decoration:underline}
+.lfk .lfk-faq-a :where(b,strong){font-weight:600;color:var(--lfk-text)}
+/* Caixa da formula (formula_wrapper): imagem ou texto da formula ao centro, fundo branco */
+.lfk .lfk-formula{display:flex;justify-content:center;align-items:center;width:100%;margin:.625rem 0;padding:1rem .75rem;border-radius:var(--lfk-r);background:var(--lfk-bg);color:var(--lfk-text);font-family:var(--lfk-font-display);font-size:1.25rem;line-height:1.5em;text-align:center;overflow-x:auto}
+.lfk .lfk-formula img{display:block;max-width:100%;height:auto}
+
+/* ---------- Etiquetas (badge) e avisos ---------- */
+/* Etiquetas (Figma > badges): normal 32px redonda, is-on-dark em fundo escuro, is-sm (20px) com is-ok = "Novo" */
+.lfk .lfk-tag{display:inline-flex;align-items:center;justify-content:center;gap:.375rem;height:2rem;padding:.375rem .75rem .375rem .625rem;border-radius:var(--lfk-r-full);background:var(--colors--badge-bg,#f2f4f7);color:var(--lfk-text-3);font-size:.875rem;line-height:1.25rem;letter-spacing:-.2px;font-weight:500;white-space:nowrap}
+.lfk .lfk-tag > :is(img,svg){flex:none;width:1rem;height:1rem}
+.lfk .lfk-tag.is-on-dark{background:#ffffff1a;color:var(--colors--text-on-color-secondary,#f2f4f7)}
+.lfk .lfk-tag.is-sm{height:1.25rem;padding:.125rem .375rem;border-radius:.375rem;font-size:.75rem;line-height:1.125rem;letter-spacing:-.1px}
+.lfk .lfk-tag.is-ok{background:var(--lfk-ok-bg);color:var(--lfk-ok)}
+.lfk .lfk-tag.is-warn{background:var(--lfk-warn-bg);color:var(--lfk-warn)}
+.lfk .lfk-tag.is-err{background:var(--lfk-err-bg);color:var(--lfk-err)}
+.lfk .lfk-tag.is-dark{background:var(--lfk-dark);color:#fff}
+.lfk .lfk-tag.is-brand{background:var(--lfk-brand);color:var(--lfk-on-brand)}
+.lfk .lfk-alert{display:block;padding:.75rem;border:1px solid var(--lfk-focus);border-radius:var(--lfk-r);background:var(--lfk-blue-soft);color:var(--lfk-blue);font-size:var(--lfk-fs-s);line-height:var(--lfk-lh-s);letter-spacing:var(--lfk-ls-s)}
+.lfk .lfk-alert.is-ok{border-color:var(--lfk-ok-bg);background:#ecfdf3;color:var(--lfk-ok)}
+.lfk .lfk-alert.is-warn{border-color:var(--lfk-warn-border);background:var(--lfk-warn-bg);color:var(--lfk-warn)}
+.lfk .lfk-alert.is-err{border-color:var(--lfk-err-border);background:var(--lfk-err-bg);color:var(--lfk-err)}
+.lfk .lfk-alert b{font-weight:600}
+.lfk .lfk-alert svg{width:16px;height:16px;margin-right:6px;vertical-align:-3px}
+/* Sem resultados ainda (table-results_wrapper is-placeholcer) */
+.lfk .lfk-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;min-height:17.5rem;padding:3rem;border:4px solid var(--lfk-border-3);border-radius:var(--lfk-r-xl);background:var(--lfk-bg);color:var(--lfk-text-4);font-size:var(--lfk-fs-s);line-height:var(--lfk-lh-s);text-align:center}
+.lfk .lfk-empty::before{content:"";flex:none;width:3rem;height:3rem;background:url("icons/placeholder-results-48.svg") center/100% no-repeat}   /* icone do placeholder das calculadoras do site */
+.lfk .lfk-empty > :is(p,span){max-width:18rem;margin:0}
+.lfk .lfk-empty b{font-weight:600}
+.lfk .lfk-spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--lfk-border-2);border-top-color:var(--lfk-text);border-radius:50%;animation:lfkRoda .8s linear infinite}
+@keyframes lfkRoda{to{transform:rotate(360deg)}}
+.lfk .lfk-foot{font-size:var(--lfk-fs-xs);line-height:var(--lfk-lh-xs);letter-spacing:var(--lfk-ls-xs);color:var(--lfk-text-4)}
+.lfk .lfk-foot a{color:inherit;text-decoration:underline}
+
+/* ---------- Cartoes (design system do Figma > cards) ----------
+   lfk-post (artigo do blog), lfk-entity (entidade com logotipo), lfk-feature (icone + texto ou lista),
+   lfk-calc-card (link para uma calculadora), lfk-cookies, lfk-price (preco), lfk-datacard (valor com variacao),
+   lfk-resource (recurso com imagem: curto e lfk-resource-row longo), lfk-team (pessoa da equipa).
+   Os que sao links (<a>) tem hover: contorno mais escuro, titulo sublinhado ou imagem com zoom. */
+.lfk :is(.lfk-post,.lfk-entity,.lfk-calc-card,.lfk-resource){color:inherit;text-decoration:none}
+.lfk .lfk-ds-title{margin:0;color:var(--lfk-text);font-size:var(--lfk-fs-l);line-height:1.625rem;letter-spacing:-.3px;font-weight:600}
+.lfk .lfk-ds-text{margin:0;color:var(--lfk-text-3);font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);letter-spacing:-.2px}
+
+/* Artigo do blog: <a class="lfk-post"> (is-dark em fundo escuro) */
+.lfk .lfk-post{display:flex;flex-direction:column;gap:1rem;max-width:18.875rem}
+.lfk .lfk-post-img{position:relative;box-sizing:border-box;aspect-ratio:302/240;overflow:hidden;border:4px solid var(--lfk-border-3);border-radius:var(--lfk-r);transition:border-color .3s}
+/* As imagens dos cartoes enchem a caixa por dentro (absolute + cover): a proporcao fica na caixa e a foto nunca estica */
+.lfk :is(.lfk-post-img,.lfk-author-img,.lfk-team-img,.lfk-resource-row-img) > img{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;object-fit:cover}
+.lfk .lfk-post-img img{transition:transform .4s}
+.lfk .lfk-post:is(:hover,:focus-visible) .lfk-post-img{border-color:var(--lfk-border-2)}
+.lfk .lfk-post:is(:hover,:focus-visible) .lfk-post-img img{transform:scale(1.167)}
+.lfk .lfk-post-body{display:flex;flex-direction:column;gap:1.5rem}
+.lfk .lfk-post-head{display:flex;flex-direction:column;gap:.5rem}
+.lfk .lfk-post-cat{color:var(--lfk-text-4);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;font-weight:500}
+.lfk .lfk-post-meta{display:flex;flex-wrap:wrap;gap:.375rem;color:var(--lfk-text-2);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px}
+.lfk .lfk-post-meta > :last-child{color:var(--lfk-text-4)}
+.lfk .lfk-post-title{margin:0;color:var(--lfk-text);font-size:var(--lfk-fs-l);line-height:1.625rem;letter-spacing:-.3px;font-weight:500}
+.lfk .lfk-post.is-dark .lfk-post-img{border-color:var(--colors--border-on-color-tertiary,#3a4454)}
+.lfk .lfk-post.is-dark:is(:hover,:focus-visible) .lfk-post-img{border-color:var(--colors--border-on-color-secondary,#2d3543)}
+.lfk .lfk-post.is-dark .lfk-post-body{gap:.25rem}
+.lfk .lfk-post.is-dark .lfk-post-cat{color:var(--lfk-tooltip-text);font-weight:500}
+.lfk .lfk-post.is-dark .lfk-post-title{color:var(--colors--text-on-color-primary,#f9fafb);font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);letter-spacing:-.2px}
+/* Autor: foto redonda de 40px + nome + texto */
+.lfk .lfk-author{display:flex;align-items:center;gap:.75rem}
+.lfk .lfk-author-img{position:relative;flex:none;width:2.5rem;height:2.5rem;border-radius:50%;overflow:hidden}
+.lfk .lfk-author-img > img{object-position:bottom}
+.lfk .lfk-author-img::after{content:"";position:absolute;inset:0;border:.75px solid #12172110;border-radius:50%}
+.lfk .lfk-author-name{display:block;color:var(--lfk-text);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;font-weight:500}
+.lfk .lfk-author-sub{display:block;color:var(--lfk-text-3);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px}
+
+/* Entidade (banco, regulador): logotipo de 64px + titulo + texto */
+.lfk .lfk-entity{display:flex;align-items:flex-start;gap:1.5rem;padding:1.25rem;border:4px solid var(--lfk-border-2);border-radius:var(--lfk-r-xl);background:var(--lfk-surface);transition:border-color .3s}
+.lfk .lfk-entity-logo{display:flex;flex:none;align-items:center;justify-content:center;width:4rem;height:4rem;overflow:hidden;border-radius:var(--lfk-r);background:var(--lfk-surface);box-shadow:0 0 0 2px var(--lfk-border-3)}
+.lfk .lfk-entity-logo img{display:block;width:62.5%;height:62.5%;object-fit:contain}
+.lfk .lfk-entity-body{display:flex;flex:1;flex-direction:column;gap:.5rem;min-width:0}
+.lfk a.lfk-entity:is(:hover,:focus-visible){border-color:var(--lfk-border)}
+.lfk a.lfk-entity:is(:hover,:focus-visible) .lfk-ds-title{text-decoration:underline;text-underline-position:from-font}
+
+/* Icone + titulo + texto (ou lista com visto): lfk-feature; lista em lfk-checks */
+.lfk .lfk-feature{display:flex;flex-direction:column;gap:1.5rem;padding:1.75rem;overflow:hidden;border:4px solid var(--lfk-border);border-radius:var(--lfk-r-xl);background:var(--lfk-surface)}
+.lfk .lfk-feature-icon{display:block;width:1.5rem;height:1.5rem}
+.lfk .lfk-feature-body{display:flex;flex-direction:column;gap:.5rem}
+.lfk .lfk-feature-body .lfk-ds-text{color:var(--lfk-text)}
+.lfk .lfk-feature-body:has(.lfk-checks){gap:1.25rem}
+.lfk .lfk-checks{display:flex;flex-direction:column;gap:1rem;margin:0;padding:0;list-style:none}
+.lfk .lfk-checks li{display:flex;align-items:flex-start;gap:.625rem;margin:0;color:var(--lfk-text);font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);letter-spacing:-.2px}
+.lfk .lfk-checks li::before{content:"";flex:none;width:1.25rem;height:1.5rem;background:url("icons/check-circle-20.svg") center/1.25rem no-repeat}
+.lfk .lfk-checks b,.lfk .lfk-checks strong{font-weight:600}
+.lfk .lfk-checks.is-sm{gap:.625rem}
+.lfk .lfk-checks.is-sm li{gap:.5rem;color:var(--lfk-text-2);font-size:var(--lfk-fs-s);line-height:1.25rem}
+.lfk .lfk-checks.is-sm li::before{width:1rem;height:1.25rem;background-image:url("icons/check-circle-16.svg");background-size:1rem}
+.lfk .lfk-checks.is-ok li::before{background-image:url("icons/check-circle-16-success.svg")}
+
+/* Link para uma calculadora: titulo, texto e ilustracao */
+.lfk .lfk-calc-card{display:flex;flex-direction:column;gap:2.5rem;padding:1.5rem 0;overflow:hidden;border:8px solid var(--lfk-border-2);border-radius:var(--lfk-r-xl);background:var(--lfk-surface);transition:border-color .3s}
+.lfk .lfk-calc-card-body{display:flex;flex-direction:column;gap:.25rem;padding:0 1.5rem}
+.lfk .lfk-calc-card-title{margin:0;color:var(--lfk-text);font-size:var(--lfk-fs-xl);line-height:1.875rem;letter-spacing:-.4px;font-weight:600}
+.lfk .lfk-calc-card .lfk-ds-text{color:var(--lfk-text-2)}
+.lfk .lfk-calc-card-img{display:block;width:100%;height:auto}
+.lfk a.lfk-calc-card:is(:hover,:focus-visible){border-color:var(--lfk-border)}
+.lfk a.lfk-calc-card:is(:hover,:focus-visible) .lfk-calc-card-title{text-decoration:underline;text-underline-position:from-font}
+
+/* Aviso de cookies */
+.lfk .lfk-cookies{display:flex;flex-direction:column;gap:1.5rem;max-width:24.5rem;padding:1rem;border-radius:1rem;background:var(--lfk-surface);filter:drop-shadow(0 0 .5px #1217211f) drop-shadow(0 12px 8px #12172114) drop-shadow(0 4px 3px #12172108)}
+.lfk .lfk-cookies p{margin:0;color:var(--lfk-text-2);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px}
+.lfk .lfk-cookies a{color:inherit;font-weight:500;text-decoration:underline;text-underline-position:from-font}
+.lfk .lfk-cookies-actions{display:flex;flex-wrap:wrap;gap:.5rem}
+
+/* Preco: lfk-price (is-highlight para o destacado) */
+.lfk .lfk-price{max-width:30rem;border:8px solid var(--lfk-border-3);border-radius:2rem;background:var(--lfk-surface);filter:drop-shadow(0 16px 24px #10181805)}
+.lfk .lfk-price.is-highlight{border-color:var(--lfk-focus)}
+.lfk .lfk-price-in{display:flex;flex-direction:column;align-items:flex-start;gap:2rem;padding:calc(2rem - 1px);border:1px solid var(--lfk-border-2);border-radius:calc(2rem - 8px)}   /* canto de dentro = canto de fora menos a borda de 8px */
+.lfk .lfk-price.is-highlight .lfk-price-in{border-color:var(--lfk-blue-200)}
+.lfk .lfk-price-head{display:flex;flex-direction:column;gap:1.5rem}
+.lfk .lfk-price-name{color:var(--lfk-text);font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);letter-spacing:-.2px;font-weight:500}
+.lfk .lfk-price-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem}
+.lfk .lfk-price-value{color:var(--lfk-text);font-family:var(--lfk-font-display);font-size:3rem;line-height:3.75rem;letter-spacing:-.2px;font-weight:400}
+.lfk .lfk-price-unit{color:var(--lfk-text-4);font-size:.75rem;line-height:1.125rem;letter-spacing:-.1px}
+.lfk .lfk-price-desc{display:block;color:var(--lfk-text-2);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px}
+.lfk .lfk-price-list{display:flex;flex-direction:column;gap:.75rem;width:100%;padding:1.5rem 0;border-top:1px solid var(--lfk-border-2);border-bottom:1px solid var(--lfk-border-2)}
+.lfk .lfk-price-list > b{color:var(--lfk-text);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;font-weight:600}
+
+/* Valor com variacao (dados das calculadoras) */
+.lfk .lfk-datacard{display:flex;flex-direction:column;gap:.5rem;padding:calc(.75rem - 1px) calc(1rem - 1px);overflow:hidden;border:1px solid var(--lfk-border-2);border-radius:1rem;background:var(--lfk-surface)}
+.lfk .lfk-datacard-title{display:flex;align-items:center;gap:.5rem;color:var(--lfk-text-2);font-size:.75rem;line-height:1.125rem;letter-spacing:-.1px;font-weight:500}
+.lfk .lfk-datacard-title::before{content:"";flex:none;width:2px;height:.625rem;border-radius:2px;background:var(--lfk-datacard-c,var(--lfk-c1))}
+.lfk .lfk-datacard-value{display:flex;flex-direction:column;gap:.25rem}
+.lfk .lfk-datacard-num{color:var(--lfk-text);font-size:1.5rem;line-height:2rem;letter-spacing:-.6px;font-weight:500}
+.lfk .lfk-datacard-num.is-pos{color:var(--lfk-ok)}
+.lfk .lfk-datacard-num.is-neg{color:var(--lfk-err-600)}
+.lfk .lfk-datacard-sub{display:flex;flex-wrap:wrap;gap:.25rem;color:var(--lfk-text-3);font-size:.6875rem;line-height:1rem}
+.lfk .lfk-datacard-sub .is-pos{color:var(--lfk-ok)}
+.lfk .lfk-datacard-sub .is-neg{color:var(--lfk-err-600)}
+
+/* Recurso: curto (imagem com titulo por cima) e longo (lfk-resource-row) */
+.lfk .lfk-resource{position:relative;display:flex;flex-direction:column;justify-content:flex-end;width:100%;max-width:18.5rem;aspect-ratio:296/464;padding:.5rem;overflow:hidden;border-radius:var(--lfk-r-xl);background:var(--lfk-surface)}
+.lfk .lfk-resource > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.lfk .lfk-resource-label{position:relative;display:flex;align-items:flex-start;gap:.625rem;padding:1rem;border-radius:1rem;background:var(--colors--bg-overlay-dark,#12172166);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);color:#fff;font-size:var(--lfk-fs-l);line-height:1.625rem;letter-spacing:-.3px;transition:background-color .3s}
+.lfk .lfk-resource-label > :is(img,svg){flex:none;width:1.25rem;height:1.25rem;margin-top:.25rem}
+.lfk a.lfk-resource:is(:hover,:focus-visible) > img{transform:scale(1.035)}
+.lfk a.lfk-resource:is(:hover,:focus-visible) .lfk-resource-label{background:var(--colors--bg-secondary-dark,#202432)}
+.lfk .lfk-resource-row{display:flex;align-items:flex-start;gap:2rem;padding:3rem 0;border-bottom:1px solid var(--lfk-border-2)}
+.lfk .lfk-resource-row-img{position:relative;flex:none;width:12.5rem;height:15rem;overflow:hidden;border-radius:var(--lfk-r-xl)}
+.lfk .lfk-resource-row-body{display:flex;flex:1;flex-direction:column;align-items:flex-start;gap:1.5rem;min-width:0}
+.lfk .lfk-resource-row-text{display:flex;flex-direction:column;gap:.75rem}
+.lfk .lfk-display{margin:0;color:var(--lfk-text);font-family:var(--lfk-font-display);font-size:2rem;line-height:2.75rem;letter-spacing:0;font-weight:400}
+.lfk .lfk-resource-row .lfk-ds-text{color:var(--lfk-text-2)}
+
+/* Pessoa da equipa */
+.lfk .lfk-team{display:flex;flex-direction:column;gap:1.5rem;max-width:25.3rem}
+.lfk .lfk-team-img{position:relative;width:100%;aspect-ratio:405/492;overflow:hidden;border-radius:var(--lfk-r-xl)}
+.lfk .lfk-team-img > img{object-position:bottom}   /* como no Figma; a foto deve ter a proporcao 405:492 */
+.lfk .lfk-team-name{margin:0;color:var(--lfk-text);font-family:var(--lfk-font-display);font-size:1.5rem;line-height:2.25rem;font-weight:400}
+.lfk .lfk-team-role{color:var(--lfk-text);font-size:var(--lfk-fs-m);line-height:var(--lfk-lh-m);letter-spacing:-.2px}
+.lfk .lfk-team-bio{display:flex;flex-direction:column;gap:1.25rem;padding-top:1rem;border-top:1px solid var(--lfk-border-2)}
+.lfk .lfk-team-bio p{margin:0;color:var(--lfk-text-2);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px}
+.lfk .lfk-socials{display:flex;gap:.75rem}
+.lfk .lfk-social.is-youtube{background-image:url("icons/youtube-grey.svg");background-size:1.25rem auto}
+
+/* ---------- Toast (Figma > toast): barra de cor + titulo + texto. is-ok / is-warn / is-err ---------- */
+.lfk .lfk-toast{display:flex;align-items:center;gap:.75rem;max-width:39rem;padding:1rem 1rem 1rem .75rem;border-radius:1rem;background:var(--lfk-bg-2)}
+.lfk .lfk-toast::before{content:"";flex:none;align-self:stretch;width:2px;border-radius:999px;background:var(--lfk-toast-c,var(--lfk-icon))}
+.lfk .lfk-toast.is-ok{--lfk-toast-c:var(--colors--icon-success,#17b26a)}
+.lfk .lfk-toast.is-warn{--lfk-toast-c:var(--colors--icon-warning,#f79009)}
+.lfk .lfk-toast.is-err{--lfk-toast-c:var(--colors--icon-error,#f04438)}
+.lfk .lfk-toast-body{display:flex;flex:1;flex-direction:column;gap:.25rem;min-width:0}
+.lfk .lfk-toast-title{color:var(--lfk-text);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;font-weight:600}
+.lfk .lfk-toast-text{margin:0;color:var(--lfk-text-2);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px}
+
+/* ---------- Indice do artigo (Figma > table of contents): lfk-toc + lfk-toc-item (is-current) ---------- */
+.lfk .lfk-toc{display:flex;flex-direction:column;gap:2rem;width:100%;max-width:18.5rem;padding-right:2rem}
+.lfk .lfk-toc-block{display:flex;flex-direction:column;gap:.75rem}
+.lfk .lfk-toc-title{color:var(--lfk-text);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;font-weight:500}
+.lfk .lfk-toc-list{display:flex;flex-direction:column}
+.lfk .lfk-toc-item{display:flex;align-items:center;min-height:1.75rem;padding:.25rem 0 .25rem .75rem;border-left:1.5px solid var(--lfk-border-2);color:var(--lfk-text-3);font-size:var(--lfk-fs-s);line-height:1.25rem;letter-spacing:-.2px;font-weight:400;text-decoration:none;transition:border-color .2s,color .2s}
+.lfk .lfk-toc-item:is(:hover,.is-current,[aria-current]){border-left-color:var(--lfk-link);color:var(--lfk-link);font-weight:500}
+.lfk .lfk-toc-item:focus-visible{outline:none}
+.lfk .lfk-toc-item:focus-visible > span{border-radius:4px;box-shadow:0 0 0 2px var(--lfk-focus)}
+@media screen and (max-width:767px){
+  .lfk .lfk-toc{max-width:none;padding-right:0;background:var(--lfk-bg)}
+  .lfk .lfk-toc-block:not(:first-child),.lfk .lfk-toc-title{display:none}
+  .lfk .lfk-toc-list{flex-direction:row;overflow-x:auto;scrollbar-width:none}
+  .lfk .lfk-toc-list::-webkit-scrollbar{display:none}
+  .lfk .lfk-toc-item{flex:none;min-height:2.25rem;padding:.5rem;border-left:0;border-bottom:2px solid var(--lfk-border-2);white-space:nowrap}
+  .lfk .lfk-toc-item:is(:hover,.is-current,[aria-current]){border-bottom-color:var(--lfk-link)}
+}
+.lfk .lfk-social.is-x{background-image:url("icons/toc-x-20.svg")}
+.lfk .lfk-social.is-facebook{background-image:url("icons/toc-facebook-20.svg")}
+
+/* ---------- Teclado e acessibilidade ---------- */
+.lfk :is(.lfk-btn,.lfk-tab,.lfk-chip,.lfk-link):focus-visible{outline:none;box-shadow:0 0 0 4px var(--lfk-focus)}
+@media (forced-colors:active){
+  .lfk :is(.lfk-card,.lfk-input,.lfk-btn,.lfk-tab,.lfk-chip,.lfk-alert,.lfk-tag){border:1px solid CanvasText}
+  .lfk :is(.lfk-tab.is-active,.lfk-chip.is-on){outline:2px solid Highlight}
+}
+@media (prefers-reduced-motion:reduce){.lfk *{transition:none!important;animation-duration:.01ms!important}}
+
+/* ---------- Breakpoints do Webflow ---------- */
+@media screen and (max-width:991px){
+  .lfk{--lfk-title-fs:2rem}
+  .lfk.lfk-hero,.lfk .lfk-hero{padding:4rem 2.5rem}
+  .lfk .lfk-calc-form{padding:1.5rem 1rem}
+  .lfk .lfk-card{padding:1.5rem 1rem}
+}
+@media screen and (max-width:767px){
+  .lfk{--lfk-fs-l:1rem}
+  .lfk .lfk-faq-a{margin-top:.6rem}
+  .lfk.lfk-hero,.lfk .lfk-hero{padding:3rem 1.5rem}
+  .lfk .lfk-hero-head{margin-bottom:2.5rem}
+  .lfk .lfk-partner > a{align-items:stretch;padding:.75rem}
+  .lfk .lfk-partner-left{flex-direction:column;align-items:flex-start}
+  .lfk .lfk-partner-line{display:none}
+  .lfk .lfk-partner-small{font-size:.75rem;line-height:1.125rem;letter-spacing:-.1px}
+  .lfk .lfk-partner-title{font-size:var(--lfk-fs-m);line-height:1.5rem;letter-spacing:-.2px}
+  .lfk .lfk-partner.is-bar > a{padding:1rem 1.5rem}
+  .lfk .lfk-partner-cta > span:first-child{display:none}
+  .lfk .lfk-partner-cta{position:absolute;top:.25rem;right:.25rem;padding:0}
+  .lfk .lfk-partner-cta .lfk-arrow{transform:rotate(-45deg)}
+  .lfk .lfk-grid.is-2,.lfk .lfk-grid.is-3{grid-template-columns:minmax(0,1fr)}
+  .lfk .lfk-toggle.is-fill:has(> :nth-child(4)){grid-auto-flow:row;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lfk .lfk-empty{min-height:auto}
+  .lfk .lfk-dd-item{max-width:100%;white-space:break-spaces}
+  .lfk .lfk-table th,.lfk .lfk-table td{min-width:7rem}
+  .lfk .lfk-table th:first-child,.lfk .lfk-table td:first-child{min-width:6rem}
+  /* Cartoes do design system em telemovel */
+  .lfk .lfk-entity{flex-direction:column}
+  .lfk .lfk-feature{padding:1.25rem}
+  .lfk .lfk-price-in{padding:calc(1.5rem - 1px)}
+  .lfk .lfk-resource-row{flex-direction:column}
+  .lfk .lfk-resource-row-img{width:100%}
+}

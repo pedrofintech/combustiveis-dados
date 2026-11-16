@@ -1,0 +1,236 @@
+<!doctype html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>teste: combustível mais barato</title>
+<style>body{margin:0;font-family:Inter,Arial,sans-serif;background:#f9fafb;color:#202432}.sec{padding:40px 16px}.h1{text-align:center;font-size:2rem;max-width:39rem;margin:0 auto 12px}.lead{text-align:center;max-width:30rem;margin:0 auto 40px;color:#4f5969}.glos{max-width:39rem;margin:0 auto;padding:40px 16px}</style>
+</head><body>
+<main>
+<section class="sec">
+  <h1 class="h1">Combustível mais barato: os postos mais baratos em cada distrito e concelho</h1>
+  <p class="lead">Preços comunicados pelos postos à DGEG, lidos duas vezes por dia. Escolhe o combustível, o distrito e o concelho e vê onde compensa atestar hoje.</p>
+  <!-- Página /combustivel-mais-barato do literaciafinanceira.pt: HTML do embed da ferramenta (cópia de referência do que está no Webflow).
+     Fica dentro da secção da página, no lugar do conteúdo da calculadora; o título (H1) e o subtítulo são elementos nativos do Webflow.
+     Estilos: LF kit (pedrofintech/lf-site-assets/kit) com o commit fixo do README do kit. Lógica: combustivel-mais-barato.js
+     (carregado num embed no fim da página, a seguir ao lf-kit.js). Os textos de fonte citam a DGEG com a data e a hora da leitura. -->
+<link rel="stylesheet" href="/esboco/real/kit-fixo/lf-kit.css">
+<style>
+/* Peças que o kit não tem, só com as variáveis do kit (prefixo lfcmb-) */
+.lfk .lfcmb-filtros { min-width: 0; }
+.lfk .lfcmb-filtros .lfk-segment { display: flex; flex-wrap: wrap; max-width: 100%; }
+.lfk .lfcmb-filtros .lfk-segment > button { flex: 1 1 auto; }
+.lfk .lfcmb-acoes { display: flex; flex-wrap: wrap; gap: .75rem; }
+.lfk .lfcmb-acoes .lfk-btn { flex: 0 1 auto; min-width: 14rem; max-width: 100%; }
+.lfk .lfcmb-tabela th { white-space: nowrap; } /* "Face à média" e "Distância" numa só linha (o kit deixa os cabeçalhos quebrar) */
+.lfk .lfcmb-posto { display: flex; flex-direction: column; gap: .125rem; min-width: 0; white-space: normal; }
+.lfk .lfcmb-posto small { color: var(--lfk-text-3); font-size: var(--lfk-fs-xs); line-height: var(--lfk-lh-xs); }
+.lfk .lfcmb-posto .lfk-link { font-weight: 500; } /* o nome é o link para o caminho no Google Maps, com o estilo de link do kit */
+.lfk .lfcmb-top .lfk-link { font-weight: 600; }
+.lfk .lfk-stat.lfcmb-ok .lfk-stat-v { color: var(--lfk-ok); } /* o mais barato a verde, como os valores positivos do kit */
+.lfk .lfk-table td.lfcmb-rank { color: var(--lfk-text-3); width: 2rem; }
+.lfk .lfcmb-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; margin-bottom: 1rem; }
+.lfk .lfcmb-head h2 { margin: 0; }
+.lfk .lfcmb-tabela .lfcmb-rank, .lfk .lfcmb-tabela th:first-child { width: 1%; white-space: nowrap; } /* coluna do número só com a largura do número */
+/* linha que separa os postos do concelho dos postos de concelhos vizinhos (concelhos com poucos postos) */
+.lfk .lfcmb-tabela tr.lfcmb-grupo td, .lfk .lfcmb-tabela tbody tr.lfcmb-grupo:hover td { padding-top: .5rem; padding-bottom: .5rem; white-space: normal; background: var(--lfk-bg-2); color: var(--lfk-text-3); font-size: var(--lfk-fs-xs); line-height: var(--lfk-lh-xs); font-weight: 500; }
+.lfk .lfcmb-dif-movel { display: none; font-size: var(--lfk-fs-xs); line-height: var(--lfk-lh-xs); font-weight: 400; }
+.lfk .lfcmb-so-movel, .lfk .lfcmb-so-estreito { display: none; }
+@media (min-width: 641px) {
+  .lfk .lfcmb-1l { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } /* texto dos indicadores numa linha */
+}
+@media (max-width: 760px) {
+  .lfk .lfk-table .lfcmb-esconde-m { display: none; }
+  .lfk .lfcmb-so-estreito { display: inline; }
+}
+@media (max-width: 640px) {
+  .lfk .lfk-table .lfcmb-esconde { display: none; }
+  .lfk .lfcmb-so-movel { display: inline; }
+  .lfk .lfcmb-dif-movel { display: block; }
+  .lfk .lfcmb-acoes .lfk-btn { flex: 1 1 auto; }
+}
+</style>
+
+<div class="lfk" id="lf-cmb">
+  <div class="lfk-calc">
+    <div class="lfk-calc-form"><div class="lfk-calc-inner">
+      <div class="lfk-calc-title">Onde está o combustível mais barato?</div>
+      <form class="lfk-stack lfcmb-filtros" id="lfcmb-form" onsubmit="return false">
+        <div class="lfk-field">
+          <span class="lfk-label" id="lfcmb-lbl-comb">Combustível</span>
+          <div class="lfk-segment" role="group" aria-labelledby="lfcmb-lbl-comb" id="lfcmb-comb">
+            <button type="button" data-comb="gasoleo" aria-pressed="true">Gasóleo</button>
+            <button type="button" data-comb="gasolina" aria-pressed="false">Gasolina 95</button>
+            <button type="button" data-comb="gpl" aria-pressed="false">GPL</button>
+          </div>
+        </div>
+        <div class="lfk-field">
+          <label class="lfk-label" for="lfcmb-distrito">Distrito</label>
+          <select class="lfk-input" id="lfcmb-distrito" name="distrito"><option value="">Todo o país</option><option value="__perto">Perto de mim</option></select>
+          <span class="lfk-hint">"Perto de mim" pede a tua localização ao browser. A localização não sai do teu dispositivo.</span>
+        </div>
+        <div class="lfk-field" id="lfcmb-campo-concelho">
+          <label class="lfk-label" for="lfcmb-concelho">Concelho</label>
+          <select class="lfk-input" id="lfcmb-concelho" name="concelho"><option value="">Todos os concelhos</option></select>
+        </div>
+        <div class="lfcmb-acoes">
+          <button type="button" class="lfk-btn" id="lfcmb-ver">Ver os postos mais baratos <span class="lfk-ico-arrow"></span></button>
+        </div>
+        <div class="lfk-alert is-warn" id="lfcmb-aviso" hidden></div>
+      </form>
+    </div></div>
+
+    <div class="lfk-calc-results" id="lfcmb-estado">
+      <div class="lfk-empty"><p>A carregar os preços dos postos...</p></div>
+    </div>
+
+    <div class="lfk-calc-results" id="lfcmb-resultados" hidden>
+      <div class="lfk-calc-form"><div class="lfk-calc-inner"><!-- mesma caixa e mesma coluna do formulário, para os dois cartões ficarem alinhados -->
+        <div class="lfcmb-head">
+          <h2 class="lfk-h-sm" id="lfcmb-titulo">Gasóleo simples mais barato em Portugal continental</h2>
+          <span class="lfk-tag is-sm is-ok" id="lfcmb-hora"></span>
+        </div>
+        <div class="lfk-kpis" id="lfcmb-kpis">
+          <div class="lfk-stat lfcmb-ok"><div class="lfk-stat-l">O mais barato</div><div class="lfk-stat-v" id="lfcmb-k-min">-</div><div class="lfk-stat-s" id="lfcmb-k-min-s"></div></div>
+          <div class="lfk-stat"><div class="lfk-stat-l">Preço médio afixado</div><div class="lfk-stat-v" id="lfcmb-k-media">-</div><div class="lfk-stat-s" id="lfcmb-k-media-s"></div></div>
+          <div class="lfk-stat"><div class="lfk-stat-l">Poupança em 50 litros</div><div class="lfk-stat-v" id="lfcmb-k-poup">-</div><div class="lfk-stat-s" id="lfcmb-k-poup-s"></div></div>
+        </div>
+        <div class="lfk-alert" id="lfcmb-sem" hidden></div>
+        <div class="lfk-table-wrap" id="lfcmb-tabela-wrap" style="margin-top:1.5rem">
+          <table class="lfk-table lfcmb-tabela" id="lfcmb-tabela">
+            <thead><tr><th class="lfcmb-esconde"></th><th>Posto</th><th class="is-num">Preço</th><th class="is-num lfcmb-esconde">Face à média</th><th class="lfcmb-esconde lfcmb-esconde-m" id="lfcmb-th-local">Atualizado</th></tr></thead>
+            <tbody id="lfcmb-linhas"></tbody>
+          </table>
+        </div>
+        <p class="lfk-hint" style="margin-top:.75rem">Clica no nome do posto para veres o caminho no Google Maps.</p>
+        <p class="lfk-summary" style="margin-top:1.5rem" id="lfcmb-frase"></p>
+        <p class="lfk-foot" style="margin-top:1rem" id="lfcmb-fonte">Preços comunicados pelos próprios postos ao <a href="https://precoscombustiveis.dgeg.gov.pt/" target="_blank" rel="noopener">portal Preços dos Combustíveis Online da DGEG</a> (Direção-Geral de Energia e Geologia). A ordenação, as médias e a poupança são cálculo do Literacia Financeira, não informação da DGEG.</p>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+  <div style="max-width:52.625rem;margin:2rem auto 0;padding:1.25rem;border:1px dashed #c9ced6;text-align:center;color:#4f5969">(anúncio do parceiro)</div>
+  <!-- Página /combustivel-mais-barato do literaciafinanceira.pt: embed com a ligação à página da previsão (/precos-combustiveis).
+     Fica no Webflow por baixo dos resultados e do anúncio do parceiro, antes das perguntas frequentes (cópia de referência do que está no Webflow).
+     Usa o kit (lf-kit.css já vem no embed da ferramenta, na mesma página): mesma caixa e mesma coluna dos cartões do formulário e dos resultados. -->
+<style>
+.lfk .lfcmb-prev { display: flex; flex-direction: column; align-items: flex-start; gap: .75rem; }
+.lfk .lfcmb-prev h2, .lfk .lfcmb-prev p { margin: 0; }
+.lfk .lfcmb-prev .lfk-link-btn { margin-top: .5rem; white-space: normal; } /* o link pode quebrar de linha no telemóvel */
+</style>
+<div class="lfk" id="lf-cmb-previsao">
+  <div class="lfk-calc"><div class="lfk-calc-results">
+    <div class="lfk-calc-form"><div class="lfk-calc-inner lfcmb-prev">
+      <h2 class="lfk-h-sm">Atestar hoje ou esperar pela segunda-feira?</h2>
+      <p class="lfk-text">Os preços costumam mudar à segunda-feira. Vê a nossa previsão para a próxima semana, atualizada todos os dias, e decide se compensa atestar já.</p>
+      <a class="lfk-link-btn" href="/precos-combustiveis">Ver a previsão para a próxima semana <span class="lfk-btn is-icon"><span class="lfk-ico-arrow"></span></span></a>
+    </div></div>
+  </div></div>
+</div>
+
+</section>
+<section class="glos"><!-- Página /combustivel-mais-barato: perguntas frequentes (HTML do embed da secção "glossário" do Webflow, com as classes do site,
+     como na página /precos-combustiveis). Cópia de referência. -->
+<h2 class="heading-style-h2">Perguntas frequentes</h2>
+<div class="spacer-1-5"></div>
+
+<div class="text-weight-semibold">
+  <div class="text-size-extra-large">
+    <h3 class="faq-calculators-h3">De onde vêm estes preços?</h3>
+  </div>
+</div>
+<div class="spacer-0-625"></div>
+<div class="text-color-secondary">
+  <div>Do <a href="https://precoscombustiveis.dgeg.gov.pt/" target="_blank" rel="noopener" class="blue-link">portal Preços dos Combustíveis Online</a> da DGEG (Direção-Geral de Energia e Geologia). Por lei, cada posto comunica o preço afixado sempre que o muda. Lemos esses dados pela API oficial da DGEG três vezes por dia, às 3h, às 13h e às 20h, e mostramos sempre a data e a hora da leitura. A ordenação, as médias e a poupança são cálculo nosso, não informação da DGEG. Os preços dos Açores e da Madeira vêm dos despachos dos Governos Regionais publicados nos jornais oficiais.</div>
+</div>
+<div class="spacer-2-5"></div>
+
+<div class="text-weight-semibold">
+  <div class="text-size-extra-large">
+    <h3 class="faq-calculators-h3">O preço que vejo aqui é o que vou pagar?</h3>
+  </div>
+</div>
+<div class="spacer-0-625"></div>
+<div class="text-color-secondary">
+  <div>É o preço afixado na bomba, sem descontos de cartões, campanhas ou vales de supermercado. Um posto pode mudar o preço entre a nossa leitura e a tua visita, por isso mostramos a hora da última atualização de cada um.</div>
+</div>
+<div class="spacer-2-5"></div>
+
+<div class="text-weight-semibold">
+  <div class="text-size-extra-large">
+    <h3 class="faq-calculators-h3">Porque é que um posto barato não aparece na lista?</h3>
+  </div>
+</div>
+<div class="spacer-0-625"></div>
+<div class="text-color-secondary">
+  <div>Só entram postos com preço atualizado nos últimos 8 dias (31 dias no GPL, que muda menos vezes). Um posto que deixou de comunicar pode ter um preço antigo que já não existe. Preços demasiado baixos para serem reais, que normalmente são erros de escrita do posto, também ficam de fora.</div>
+</div>
+<div class="spacer-2-5"></div>
+
+<div class="text-weight-semibold">
+  <div class="text-size-extra-large">
+    <h3 class="faq-calculators-h3">Como funciona o filtro por concelho e a localização?</h3>
+  </div>
+</div>
+<div class="spacer-0-625"></div>
+<div class="text-color-secondary">
+  <div>Escolhe o distrito e depois o concelho para veres só os postos desse concelho. Cada posto aparece no concelho onde a DGEG o regista: o Auchan de Alfragide, por exemplo, está em Oeiras e não na Amadora. Por isso, quando um concelho tem menos de 5 postos com o combustível escolhido, a lista mostra também os postos de concelhos vizinhos a menos de 3 km. Com "Perto de mim" no distrito, o browser pede-te autorização e a página mostra os 10 postos mais baratos num raio de 15 km, com a distância a cada um. A tua localização não sai do teu dispositivo: a conta é feita na própria página. Em qualquer lista, clica no nome do posto para abrires o caminho no Google Maps.</div>
+</div>
+<div class="spacer-2-5"></div>
+
+<div class="text-weight-semibold">
+  <div class="text-size-extra-large">
+    <h3 class="faq-calculators-h3">E nos Açores e na Madeira?</h3>
+  </div>
+</div>
+<div class="spacer-0-625"></div>
+<div class="text-color-secondary">
+  <div>Nas ilhas o preço dos combustíveis é um máximo fixado pelo Governo Regional: na Madeira muda todas as semanas, à segunda-feira, e nos Açores todos os meses, no dia 1. Os postos não podem vender acima desse preço, e a DGEG só recolhe os preços dos postos do continente. Escolhe Madeira ou Açores no campo Distrito para veres o preço máximo em vigor da gasolina 95 e do gasóleo, a diferença para a média do continente e o despacho do jornal oficial que o fixa. O GPL Auto não tem preço fixado nas ilhas.</div>
+</div>
+<div class="spacer-2-5"></div>
+
+<div class="text-weight-semibold">
+  <div class="text-size-extra-large">
+    <h3 class="faq-calculators-h3">Porque é que a média aqui é diferente da média oficial da DGEG?</h3>
+  </div>
+</div>
+<div class="spacer-0-625"></div>
+<div class="text-color-secondary">
+  <div>A nossa média é a média simples dos preços afixados nos postos, sem descontos. O <a href="https://precoscombustiveis.dgeg.gov.pt/estatistica/preco-medio-diario/" target="_blank" rel="noopener" class="blue-link">preço médio diário oficial da DGEG</a> pondera cada posto pelas quantidades que vende e inclui os descontos de cartões de frota e outros, por isso é alguns cêntimos mais baixo. Para escolher onde abastecer, o que conta é o preço afixado na bomba, e é esse que comparamos.</div>
+</div>
+<div class="spacer-2-5"></div>
+
+<div class="text-weight-semibold">
+  <div class="text-size-extra-large">
+    <h3 class="faq-calculators-h3">Quanto poupo mesmo?</h3>
+  </div>
+</div>
+<div class="spacer-0-625"></div>
+<div class="text-color-secondary">
+  <div>A conta é simples: a diferença entre o preço do posto e a média afixada na zona, vezes 50 litros. Entre o posto mais barato e a média de um distrito a diferença anda à volta de 10 cêntimos por litro, ou seja, 5€ por depósito. Se abasteces todas as semanas, são mais de 250€ por ano.</div>
+</div>
+<div class="spacer-2-5"></div>
+
+<div class="text-weight-semibold">
+  <div class="text-size-extra-large">
+    <h3 class="faq-calculators-h3">Os preços sobem ou descem na próxima semana?</h3>
+  </div>
+</div>
+<div class="spacer-0-625"></div>
+<div class="text-color-secondary">
+  <div>Essa resposta está na nossa página de <a href="https://www.literaciafinanceira.pt/precos-combustiveis" class="blue-link">previsão dos preços dos combustíveis</a>: todas as semanas publicamos a variação esperada para segunda-feira e confirmamo-la com a média oficial da DGEG.</div>
+</div>
+<div class="spacer-2-5"></div>
+
+<div class="text-weight-semibold">
+  <div class="text-size-extra-large">
+    <h3 class="faq-calculators-h3">Nota</h3>
+  </div>
+</div>
+<div class="spacer-0-625"></div>
+<div class="text-color-secondary">
+  <div>Esta página tem caráter meramente informativo. Os preços são comunicados pelos postos à DGEG e podem conter erros ou atrasos. Confirma sempre o preço na bomba antes de abastecer.</div>
+</div>
+</section>
+</main>
+<script>window.__lfCombBaratoDados = window.__lfCombBaratoDados || '/esboco/real/dados/';</script>
+<script defer src="/esboco/real/kit-fixo/lf-kit.js"></script>
+<script defer src="/combustiveis-dados/combustivel-mais-barato.js"></script>
+</body></html>

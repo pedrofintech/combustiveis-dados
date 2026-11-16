@@ -11,6 +11,8 @@
                          A DGEG só tem os postos do continente; nas ilhas o preço é um máximo fixado pelo Governo Regional,
                          por isso as duas regiões aparecem no campo Distrito com esse preço em vez de uma lista de postos.
    O HTML da ferramenta está no embed da página (cópia em combustivel-mais-barato.html) e usa o LF kit (lf-site-assets/kit).
+   Cada vista fica no endereço (#gpl/lisboa/amadora) e numa entrada do histórico do browser: voltar atrás mostra a lista
+   anterior. Num concelho com poucos postos, a lista junta os de concelhos vizinhos que ficam mesmo ao lado (ver vizinhos()).
    Condições da DGEG: citar a DGEG com a data e a hora da leitura e dizer que a ordenação, as médias e a poupança são
    cálculo nosso. Os textos que o fazem estão em rodape() e no HTML do embed. */
 (function () {
@@ -20,8 +22,10 @@
 
   /* Fontes dos dados, por ordem. O raw.githubusercontent.com tem a versão mais recente (5 minutos de cache), mas o GitHub
      limita os pedidos anónimos por IP e às vezes responde com erro (429) ou nem responde. Quando falha, a página vai buscar
-     os mesmos ficheiros ao jsDelivr, a CDN que já serve o kit e este ficheiro; o workflow "Ler postos DGEG" manda o jsDelivr
-     atualizar a cópia a seguir a cada leitura. window.__lfCombBaratoDados troca as fontes (texto ou lista): usa-se no staging. */
+     os mesmos ficheiros ao jsDelivr, a CDN que já serve o kit e este ficheiro; os workflows "Ler postos DGEG" e "Ler preços
+     das ilhas" mandam o jsDelivr atualizar a cópia a seguir a cada mudança (uns 10 a 20 minutos depois). Se a cópia ainda
+     estiver atrasada, a página mostra a hora da leitura que está a usar (ver leitura()).
+     window.__lfCombBaratoDados troca as fontes (texto ou lista): usa-se no staging. */
   var FONTES = window.__lfCombBaratoDados ? [].concat(window.__lfCombBaratoDados) : [
     'https://raw.githubusercontent.com/pedrofintech/combustiveis-dados/main/',
     'https://cdn.jsdelivr.net/gh/pedrofintech/combustiveis-dados@main/'
@@ -30,6 +34,10 @@
   var ESPERA_TOTAL_MS = 30000; /* limite para o pedido inteiro (ligações muito lentas) */
   var NOVA_VOLTA_MS = 1200; /* pausa antes de voltar a tentar todas as fontes (faz-se uma segunda volta antes de mostrar o erro) */
   var RAIO_KM = 15, RAIO_MAX_KM = 40, TOP = 10, DEPOSITO_L = 50;
+  /* Concelho com menos de POUCOS_POSTOS postos do combustível escolhido: a lista mostra também os postos de outros
+     concelhos a menos de VIZINHOS_KM de um posto desse concelho. */
+  var POUCOS_POSTOS = 5, VIZINHOS_KM = 3;
+  var GEO_MAX_MIN = 60; /* uma localização guardada no histórico do browser há mais minutos do que isto já não se usa */
   var MAX_HORAS_AVISO = 30; /* leitura com mais horas do que isto: aviso de que os preços podem estar desatualizados */
   var PERTO = '__perto'; /* valor da opção "Perto de mim" no select do distrito: usa a localização do browser */
   var COMB = {
@@ -272,6 +280,26 @@
     return { titulo: COMB[estado.comb].nome + ' ' + maisBarato() + ' ' + noDistrito(d), onde: noDistrito(d), lista: lista.slice(0, TOP),
       media: r.media, mediaOnde: noDistrito(d), postos: r.postos, mostraDistrito: false };
   }
+  /* Postos de outros concelhos, com o combustível k, a menos de VIZINHOS_KM de algum posto do concelho (com qualquer
+     combustível), por preço. A DGEG regista cada posto no concelho da morada, e quem escolhe um concelho conta com os
+     postos que ficam mesmo ao lado: o Auchan de Alfragide, por exemplo, está registado em Oeiras e não na Amadora.
+     Um posto a menos de 3 km de um posto do concelho está, por força, a menos de 3 km do concelho. */
+  function vizinhos(d, c, k) {
+    var base = [], fora = [], perto = [], i, j, l, p;
+    for (i = 0; i < D.todos.postos.length; i++) {
+      l = D.todos.postos[i];
+      if (l[5] == null || l[6] == null) continue;
+      if (l[4] === d && l[3] === c) base.push(l); else if (l[k]) fora.push(l);
+    }
+    for (i = 0; i < fora.length; i++) {
+      l = fora[i];
+      for (j = 0; j < base.length; j++) {
+        if (Math.abs(l[5] - base[j][5]) > 0.05) continue; /* mais de 5 km só em latitude: não vale a pena medir */
+        if (distanciaKm(l[5], l[6], base[j][5], base[j][6]) <= VIZINHOS_KM) { p = postoTodos(l, k); if (p) perto.push(p); break; }
+      }
+    }
+    return ordenar(perto);
+  }
   function vistaConcelho(d, c) {
     var k = indiceComb(estado.comb), lista = [], todosConcelho = [];
     for (var i = 0; i < D.todos.postos.length; i++) {
@@ -284,6 +312,8 @@
     var v = { titulo: COMB[estado.comb].nome + ' ' + maisBarato() + ' ' + emLocal(c), onde: emLocal(c), lista: ordenar(lista).slice(0, TOP), mostraDistrito: false, concelho: c };
     if (todosConcelho.length >= 3) { v.media = media(todosConcelho); v.mediaOnde = 'no concelho ' + deLocal(c); v.postos = todosConcelho.length; }
     else { v.media = rd.media; v.mediaOnde = noDistrito(d); v.postos = rd.postos; v.poucos = todosConcelho.length; v.mediaFora = 'do distrito'; }
+    /* poucos postos no concelho: junta os de concelhos vizinhos mesmo ao lado, até a lista ter TOP linhas */
+    if (lista.length < POUCOS_POSTOS) v.vizinhos = vizinhos(d, c, k).slice(0, TOP - lista.length);
     return v;
   }
   function vistaPerto(lat, lon) {
@@ -344,17 +374,43 @@
     tag.className = 'lfk-tag is-sm ' + (horas > MAX_HORAS_AVISO ? 'is-warn' : 'is-ok');
 
     var tb = $('lfcmb-linhas'), aviso = $('lfcmb-sem'), dica = dicaTabela();
-    if (dica) dica.hidden = !v.lista.length;
+    var vz = v.vizinhos && v.vizinhos.length ? v.vizinhos : null, temMedia = v.media != null && v.lista.length > 0;
+    /* uma linha da tabela; n = número de ordem (0 nos postos de concelhos vizinhos, que não entram na ordem do concelho) */
+    function linha(p, n) {
+      var d = temMedia ? p.preco - v.media : 0;
+      /* o nome do posto é o link para o caminho no Google Maps (abre noutro separador) */
+      var nomeLink = '<a class="lfk-link" href="' + esc(mapa(p)) + '" target="_blank" rel="noopener" title="Como chegar (Google Maps)">' + esc(p.nome) + '</a>';
+      var onde = v.concelho ? (p.localidade || p.municipio) : v.mostraDistrito && !v.perto ? p.municipio + ', ' + nomeDistrito(p.distrito) : p.municipio;
+      /* em ecrãs estreitos a última coluna (distância ou hora de atualização) esconde-se e passa para ao lado do concelho */
+      var km = '<span class="lfcmb-so-estreito"> · ' + (v.perto ? fmt(p.km, { currency: false, decimals: 1 }) + ' km' : 'atualizado ' + esc(quando(p.atualizado))) + '</span>';
+      var corDif = d < 0 ? 'lfk-pos' : d > 0 ? 'lfk-neg' : '';
+      return '<tr' + (n === 1 ? ' class="is-on"' : '') + '><td class="lfcmb-rank lfcmb-esconde">' + (n || '') + '</td>' +
+        '<td><div class="lfcmb-posto"><span class="' + (n === 1 ? 'lfcmb-top' : '') + '">' + (n ? '<span class="lfcmb-so-movel">' + n + '. </span>' : '') + nomeLink + '</span><small>' + esc(onde) + km + '</small></div></td>' +
+        '<td class="is-num"><b>' + preco(p.preco) + '</b>' + (temMedia ? '<small class="lfcmb-dif-movel ' + corDif + '">' + dif(d) + '</small>' : '') + '</td>' +
+        '<td class="is-num lfcmb-esconde ' + corDif + '">' + (temMedia ? dif(d) : '-') + '</td>' +
+        '<td class="lfcmb-esconde lfcmb-esconde-m">' + esc(v.perto ? fmt(p.km, { currency: false, decimals: 1 }) + ' km' : quando(p.atualizado)) + '</td></tr>';
+    }
+    /* os postos de concelhos vizinhos vêm depois dos do concelho, debaixo de uma linha que diz o que são */
+    function linhasVizinhos() {
+      if (!vz) return '';
+      return '<tr class="lfcmb-grupo"><td colspan="5" style="white-space:normal">Noutros concelhos, a menos de ' + VIZINHOS_KM + ' km ' + esc(deLocal(v.concelho)) + '</td></tr>' +
+        vz.map(function (p) { return linha(p, 0); }).join('');
+    }
+    $('lfcmb-th-local').textContent = v.perto ? 'Distância' : 'Atualizado';
+    if (dica) dica.hidden = !v.lista.length && !vz;
     if (!v.lista.length) {
-      $('lfcmb-kpis').hidden = true; $('lfcmb-tabela-wrap').hidden = true; $('lfcmb-frase').hidden = true;
+      $('lfcmb-kpis').hidden = true; $('lfcmb-frase').hidden = true;
       aviso.hidden = false; aviso.className = 'lfk-alert';
       aviso.textContent = v.perto ? 'Não encontrámos postos com ' + c.art.replace(/^[oa] /, '') + ' num raio de ' + fmt(RAIO_MAX_KM, { currency: false, decimals: 0 }) + ' km. Escolhe um distrito ou um concelho.' :
-        'Não há postos com preço recente de ' + c.nome.toLowerCase() + ' ' + v.onde + '.';
+        'Não há postos com preço recente de ' + c.art.replace(/^[oa] /, '') + ' ' + v.onde + '.' +
+        (vz ? ' Na lista estão os de concelhos vizinhos, a menos de ' + VIZINHOS_KM + ' km.' : '');
+      $('lfcmb-tabela-wrap').hidden = !vz;
+      tb.innerHTML = linhasVizinhos();
       $('lfcmb-fonte').innerHTML = rodape(v);
       return;
     }
     aviso.hidden = true; $('lfcmb-kpis').hidden = false; $('lfcmb-tabela-wrap').hidden = false; $('lfcmb-frase').hidden = false;
-    var min = v.lista[0], temMedia = v.media != null;
+    var min = v.lista[0];
     $('lfcmb-k-min').textContent = preco(min.preco);
     sub('lfcmb-k-min-s', v.perto ? 'a ' + fmt(min.km, { currency: false, decimals: 1 }) + ' km, ' + emLocal(min.municipio) :
       v.concelho ? 'em ' + min.nome : emLocal(min.municipio));
@@ -363,21 +419,7 @@
     $('lfcmb-k-poup').textContent = temMedia ? fmt(Math.max(0, v.media - min.preco) * DEPOSITO_L) : '-';
     sub('lfcmb-k-poup-s', temMedia ? 'face à média' + (v.mediaFora ? ' ' + v.mediaFora : '') : '');
 
-    $('lfcmb-th-local').textContent = v.perto ? 'Distância' : 'Atualizado';
-    tb.innerHTML = v.lista.map(function (p, i) {
-      var d = temMedia ? p.preco - v.media : 0;
-      /* o nome do posto é o link para o caminho no Google Maps (abre noutro separador) */
-      var nomeLink = '<a class="lfk-link" href="' + esc(mapa(p)) + '" target="_blank" rel="noopener" title="Como chegar (Google Maps)">' + esc(p.nome) + '</a>';
-      var onde = v.concelho ? (p.localidade || p.municipio) : v.mostraDistrito && !v.perto ? p.municipio + ', ' + nomeDistrito(p.distrito) : p.municipio;
-      /* em ecrãs estreitos a última coluna (distância ou hora de atualização) esconde-se e passa para ao lado do concelho */
-      var km = '<span class="lfcmb-so-estreito"> · ' + (v.perto ? fmt(p.km, { currency: false, decimals: 1 }) + ' km' : 'atualizado ' + esc(quando(p.atualizado))) + '</span>';
-      var corDif = d < 0 ? 'lfk-pos' : d > 0 ? 'lfk-neg' : '';
-      return '<tr' + (i === 0 ? ' class="is-on"' : '') + '><td class="lfcmb-rank lfcmb-esconde">' + (i + 1) + '</td>' +
-        '<td><div class="lfcmb-posto"><span class="' + (i === 0 ? 'lfcmb-top' : '') + '"><span class="lfcmb-so-movel">' + (i + 1) + '. </span>' + nomeLink + '</span><small>' + esc(onde) + km + '</small></div></td>' +
-        '<td class="is-num"><b>' + preco(p.preco) + '</b>' + (temMedia ? '<small class="lfcmb-dif-movel ' + corDif + '">' + dif(d) + '</small>' : '') + '</td>' +
-        '<td class="is-num lfcmb-esconde ' + corDif + '">' + (temMedia ? dif(d) : '-') + '</td>' +
-        '<td class="lfcmb-esconde lfcmb-esconde-m">' + esc(v.perto ? fmt(p.km, { currency: false, decimals: 1 }) + ' km' : quando(p.atualizado)) + '</td></tr>';
-    }).join('');
+    tb.innerHTML = v.lista.map(function (p, i) { return linha(p, i + 1); }).join('') + linhasVizinhos();
 
     var caro = v.lista[v.lista.length - 1], frase;
     if (temMedia) {
@@ -388,7 +430,11 @@
     } else {
       frase = (c.art.charAt(0).toUpperCase() + c.art.slice(1)) + ' mais barat' + (estado.comb === 'gasolina' ? 'a' : 'o') + ' ' + v.onde + ' está a <b>' + preco(min.preco) + '</b> por litro.';
     }
-    if (v.pais && ilhasComPrecos().length) frase += ' Nos Açores e na Madeira o preço é um máximo fixado pelo Governo Regional: escolhe a região no campo Distrito.';
+    if (vz) {
+      frase += ' A lista mostra também ' + (vz.length === 1 ? '1 posto' : vz.length + ' postos') + ' de concelhos vizinhos, a menos de ' + VIZINHOS_KM + ' km ' + esc(deLocal(v.concelho)) + '.';
+      if (vz[0].preco < min.preco) frase += (vz.length === 1 ? ' Está a <b>' : ' O mais barato deles está a <b>') + preco(vz[0].preco) + '</b>.';
+    }
+    if (v.pais && estado.comb !== 'gpl' && ilhasComPrecos().length) frase += ' Nos Açores e na Madeira o preço é um máximo fixado pelo Governo Regional: escolhe a região no campo Distrito.';
     $('lfcmb-frase').innerHTML = frase;
     $('lfcmb-fonte').innerHTML = rodape(v);
   }
@@ -482,7 +528,13 @@
   function opcaoConcelho(d, c, comNomeDistrito) {
     return '<option value="' + esc(d + '|' + c) + '">' + esc(comNomeDistrito ? c + ' (' + nomeDistrito(d) + ')' : c) + '</option>';
   }
+  /* o botão diz o que vai mostrar: nas ilhas não há postos, há o preço máximo */
+  function rotuloBotao() {
+    var t = el.ver.firstChild, ilha = regiaoIlha(el.distrito.value) && despachosIlha(regiaoIlha(el.distrito.value)).length;
+    if (t && t.nodeType === 3) t.nodeValue = (ilha ? 'Ver o preço máximo' : 'Ver os postos mais baratos') + ' ';
+  }
   function preencherConcelhos() {
+    rotuloBotao();
     var d = el.distrito.value === PERTO ? '' : el.distrito.value, sel = el.concelho, mapa = D.top.concelhos || {}, atual = sel.value, html;
     if (d) {
       html = (mapa[d] || []).map(function (c) { return opcaoConcelho(d, c, false); }).join('');
@@ -519,9 +571,39 @@
     estado.distrito = (d === PERTO ? '' : d) || x.d || '';
     estado.concelho = x.c && (x.d === estado.distrito) ? x.c : '';
   }
-  function escreverHash() {
+  /* ---------- endereço e histórico do browser ----------
+     Cada vista tem o seu endereço (#gpl/lisboa/amadora; o gasóleo em todo o país fica sem nada). Quando é a pessoa a mudar
+     de vista, o endereço novo entra no histórico do browser (pushState): o botão de voltar atrás mostra a lista anterior
+     em vez de sair da página. No arranque, e quando a vista é a mesma, só se acerta o endereço (replaceState).
+     "Perto de mim" não cabe no endereço, porque uma localização não se partilha: fica no estado dessa entrada do
+     histórico, que não sai do dispositivo, com a hora a que foi obtida. */
+  var vistaNoHistorico = null; /* a vista que a entrada atual do histórico representa: endereço e, se for o caso, "perto" */
+  var vistaPedida = null;      /* a vista que o histórico pediu e que ainda está a ser carregada */
+  function enderecoDoEstado() {
     var h = '#' + estado.comb + (estado.distrito ? '/' + slug(estado.distrito) + (estado.concelho ? '/' + slug(estado.concelho) : '') : '');
-    try { history.replaceState(null, '', location.pathname + location.search + (h === '#gasoleo' ? '' : h)); } catch (e) { /* sem history: fica como está */ }
+    return location.pathname + location.search + (h === '#gasoleo' ? '' : h);
+  }
+  function chaveDoEstado() { return enderecoDoEstado() + (estado.geo ? '|perto' : ''); }
+  function escreverHash(empurrar) {
+    var url = enderecoDoEstado(), chave = chaveDoEstado();
+    var st = { lfcmb: 1, geo: estado.geo ? { lat: estado.geo.lat, lon: estado.geo.lon, t: estado.geo.t || Date.now() } : null };
+    try {
+      if (empurrar && vistaNoHistorico !== null && chave !== vistaNoHistorico) history.pushState(st, '', url);
+      else history.replaceState(st, '', url);
+    } catch (e) { /* sem history: fica como está */ }
+    vistaNoHistorico = chave; vistaPedida = null;
+  }
+  function estadoDoHistorico() { try { return history.state; } catch (e) { return null; } }
+  /* a localização guardada numa entrada do histórico, se for desta página e ainda for recente */
+  function geoGuardada(st) {
+    var g = st && st.lfcmb && st.geo;
+    return g && typeof g.lat === 'number' && typeof g.lon === 'number' && Date.now() - g.t < GEO_MAX_MIN * 6e4 ? { lat: g.lat, lon: g.lon, t: g.t } : null;
+  }
+  /* o estado que o endereço e a entrada do histórico pedem (no arranque e ao voltar atrás ou avançar) */
+  function lerEndereco() {
+    estado.comb = 'gasoleo'; estado.distrito = ''; estado.concelho = ''; estado.geo = null;
+    lerHash();
+    if (!estado.distrito) estado.geo = geoGuardada(estadoDoHistorico());
   }
   function lerHash(h) {
     var p = (h == null ? location.hash || '' : h).replace(/^#/, '').split('/');
@@ -536,25 +618,26 @@
   }
   function sincronizarFormulario() {
     el.comb.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-comb') === estado.comb ? 'true' : 'false'); });
-    el.distrito.value = estado.distrito;
+    el.distrito.value = estado.geo ? PERTO : estado.distrito;
     el.distrito.dispatchEvent(new Event('change', { bubbles: true }));
     preencherConcelhos();
     el.concelho.value = estado.concelho ? estado.distrito + '|' + estado.concelho : '';
     el.concelho.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
-  /* aplica o estado: escolhe a vista, carrega o ficheiro completo se for preciso e desenha */
-  function aplicar(rolar) {
+  /* aplica o estado: escolhe a vista, carrega o ficheiro completo se for preciso e desenha.
+     empurrar: a vista foi pedida pela pessoa (botão ou "Perto de mim") e entra no histórico do browser */
+  function aplicar(rolar, empurrar) {
     aviso('');
     /* rola até ao cartão (não até ao bloco que o envolve, que tem margem em cima): o cartão do formulário fica
        escondido debaixo do menu, como nas outras calculadoras */
-    function pronto(v) { render(v); mostrarResultados(); escreverHash(); if (rolar) rolarAte($('lfcmb-resultados').firstElementChild || $('lfcmb-resultados')); }
+    function pronto(v) { render(v); mostrarResultados(); escreverHash(empurrar); if (rolar) rolarAte($('lfcmb-resultados').firstElementChild || $('lfcmb-resultados')); }
     if (estado.geo) {
       /* nos Açores e na Madeira não há postos na lista da DGEG: mostra o preço máximo da região */
       var rg = regiaoDaPosicao(estado.geo.lat, estado.geo.lon);
       if (rg && despachosIlha(rg).length) { pronto(vistaIlha(rg, true)); return; }
       carregarTodos(function (e) {
-        if (e) { aviso('Não conseguimos carregar a lista completa dos postos. Tenta outra vez daqui a pouco.', 'is-err'); return; }
+        if (e) { vistaPedida = null; aviso('Não conseguimos carregar a lista completa dos postos. Tenta outra vez daqui a pouco.', 'is-err'); return; }
         pronto(vistaPerto(estado.geo.lat, estado.geo.lon));
       });
       return;
@@ -563,7 +646,7 @@
       el.ver.disabled = true;
       carregarTodos(function (e) {
         el.ver.disabled = false;
-        if (e) { aviso('Não conseguimos carregar os postos deste concelho. Tenta outra vez daqui a pouco.', 'is-err'); return; }
+        if (e) { vistaPedida = null; aviso('Não conseguimos carregar os postos deste concelho. Tenta outra vez daqui a pouco.', 'is-err'); return; }
         pronto(vistaConcelho(estado.distrito, estado.concelho));
       });
       return;
@@ -588,9 +671,9 @@
     navigator.geolocation.getCurrentPosition(function (pos) {
       aLocalizar = false; el.ver.disabled = false;
       if (el.distrito.value !== PERTO) { aviso(''); return; } /* entretanto escolheu outra coisa */
-      estado.geo = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      estado.geo = { lat: pos.coords.latitude, lon: pos.coords.longitude, t: Date.now() };
       lerFormulario();
-      aplicar(true);
+      aplicar(true, true);
     }, function (err) {
       aLocalizar = false; el.ver.disabled = false;
       semLocalizacao(err && err.code === 1 ? 'Para veres os postos à tua volta, autoriza a localização no browser. A localização não sai do teu dispositivo: a conta é feita aqui na página.' :
@@ -617,11 +700,29 @@
       if (arrancou) return;
       arrancou = true;
       if (!D.resumo[estado.comb] || !D.top[estado.comb]) { erro('Ainda não há preços de postos para mostrar.'); return; }
-      lerHash();
+      lerEndereco();
       preencherDistritos();
       sincronizarFormulario();
       aplicar(false);
     }
+    /* Voltar atrás ou avançar no browser (popstate) e endereço mudado à mão (hashchange): mostra a vista dessa entrada do
+       histórico, sem criar outra. Só reage a entradas escritas por esta página ou a endereços com um combustível
+       (#gpl/...): as outras âncoras da página não mexem na ferramenta. Numa navegação o browser dispara os dois
+       eventos; o segundo já encontra a vista pedida e não faz nada. O browser repõe sozinho a posição da página. */
+    function aoNavegar() {
+      if (!arrancou || falhou || !D.resumo || !D.top) return;
+      var st = estadoDoHistorico(), comb = (location.hash || '').replace(/^#/, '').split('/')[0];
+      if (!(st && st.lfcmb) && !COMB[comb]) return;
+      lerEndereco();
+      var chave = chaveDoEstado();
+      if (chave === vistaPedida) return;
+      vistaPedida = chave; mexeu = true;
+      sincronizarFormulario();
+      if (chave === vistaNoHistorico) { vistaPedida = null; return; } /* a lista à vista já é esta: só se acertou o formulário */
+      aplicar(false, false);
+    }
+    window.addEventListener('popstate', aoNavegar);
+    window.addEventListener('hashchange', aoNavegar);
     /* o resumo e o top chegaram: arranca já se o ilhas.json também chegou; senão espera por ele, no máximo ESPERA_ILHAS_MS */
     function seguir() {
       if (D.ilhasPronto) { mesmaLeitura(arrancar); return; }
@@ -660,7 +761,7 @@
       e.preventDefault(); if (!D.resumo || !D.top) return;
       lerFormulario();
       if (el.distrito.value === PERTO && !estado.geo) { localizar(); return; } /* ainda sem localização: pede-a e mostra quando chegar */
-      aplicar(true);
+      aplicar(true, true);
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
