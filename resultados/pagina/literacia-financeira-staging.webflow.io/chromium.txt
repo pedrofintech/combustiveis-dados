@@ -7,9 +7,10 @@ localização de teste (dados fictícios): {"latitude":37.78446,"longitude":-8.0
   ok  pesquisar Lisboa cria uma entrada: /combustivel-mais-barato#gasoleo/lisboa (4)
   ok  pesquisar GPL em Amadora cria outra: /combustivel-mais-barato#gpl/lisboa/amadora (5)
   ok  voltar atrás: lista de Lisboa e formulário acertado (Lisboa, -, gasoleo, 10)
+  ok  e a página fica onde a pessoa estava quando fez a pesquisa seguinte (lista 778, formulário 64, lista 778 -> 64)
   ok  voltar atrás outra vez: todo o país, na posição do formulário (340 -> 778 -> 340)
-  FALHA avançar: Lisboa, na posição da lista (64 vs 778)
-  ok  avançar outra vez: GPL em Amadora
+  ok  avançar: Lisboa, na posição em que a pessoa a deixou (64 vs 64)
+  ok  avançar outra vez: GPL em Amadora, na posição da lista (778 vs 778)
   ok  à terceira vez para trás sai para a página anterior (/precos-combustiveis)
   ok  e avançar volta à página, em todo o país
   ok  "Perto de mim": Gasóleo simples mais barato num raio de 15 km (endereço /combustivel-mais-barato, 1 pedido(s) de localização)
@@ -23,7 +24,7 @@ localização de teste (dados fictícios): {"latitude":37.78446,"longitude":-8.0
   ok  FAQ do filtro por concelho explica os concelhos vizinhos
   ok  o embed da ferramenta tem o estilo da linha de separação
 consola: ["warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404","warning: [combustivel-mais-barato] ilhas.json falhou em raw.githubusercontent.com: HTTP 404"]
-  ok  sem erros de JavaScript na página
+  ok  sem erros de JavaScript da ferramenta nem do kit (0 de outros scripts do site, que não são desta página)
 
-FALHAS: 1
-codigo de saida 1
+Tudo ok
+codigo de saida 0
