@@ -8,7 +8,7 @@ const BASE = (process.env.URL_BASE || 'https://www.literaciafinanceira.pt').repl
 const PAGINA = BASE + '/combustivel-mais-barato';
 const PRODUCAO = !/webflow\.io/.test(BASE);
 const SAIDA = process.env.SAIDA || '.';
-const HASH = process.env.HASH || '794875bf5207a66a0fae701b3e1eb1fd3323e79f'; // commit do script que a página tem de estar a carregar
+const HASH = process.env.HASH || '2962d0d85596f251b4b09eeb495be05992f8eb40'; // commit do script que a página tem de estar a carregar
 const RAMO = PRODUCAO ? 'main' : 'exemplo'; // o staging usa o ramo de dados fictícios
 let GEO = { latitude: 38.757, longitude: -9.224 }; // Amadora
 const erros = [];
@@ -141,6 +141,7 @@ function km(a, b, c, d) { const R = 6371, dl = (c - a) * Math.PI / 180, dn = (d 
           { n: tr.children[0].textContent.trim(), nome: tr.querySelector('a').textContent, href: tr.querySelector('a').getAttribute('href'), onde: tr.querySelector('small').firstChild.textContent, preco: tr.children[2].querySelector('b').textContent }),
         frase: document.getElementById('lfcmb-frase').textContent, kmin: document.getElementById('lfcmb-k-min').textContent, kminS: document.getElementById('lfcmb-k-min-s').textContent,
         sw: document.documentElement.scrollWidth, iw: window.innerWidth,
+        fora: (() => { const cw = document.documentElement.clientWidth, o = { ferramenta: [], site: [] }; document.querySelectorAll('body *').forEach((e) => { const q = e.getBoundingClientRect(); if (q.width > 0 && q.right > cw + 0.5 && q.left < cw) (e.closest('#lf-cmb') ? o.ferramenta : o.site).push(e.tagName.toLowerCase() + '.' + String(e.className && e.className.baseVal !== undefined ? e.className.baseVal : e.className).trim().split(/\s+/).slice(0, 2).join('.') + ' ' + Math.round(q.left) + '-' + Math.round(q.right * 10) / 10); }); return o; })(),
         grupoEstilo: (() => { const td = document.querySelector('#lfcmb-linhas tr.lfcmb-grupo td'); if (!td) return null; const s = getComputedStyle(td); return [s.fontSize, s.whiteSpace, s.backgroundColor, s.color].join(' | '); })(),
       }));
       console.log('   leitura na página:', r.lido, '| no repositório:', todos.lidoEmLisboa);
@@ -150,8 +151,10 @@ function km(a, b, c, d) { const R = 6371, dl = (c - a) * Math.PI / 180, dn = (d 
       ok(vz.length === viz.length && viz.every((l, i) => igual(vz[i], l) && vz[i].onde === l[3]), vp.width + ' px: ' + vz.length + ' postos de concelhos vizinhos iguais ao cálculo independente');
       ok(gr.length === 1 && gr[0].grupo === 'Noutros concelhos, a menos de 3 km da Amadora', 'linha de separação: ' + (gr[0] && gr[0].grupo) + ' [' + r.grupoEstilo + ']');
       ok(!!r.grupoEstilo && / \| normal \| /.test(r.grupoEstilo) && !/rgba\(0, 0, 0, 0\) \|/.test(r.grupoEstilo), vp.width + ' px: a linha de separação tem o estilo do embed (fundo e texto que quebra)');
-      ok(new RegExp('A lista mostra também ' + viz.length + ' postos de concelhos vizinhos, a menos de 3 km da Amadora\\.').test(r.frase), 'frase: ...' + r.frase.slice(-170));
-      ok(r.sw <= r.iw, vp.width + ' px: sem scroll horizontal (' + r.sw + ' vs ' + r.iw + ')');
+      ok(new RegExp('A lista mostra também ' + viz.length + ' postos de concelhos vizinhos, a menos de 3 km da Amadora\\.').test(r.frase), 'frase: ...' + r.frase.slice(-230));
+      if (proprios.length && proprios.length < 3) ok(r.frase.indexOf('Como o concelho tem só ' + proprios.length + ' posto' + (proprios.length === 1 ? '' : 's') + ' com preço recente de GPL Auto, a comparação é com a média do distrito.') !== -1, 'a frase diz de que combustível são os poucos postos do concelho');
+      ok(r.fora.ferramenta.length === 0, vp.width + ' px: nenhum elemento da ferramenta sai do ecrã' + (r.fora.ferramenta.length ? ': ' + r.fora.ferramenta.slice(0, 5).join(', ') : ''));
+      if (r.sw > r.iw) console.log('   (a página mede ' + r.sw + ' px num ecrã de ' + r.iw + ' por causa de elementos do site, fora da ferramenta: ' + r.fora.site.slice(0, 5).join(', ') + ' ... ' + r.fora.site.length + ' no total)');
       r.linhas.forEach((l) => console.log('      ' + (l.grupo ? '-- ' + l.grupo : (l.n || ' ') + ' ' + l.nome + ' (' + l.onde + ') ' + l.preco)));
       await (await p.$('#lfcmb-resultados')).screenshot({ path: SAIDA + '/amadora-gpl-' + tipo + '-' + vp.width + '.png' });
       await c.close();
