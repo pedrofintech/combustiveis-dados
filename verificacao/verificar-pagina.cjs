@@ -35,9 +35,9 @@ function km(a, b, c, d) { const R = 6371, dl = (c - a) * Math.PI / 180, dn = (d 
     o = o || {};
     const c = await browser.newContext({ viewport: o.viewport || { width: 1280, height: 900 }, locale: 'pt-PT', timezoneId: 'Europe/Lisbon', geolocation: GEO, permissions: ['geolocation'] });
     const p = await c.newPage();
-    p.on('pageerror', (e) => consola.push('pageerror: ' + e.message));
+    p.on('pageerror', (e) => consola.push('pageerror: ' + e.message + ' @ ' + String(e.stack || '').split('\n').slice(0, 3).join(' | ').slice(0, 300)));
     p.on('console', (m) => { if (/combustivel-mais-barato\]/.test(m.text())) consola.push(m.type() + ': ' + m.text()); });
-    await p.addInitScript(() => { window.__geo = 0; try { const g = navigator.geolocation, f = g.getCurrentPosition.bind(g); g.getCurrentPosition = function () { window.__geo++; return f.apply(null, arguments); }; } catch (e) {} });
+    await p.addInitScript(() => { window.__geo = 0; document.addEventListener('click', (e) => { if (e.target && e.target.closest && e.target.closest('#lfcmb-ver')) window.__yVer = Math.round(window.scrollY); }, true); try { const g = navigator.geolocation, f = g.getCurrentPosition.bind(g); g.getCurrentPosition = function () { window.__geo++; return f.apply(null, arguments); }; } catch (e) {} });
     await p.goto(BASE + '/precos-combustiveis', { waitUntil: 'domcontentloaded', timeout: 60000 }); // a página de onde a pessoa vem
     await p.goto(PAGINA + (o.hash || ''), { waitUntil: 'load', timeout: 60000 });
     await p.waitForFunction(() => document.getElementById('lfcmb-resultados') && !document.getElementById('lfcmb-resultados').hidden, null, { timeout: 40000 });
@@ -48,7 +48,7 @@ function km(a, b, c, d) { const R = 6371, dl = (c - a) * Math.PI / 180, dn = (d 
     const t = document.getElementById('lfcmb-titulo'), b = document.querySelector('#lfcmb-comb button[aria-pressed="true"]');
     return { url: location.pathname + location.hash, n: history.length, titulo: t ? t.textContent : '(fora da página)',
       distrito: (document.getElementById('lfcmb-distrito') || {}).value, concelho: (document.getElementById('lfcmb-concelho') || {}).value, comb: b ? b.getAttribute('data-comb') : '',
-      linhas: document.querySelectorAll('#lfcmb-linhas tr:not(.lfcmb-grupo)').length, geo: window.__geo, y: Math.round(window.scrollY), lenis: typeof window.lenis,
+      linhas: document.querySelectorAll('#lfcmb-linhas tr:not(.lfcmb-grupo)').length, geo: window.__geo, y: Math.round(window.scrollY), yVer: window.__yVer, lenis: typeof window.lenis,
       script: [...document.scripts].map((s) => s.src).filter((s) => /combustivel-mais-barato/.test(s)).join(' ') };
   });
   const titulo = (p, re) => p.waitForFunction((src) => new RegExp(src).test((document.getElementById('lfcmb-titulo') || {}).textContent || ''), re.source, { timeout: 15000 });
@@ -71,20 +71,21 @@ function km(a, b, c, d) { const R = 6371, dl = (c - a) * Math.PI / 180, dn = (d 
     const alvo = conc.indexOf('Lisboa|Amadora') !== -1 ? 'Lisboa|Amadora' : conc[0];
     await clicar(p, '#lfcmb-comb button[data-comb="gpl"]'); await p.selectOption('#lfcmb-concelho', alvo); await clicar(p, '#lfcmb-ver');
     await p.waitForFunction(() => /^#gpl\/lisboa\/./.test(location.hash), null, { timeout: 15000 }); await espera(2500);
-    a = await hist(p);
+    a = await hist(p); const yB = a.yVer, yC = a.y; // yB: onde a pessoa estava (subiu ao formulário) quando fez a segunda pesquisa
     ok(a.n === n0 + 2 && a.comb === 'gpl' && a.concelho === alvo, 'pesquisar GPL em ' + alvo.split('|')[1] + ' cria outra: ' + a.url + ' (' + a.n + ')');
     await p.goBack(); await titulo(p, distritoDoTitulo('Lisboa')); await espera(1500);
     a = await hist(p);
     ok(a.url === '/combustivel-mais-barato#gasoleo/lisboa' && a.distrito === 'Lisboa' && a.concelho === '' && a.comb === 'gasoleo' && a.linhas === 10, 'voltar atrás: lista de Lisboa e formulário acertado (' + [a.distrito, a.concelho || '-', a.comb, a.linhas].join(', ') + ')');
+    ok(Math.abs(a.y - yB) < 80, 'e a página fica onde a pessoa estava quando fez a pesquisa seguinte (lista ' + y1 + ', formulário ' + yB + ', lista ' + yC + ' -> ' + a.y + ')');
     await p.goBack(); await titulo(p, /em Portugal continental$/); await espera(1500);
     a = await hist(p);
     ok(a.url === '/combustivel-mais-barato' && a.distrito === '' && Math.abs(a.y - y0) < 80, 'voltar atrás outra vez: todo o país, na posição do formulário (' + y0 + ' -> ' + y1 + ' -> ' + a.y + ')');
     await p.goForward(); await titulo(p, distritoDoTitulo('Lisboa')); await espera(1500);
     a = await hist(p);
-    ok(a.distrito === 'Lisboa' && Math.abs(a.y - y1) < 80, 'avançar: Lisboa, na posição da lista (' + a.y + ' vs ' + y1 + ')');
-    await p.goForward(); await p.waitForFunction(() => /^#gpl\/lisboa\/./.test(location.hash), null, { timeout: 15000 }); await espera(800);
+    ok(a.distrito === 'Lisboa' && Math.abs(a.y - yB) < 80, 'avançar: Lisboa, na posição em que a pessoa a deixou (' + a.y + ' vs ' + yB + ')');
+    await p.goForward(); await p.waitForFunction(() => /^#gpl\/lisboa\/./.test(location.hash), null, { timeout: 15000 }); await espera(1500);
     a = await hist(p);
-    ok(a.comb === 'gpl' && a.concelho === alvo, 'avançar outra vez: GPL em ' + alvo.split('|')[1]);
+    ok(a.comb === 'gpl' && a.concelho === alvo && Math.abs(a.y - yC) < 80, 'avançar outra vez: GPL em ' + alvo.split('|')[1] + ', na posição da lista (' + a.y + ' vs ' + yC + ')');
     await p.goBack(); await espera(500); await p.goBack(); await titulo(p, /em Portugal continental$/); await espera(500);
     await p.goBack(); await p.waitForFunction(() => /precos-combustiveis$/.test(location.pathname), null, { timeout: 20000 });
     ok(true, 'à terceira vez para trás sai para a página anterior (/precos-combustiveis)');
@@ -168,7 +169,8 @@ function km(a, b, c, d) { const R = 6371, dl = (c - a) * Math.PI / 180, dn = (d 
   }
 
   console.log('consola:', JSON.stringify(consola));
-  ok(consola.filter((x) => /pageerror/.test(x)).length === 0, 'sem erros de JavaScript na página');
+  const errosJs = consola.filter((x) => /^pageerror/.test(x)), nossos = errosJs.filter((x) => /combustivel-mais-barato|combustiveis-dados|lf-kit|lf-site-assets/.test(x));
+  ok(nossos.length === 0, 'sem erros de JavaScript da ferramenta nem do kit (' + (errosJs.length - nossos.length) + ' de outros scripts do site, que não são desta página)');
   console.log(erros.length ? '\nFALHAS: ' + erros.length : '\nTudo ok');
   await browser.close();
   process.exit(erros.length ? 1 : 0);
