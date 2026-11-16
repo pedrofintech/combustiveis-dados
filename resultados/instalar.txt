@@ -2,27 +2,27 @@ Version 1.65.1
 Installing dependencies...
 Switching to root user to install dependencies...
 Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
-Get:4 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
 Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
 Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
-Get:5 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
-Get:6 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
-Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [772 kB]
-Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [702 kB]
-Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1450 kB]
-Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [315 kB]
-Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1713 kB]
-Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [345 kB]
-Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1883 kB]
-Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [430 kB]
-Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.6 kB]
-Get:16 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1195 kB]
-Get:17 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [238 kB]
-Get:18 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1228 kB]
-Get:19 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [248 kB]
-Get:20 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1788 kB]
-Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [411 kB]
-Fetched 13.1 MB in 1s (9637 kB/s)
+Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+Get:7 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1450 kB]
+Get:8 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [315 kB]
+Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1713 kB]
+Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [345 kB]
+Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1883 kB]
+Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [430 kB]
+Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.6 kB]
+Get:14 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1195 kB]
+Get:15 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [238 kB]
+Get:16 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1228 kB]
+Get:20 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [702 kB]
+Get:17 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [248 kB]
+Get:21 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [772 kB]
+Get:18 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1788 kB]
+Get:19 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [411 kB]
+Fetched 13.1 MB in 1s (9517 kB/s)
 Reading package lists...
 Reading package lists...
 Building dependency tree...
@@ -390,7 +390,7 @@ Get:179 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libsbc1 amd64 2.
 Get:180 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libvo-aacenc0 amd64 0.1.3-2build1 [67.8 kB]
 Get:181 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libvo-amrwbenc0 amd64 0.1.3-2build1 [76.7 kB]
 Get:182 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 gstreamer1.0-plugins-bad amd64 1.24.2-1ubuntu4 [3081 kB]
-Fetched 114 MB in 1min 12s (1587 kB/s)
+Fetched 114 MB in 10s (11.9 MB/s)
 Selecting previously unselected package fonts-ipafont-gothic.
 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 216752 files and directories currently installed.)
 Preparing to unpack .../000-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
