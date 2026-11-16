@@ -1,0 +1,64 @@
+browser: firefox 159.0 | página: https://www.literaciafinanceira.pt/combustivel-mais-barato
+1) histórico do browser (computador)
+   script: https://cdn.jsdelivr.net/gh/pedrofintech/combustiveis-dados@794875bf5207a66a0fae701b3e1eb1fd3323e79f/combustivel-mais-barato.js | lenis: object
+  ok  a página carrega o script do commit 794875b
+  ok  chegada: Gasóleo simples mais barato em Portugal continental (2 entradas)
+  ok  pesquisar Lisboa cria uma entrada: /combustivel-mais-barato#gasoleo/lisboa (3)
+  ok  pesquisar GPL em Amadora cria outra: /combustivel-mais-barato#gpl/lisboa/amadora (4)
+  ok  voltar atrás: lista de Lisboa e formulário acertado (Lisboa, -, gasoleo, 10)
+  ok  e a página fica onde a pessoa estava quando fez a pesquisa seguinte (lista 778, formulário 64, lista 778 -> 64)
+  ok  voltar atrás outra vez: todo o país, na posição do formulário (340 -> 778 -> 340)
+  ok  avançar: Lisboa, na posição em que a pessoa a deixou (64 vs 64)
+  ok  avançar outra vez: GPL em Amadora, na posição da lista (778 vs 778)
+  ok  à terceira vez para trás sai para a página anterior (/precos-combustiveis)
+  ok  e avançar volta à página, em todo o país
+  ok  "Perto de mim": Gasóleo simples mais barato num raio de 15 km (endereço /combustivel-mais-barato, 1 pedido(s) de localização)
+  ok  voltar atrás de "Perto de mim": todo o país
+  ok  avançar: "Perto de mim" sem voltar a pedir a localização (1)
+  ok  recarregar mantém "Perto de mim" sem pedir a localização: Gasóleo simples mais barato num raio de 15 km
+2) histórico do browser (telemóvel, 375 px)
+  ok  "Ver" desce até à lista (479 -> 801) e voltar atrás repõe o formulário (479)
+  ok  avançar repõe a lista (801)
+3) GPL na Amadora: postos de concelhos vizinhos, contra os dados da DGEG no repositório
+   leitura na página: 16 de novembro de 2026, às 03:02 | no repositório: 2026-11-16 03:02
+  ok  1280 px: 1 posto(s) da Amadora, como nos dados (AUCHAN Amadora (UBBO))
+  ok  1280 px: 8 postos de concelhos vizinhos iguais ao cálculo independente
+  ok  linha de separação: Noutros concelhos, a menos de 3 km da Amadora [12px | normal | rgb(249, 250, 251) | rgb(79, 89, 105)]
+  ok  1280 px: a linha de separação tem o estilo do embed (fundo e texto que quebra)
+  ok  frase: ...m só 1 posto, a comparação é com a média do distrito. A lista mostra também 8 postos de concelhos vizinhos, a menos de 3 km da Amadora. O mais barato deles está a 0,999€.
+  ok  1280 px: sem scroll horizontal (1280 vs 1280)
+      1 AUCHAN Amadora (UBBO) (Amadora) 1,019€
+      -- Noutros concelhos, a menos de 3 km da Amadora
+        Oz Energia - Massamá (Sintra) 0,999€
+        Posto de Abastecimento - Intermarché de Famões (Odivelas) 0,999€
+        PRIO Arroja (Odivelas) 1,019€
+        AUCHAN Alfragide (Oeiras) 1,019€
+        ES CASA PIA - Gespost - Gestão e Administração de Postos de Abastecimento Unipessoal LDA (Lisboa) 1,109€
+        GALP Carnaxide (Qta. do Minote) (Oeiras) 1,109€
+        ES REPSOL Benfica B - Estádio da Luz (Lisboa) 1,119€
+        GALP A.S. Telheiras - Eixo Norte-Sul (S/N) (Lisboa) 1,119€
+   leitura na página: 16 de novembro de 2026, às 03:02 | no repositório: 2026-11-16 03:02
+  ok  375 px: 1 posto(s) da Amadora, como nos dados (AUCHAN Amadora (UBBO))
+  ok  375 px: 8 postos de concelhos vizinhos iguais ao cálculo independente
+  ok  linha de separação: Noutros concelhos, a menos de 3 km da Amadora [12px | normal | rgb(249, 250, 251) | rgb(79, 89, 105)]
+  ok  375 px: a linha de separação tem o estilo do embed (fundo e texto que quebra)
+  ok  frase: ...m só 1 posto, a comparação é com a média do distrito. A lista mostra também 8 postos de concelhos vizinhos, a menos de 3 km da Amadora. O mais barato deles está a 0,999€.
+  FALHA 375 px: sem scroll horizontal (376 vs 375)
+      1 AUCHAN Amadora (UBBO) (Amadora) 1,019€
+      -- Noutros concelhos, a menos de 3 km da Amadora
+        Oz Energia - Massamá (Sintra) 0,999€
+        Posto de Abastecimento - Intermarché de Famões (Odivelas) 0,999€
+        PRIO Arroja (Odivelas) 1,019€
+        AUCHAN Alfragide (Oeiras) 1,019€
+        ES CASA PIA - Gespost - Gestão e Administração de Postos de Abastecimento Unipessoal LDA (Lisboa) 1,109€
+        GALP Carnaxide (Qta. do Minote) (Oeiras) 1,109€
+        ES REPSOL Benfica B - Estádio da Luz (Lisboa) 1,119€
+        GALP A.S. Telheiras - Eixo Norte-Sul (S/N) (Lisboa) 1,119€
+4) perguntas frequentes e estilos do embed
+  ok  FAQ do filtro por concelho explica os concelhos vizinhos
+  ok  o embed da ferramenta tem o estilo da linha de separação
+consola: ["pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-animation@1/animation.esm.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-animation@1/animation.esm.js | ","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-animation@1/animation.esm.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-animation@1/animation.esm.js | ","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js |     at Ye (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsload@1.11.2/cmsload.js:1:17935) |     at async*Se/< (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsloa","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js |     at ne (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsfilter@1.15.0/cmsfilter.js:1:22800) |     at async*Rt/< (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cm","pageerror: NetworkError when attempting to fetch resource. @ TypeError: NetworkError when attempting to fetch resource. | ","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js | ","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js |     at Ye (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsload@1.11.2/cmsload.js:1:17935) |     at async*Se/< (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsloa","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js |     at ne (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsfilter@1.15.0/cmsfilter.js:1:22800) |     at async*Rt/< (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cm","pageerror: NetworkError when attempting to fetch resource. @ TypeError: NetworkError when attempting to fetch resource. | ","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js | ","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js |     at Ye (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsload@1.11.2/cmsload.js:1:17935) |     at async*Se/< (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsloa","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js |     at ne (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsfilter@1.15.0/cmsfilter.js:1:22800) |     at async*Rt/< (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cm","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js | ","pageerror: NetworkError when attempting to fetch resource. @ TypeError: NetworkError when attempting to fetch resource. | ","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js |     at Ye (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsload@1.11.2/cmsload.js:1:17935) |     at async*Se/< (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsloa","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js |     at ne (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsfilter@1.15.0/cmsfilter.js:1:22800) |     at async*Rt/< (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cm","pageerror: NetworkError when attempting to fetch resource. @ TypeError: NetworkError when attempting to fetch resource. | ","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js | ","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js |     at ne (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsfilter@1.15.0/cmsfilter.js:1:22800) |     at async*Rt/< (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cm","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js |     at Ye (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsload@1.11.2/cmsload.js:1:17935) |     at async*Se/< (https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmsloa","pageerror: NetworkError when attempting to fetch resource. @ TypeError: NetworkError when attempting to fetch resource. | ","pageerror: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js @ TypeError: error loading dynamically imported module: https://cdn.jsdelivr.net/npm/@finsweet/attributes-cmscore@1/cmscore.js | "]
+  ok  sem erros de JavaScript da ferramenta nem do kit (22 de outros scripts do site, que não são desta página)
+
+FALHAS: 1
+codigo de saida 1
