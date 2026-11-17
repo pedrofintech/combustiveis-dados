@@ -1,7 +1,6 @@
 {
  "madeira": {
   "vistos": {
-   "IISerie-198-2026-11-02.pdf": "2026-11-02",
    "IISerie-199-2026-11-03.pdf": "2026-11-03",
    "IISerie-199-2026-11-03Supl.pdf": "2026-11-03",
    "IISerie-199-2026-11-03Supl2.pdf": "2026-11-03",
@@ -25,7 +24,7 @@
  },
  "acores": {
   "ano": 2026,
-  "numero": 147,
+  "numero": 148,
   "suplemento": 0
  }
 }
