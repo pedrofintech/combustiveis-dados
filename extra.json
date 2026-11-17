@@ -1,33 +1,18 @@
 {
- "atualizado": "2026-11-16",
+ "atualizado": "2026-11-17",
  "eficiente": {
-  "semana": "9 a 15 de novembro",
-  "inicio": "2026-11-09",
-  "fonte": "https://www.erse.pt/media/lcanuh1u/relatório-semanal-09nov-15nov.pdf",
+  "semana": "16 a 22 de novembro",
+  "inicio": "2026-11-16",
+  "fonte": "https://www.erse.pt/media/0lmdzlh1/relatório-semanal-16nov-22nov.pdf",
   "gasolina": {
-   "pvp": 1.961,
-   "semImpostos": 0.977,
-   "variacaoPct": -4.7
+   "pvp": 1.934,
+   "semImpostos": 0.954,
+   "variacaoPct": -1.3
   },
   "gasoleo": {
-   "pvp": 2.193,
-   "semImpostos": 1.34,
-   "variacaoPct": -4.2
-  },
-  "anterior": {
-   "semana": "2 a 8 de novembro",
-   "gasolina": {
-    "porticoCent": -0.3,
-    "porticoPct": -0.2,
-    "descontosCent": -5.8,
-    "descontosPct": -2.8
-   },
-   "gasoleo": {
-    "porticoCent": -2.0,
-    "porticoPct": -0.9,
-    "descontosCent": -8.4,
-    "descontosPct": -3.7
-   }
+   "pvp": 2.142,
+   "semImpostos": 1.288,
+   "variacaoPct": -2.3
   }
  },
  "marcas": {
@@ -196,5 +181,5 @@
    ]
   }
  },
- "eficiente_lido": "2026-11-10"
+ "eficiente_lido": "2026-11-17"
 }
