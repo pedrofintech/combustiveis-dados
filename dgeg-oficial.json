@@ -1,7 +1,7 @@
 {
   "_nota": "Escrito pelo dgeg-oficial.mjs: média oficial da DGEG de cada segunda-feira (preço médio diário, gasóleo simples e gasolina simples 95). O override.json ganha sempre.",
   "fonte": "https://precoscombustiveis.dgeg.gov.pt/estatistica/preco-medio-diario/",
-  "atualizado": "2026-11-10T13:58:17.625Z",
+  "atualizado": "2026-11-17T15:12:18.610Z",
   "leituras": [
     {
       "data": "2026-10-12",
@@ -27,6 +27,11 @@
       "data": "2026-11-09",
       "gasolina": 1.922,
       "gasoleo": 2.135
+    },
+    {
+      "data": "2026-11-16",
+      "gasolina": 1.887,
+      "gasoleo": 2.078
     }
   ]
 }
