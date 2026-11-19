@@ -1,6 +1,8 @@
 // enviar-previsao.mjs - compoe o email semanal com a previsao para as redacoes (Leak e quem mais disser que sim).
-// Corre no workflow enviar-previsao.yml a quinta-feira. Nao envia nada: escreve email-assunto.txt, email-corpo.txt e email-para.txt
+// Corre no workflow enviar-previsao.yml a quinta-feira. Nao envia nada: escreve email-assunto.txt, email-corpo.txt e email-cc.txt
 // e diz ao workflow (GITHUB_OUTPUT: enviar=sim|nao, motivo=...) se a previsao esta em condicoes de sair.
+// Os emails das redacoes estao no secret REDACOES_PARA (separados por virgula), para nao ficarem no repo publico nem nos logs.
+// Este script so confirma que o secret existe e tem emails validos; nunca o escreve. O workflow passa-o direto ao passo de envio.
 // Guardas: so sai se a previsao for do modelo, para a proxima segunda-feira, atualizada hoje e medida contra uma base oficial recente.
 // Se alguma falhar, o workflow avisa geral@literaciafinanceira.pt em vez de mandar numeros errados para fora.
 import { readFile, writeFile, appendFile } from "node:fs/promises";
@@ -19,6 +21,9 @@ async function principal() {
   const d = JSON.parse(await readFile("combustiveis.json", "utf8"));
   const dest = JSON.parse(await readFile("destinatarios.json", "utf8"));
   const problemas = [];
+  const para = (process.env.REDACOES_PARA || "").split(",").map((s) => s.trim()).filter(Boolean);
+  if (!para.length) problemas.push("falta o secret REDACOES_PARA com os emails das redacoes (Settings > Secrets and variables > Actions)");
+  else if (para.some((e) => !/^[^@\s;]+@[^@\s;]+\.[^@\s;]+$/.test(e))) problemas.push("o secret REDACOES_PARA tem um endereco mal escrito (os emails vao separados por virgula)");
   if (d.fonte !== "modelo-proprio") problemas.push("fonte e " + d.fonte + ", nao modelo-proprio");
   if (d.semanaInicio !== proximaSegunda) problemas.push("semanaInicio " + d.semanaInicio + " nao e a proxima segunda (" + proximaSegunda + ")");
   if (d.atualizado !== iso(hoje)) problemas.push("atualizado a " + d.atualizado + ", nao hoje");
@@ -56,11 +61,9 @@ async function principal() {
 
   await writeFile("email-assunto.txt", assunto + "\n");
   await writeFile("email-corpo.txt", corpo + "\n");
-  await writeFile("email-para.txt", (dest.para || []).join(",") + "\n");
   await writeFile("email-cc.txt", (dest.cc || []).join(",") + "\n");
   await saida("enviar", "sim");
   await saida("assunto", assunto);
-  await saida("para", (dest.para || []).join(","));
   await saida("cc", (dest.cc || []).join(","));
   console.log("\n" + assunto + "\n\n" + corpo);
 }
