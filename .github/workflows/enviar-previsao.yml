@@ -1,6 +1,7 @@
 # Envio semanal da previsão às redações (Leak e quem mais aderir) - quinta-feira de manhã.
 # Sai do Gmail (SMTP com app password) definido nos secrets MAIL_USERNAME / MAIL_PASSWORD.
 # O remetente MAIL_FROM tem de ser um "enviar como" verificado nessa conta (geral@literaciafinanceira.pt).
+# Os emails das redações vêm do secret REDACOES_PARA (separados por vírgula), para não ficarem à vista no repo nem nos logs.
 name: Enviar previsão às redações
 
 on:
@@ -43,6 +44,8 @@ jobs:
 
       - name: Compor o email a partir do combustiveis.json
         id: compor
+        env:
+          REDACOES_PARA: ${{ secrets.REDACOES_PARA }}
         run: node enviar-previsao.mjs
 
       - name: Enviar previsão
@@ -55,7 +58,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           from: ${{ vars.MAIL_FROM || 'Pedro Braz <geral@literaciafinanceira.pt>' }}
-          to: ${{ steps.compor.outputs.para }}
+          to: ${{ secrets.REDACOES_PARA }}
           cc: ${{ steps.compor.outputs.cc }}
           subject: ${{ steps.compor.outputs.assunto }}
           body: file://email-corpo.txt
