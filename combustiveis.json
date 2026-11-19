@@ -12,7 +12,7 @@
   },
   "gasolina": {
     "atual": 1.887,
-    "variacao": -0.019,
+    "variacao": -0.02,
     "intervalo": {
       "min": -3.5,
       "max": -0.5
@@ -46,7 +46,7 @@
     },
     {
       "semana": "23/11",
-      "gasolina": 1.868,
+      "gasolina": 1.867,
       "gasoleo": 2.034,
       "previsto": true
     }
