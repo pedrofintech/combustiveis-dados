@@ -1,21 +1,21 @@
 {
-  "atualizado": "2026-11-19",
+  "atualizado": "2026-11-20",
   "semanaInicio": "2026-11-23",
   "semanaFim": "2026-11-29",
   "gasoleo": {
     "atual": 2.078,
-    "variacao": -0.042,
+    "variacao": -0.045,
     "intervalo": {
       "min": -5.5,
-      "max": -2.5
+      "max": -3.5
     }
   },
   "gasolina": {
     "atual": 1.887,
-    "variacao": -0.02,
+    "variacao": -0.023,
     "intervalo": {
       "min": -3.5,
-      "max": -0.5
+      "max": -1.5
     }
   },
   "isp": {
@@ -46,16 +46,16 @@
     },
     {
       "semana": "23/11",
-      "gasolina": 1.867,
-      "gasoleo": 2.036,
+      "gasolina": 1.864,
+      "gasoleo": 2.033,
       "previsto": true
     }
   ],
   "fonte": "modelo-proprio",
   "baseConfirmada": true,
   "modelo": {
-    "janelaCompleta": false,
-    "diasDeCotacoes": 4,
+    "janelaCompleta": true,
+    "diasDeCotacoes": 5,
     "k": {
       "gasoleo": 1.04,
       "gasolina": 1.04
@@ -146,23 +146,23 @@
   ],
   "fiscalidade": {
     "iva": 0.23,
-    "emVigor": "19 de novembro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
+    "emVigor": "20 de novembro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
     "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
     "gasolina": {
       "ispBase": 0.49752,
       "csr": 0.087,
       "carbono": 0.15911,
-      "desconto": 0.04363
+      "desconto": 0.04063
     },
     "gasoleo": {
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.09194
+      "desconto": 0.08893999999999999
     }
   },
   "placar": {
-    "atualizado": "2026-11-19",
+    "atualizado": "2026-11-20",
     "semanas": 12,
     "semanasComSetor": 11,
     "gasoleo": {
@@ -286,16 +286,16 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-11-19",
-    "semanaInicio": "2026-11-16",
-    "semanaFim": "2026-11-22",
+    "lidoEm": "2026-11-20",
+    "semanaInicio": "2026-11-23",
+    "semanaFim": "2026-11-29",
     "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)",
     "gasoleo": {
-      "variacao": -0.06,
+      "variacao": -0.045,
       "preco": null
     },
     "gasolina": {
-      "variacao": -0.02,
+      "variacao": -0.045,
       "preco": null
     }
   }
