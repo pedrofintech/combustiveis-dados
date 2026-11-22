@@ -1,13 +1,13 @@
 {
-  "atualizado": "2026-11-21",
+  "atualizado": "2026-11-22",
   "semanaInicio": "2026-11-23",
   "semanaFim": "2026-11-29",
   "gasoleo": {
     "atual": 2.078,
-    "variacao": -0.043,
+    "variacao": -0.047,
     "intervalo": {
-      "min": -5.5,
-      "max": -3
+      "min": -6,
+      "max": -3.5
     }
   },
   "gasolina": {
@@ -47,7 +47,7 @@
     {
       "semana": "23/11",
       "gasolina": 1.865,
-      "gasoleo": 2.035,
+      "gasoleo": 2.031,
       "previsto": true
     }
   ],
@@ -162,7 +162,7 @@
     }
   },
   "placar": {
-    "atualizado": "2026-11-21",
+    "atualizado": "2026-11-22",
     "semanas": 12,
     "semanasComSetor": 11,
     "gasoleo": {
@@ -286,7 +286,7 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-11-21",
+    "lidoEm": "2026-11-22",
     "semanaInicio": "2026-11-23",
     "semanaFim": "2026-11-29",
     "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)",
