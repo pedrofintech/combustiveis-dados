@@ -1,26 +1,26 @@
 {
  "_nota": "Escrito pelo dgeg-postos.mjs com os preços dos postos lidos na API da DGEG. Médias e listas são cálculo do Literacia Financeira, não informação produzida pela DGEG. Na página citar a DGEG com a data e a hora da leitura (lidoEmLisboa). Médias nacionais e por marca: só Portugal continental.",
  "fonte": "DGEG - Direção-Geral de Energia e Geologia, portal Preços dos Combustíveis Online (https://precoscombustiveis.dgeg.gov.pt/)",
- "lidoEm": "2026-11-22T03:02:07.721Z",
- "lidoEmLisboa": "2026-11-22 03:02",
+ "lidoEm": "2026-11-22T13:02:48.209Z",
+ "lidoEmLisboa": "2026-11-22 13:02",
  "postosLidos": 3152,
  "minPostos": 20,
  "mediaOficial": {
   "data": "2026-11-16",
   "diferenca": {
-   "gasoleo": 0.0614,
-   "gasolina": 0.0484
+   "gasoleo": 0.0613,
+   "gasolina": 0.0486
   }
  },
  "gasoleo": {
   "id": 2101,
   "nome": "Gasóleo simples",
   "diasValidos": 8,
-  "postos": 2903,
+  "postos": 2905,
   "postosIlhas": 0,
-  "semPrecoRecente": 6,
-  "precosImplausiveis": 3,
-  "media": 2.1394,
+  "semPrecoRecente": 7,
+  "precosImplausiveis": 0,
+  "media": 2.1393,
   "mediana": 2.159,
   "minimo": 1.899,
   "maximo": 2.339,
@@ -68,7 +68,7 @@
    [
     "Genérico",
     222,
-    2.1122
+    2.1117
    ],
    [
     "FREITAS",
@@ -82,7 +82,7 @@
    ],
    [
     "GALP",
-    642,
+    641,
     2.1687
    ],
    [
@@ -97,32 +97,32 @@
    ],
    [
     "REPSOL",
-    478,
-    2.1762
+    481,
+    2.176
    ],
    [
     "BP",
     467,
-    2.1934
+    2.1932
    ]
   ],
   "distritos": [
    [
     "Aveiro",
     236,
-    2.1225,
+    2.1222,
     1.929
    ],
    [
     "Beja",
-    77,
-    2.1529,
+    76,
+    2.1511,
     1.999
    ],
    [
     "Braga",
     242,
-    2.1291,
+    2.1285,
     1.959
    ],
    [
@@ -182,7 +182,7 @@
    [
     "Porto",
     418,
-    2.1359,
+    2.1362,
     1.949
    ],
    [
@@ -193,14 +193,14 @@
    ],
    [
     "Setúbal",
-    175,
+    178,
     2.1432,
     1.984
    ],
    [
     "Viana do Castelo",
     68,
-    2.1451,
+    2.1445,
     1.989
    ],
    [
@@ -221,11 +221,11 @@
   "id": 3201,
   "nome": "Gasolina simples 95",
   "diasValidos": 8,
-  "postos": 3065,
+  "postos": 3064,
   "postosIlhas": 0,
-  "semPrecoRecente": 5,
+  "semPrecoRecente": 6,
   "precosImplausiveis": 0,
-  "media": 1.9354,
+  "media": 1.9356,
   "mediana": 1.949,
   "minimo": 1.699,
   "maximo": 2.198,
@@ -273,7 +273,7 @@
    [
     "Genérico",
     209,
-    1.9283
+    1.9277
    ],
    [
     "FREITAS",
@@ -282,8 +282,8 @@
    ],
    [
     "GALP",
-    631,
-    1.956
+    630,
+    1.9561
    ],
    [
     "GASPE",
@@ -303,31 +303,31 @@
    [
     "BP",
     462,
-    1.9723
+    1.972
    ],
    [
     "REPSOL",
     479,
-    1.9755
+    1.9769
    ]
   ],
   "distritos": [
    [
     "Aveiro",
     258,
-    1.9246,
+    1.9244,
     1.739
    ],
    [
     "Beja",
-    73,
-    1.9544,
+    72,
+    1.9531,
     1.789
    ],
    [
     "Braga",
     260,
-    1.9216,
+    1.9211,
     1.759
    ],
    [
@@ -387,7 +387,7 @@
    [
     "Porto",
     453,
-    1.9293,
+    1.9296,
     1.747
    ],
    [
@@ -399,13 +399,13 @@
    [
     "Setúbal",
     191,
-    1.9319,
-    1.699
+    1.9355,
+    1.764
    ],
    [
     "Viana do Castelo",
     73,
-    1.9368,
+    1.9363,
     1.809
    ],
    [
