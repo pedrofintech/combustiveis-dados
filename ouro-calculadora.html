@@ -1,0 +1,35 @@
+<div id="lfc-ouro">
+  <p class="lfc-ouro-calc-sub">Escolhe os quilates da peça, indica o peso e vê quanto vale o ouro à cotação de agora.</p>
+
+  <div class="lfc-ouro-seg" id="lfc-ouro-seg">
+    <button type="button" class="lfc-ouro-seg-btn" data-toque="24">24k</button>
+    <button type="button" class="lfc-ouro-seg-btn" data-toque="22">22k</button>
+    <button type="button" class="lfc-ouro-seg-btn is-active" data-toque="19.2">19,2k</button>
+    <button type="button" class="lfc-ouro-seg-btn" data-toque="18">18k</button>
+    <button type="button" class="lfc-ouro-seg-btn" data-toque="14">14k</button>
+    <button type="button" class="lfc-ouro-seg-btn" data-toque="9">9k</button>
+  </div>
+
+  <div class="lfc-ouro-inputs">
+    <div class="lfc-ouro-field">
+      <label for="lfc-ouro-peso" class="form_label">Peso da peça</label>
+      <div class="input-text_wrapper">
+        <input id="lfc-ouro-peso" class="form_input is-normal" value="10" inputmode="decimal" maxlength="7" autocomplete="off">
+        <div class="input-text-position"><div class="text-size-medium"><div class="text-color-placeholder"><div>g</div></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lfc-ouro-result" id="lfc-ouro-result">@@RESULT@@</div>
+
+  <div class="lfc-ouro-toques">
+    <div class="lfc-ouro-tq-head-row">
+      <div class="lfc-ouro-tq-head-cell">Quilates</div>
+      <div class="lfc-ouro-tq-head-cell">Toque (milésimas)</div>
+      <div class="lfc-ouro-tq-head-cell">Valor por grama</div>
+    </div>
+    <div id="lfc-ouro-toques-tbody">@@ROWS@@</div>
+  </div>
+
+  <div class="lfc-ouro-disclaimer">Valores indicativos, calculados à cotação spot internacional, sem margens de compra e venda. O valor final de uma peça depende sempre da avaliação do toque e do peso feita no local. Esta página é informativa e não constitui aconselhamento financeiro.</div>
+</div>

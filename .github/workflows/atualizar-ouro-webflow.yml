@@ -1,0 +1,44 @@
+name: Atualizar preço do ouro (Webflow)
+
+# Põe a cotação do dia no HTML do /preco-do-ouro do literaciafinanceira.pt: atualiza o item
+# "Ouro (hoje)" do CMS do Webflow (cartões do topo, frase, tabela de quilates e perguntas com
+# preço) e publica SÓ esse item, nunca o site. O script da página continua a pôr os valores
+# ao vivo em cada visita; isto serve para o Google, o Bing e os assistentes de IA lerem o
+# preço do dia sem correrem JavaScript. Não mexe em nada dos combustíveis.
+# Precisa do secret WEBFLOW_TOKEN (o mesmo dos combustíveis: token do site com CMS read e write).
+
+on:
+  schedule:
+    # Todos os dias às 6h07 UTC, para a data da página ser a de hoje logo de manhã,
+    # e nos dias úteis às 15h37 UTC, depois do câmbio de referência do BCE.
+    - cron: '7 6 * * *'
+    - cron: '37 15 * * 1-5'
+  push:
+    paths:
+      - 'webflow-ouro.mjs'
+      - 'ouro-*.html'
+      - '.github/workflows/atualizar-ouro-webflow.yml'
+  workflow_dispatch: # permite correr à mão no separador Actions
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atualizar-ouro-webflow
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Atualizar item "Ouro (hoje)" do CMS (só o item, nunca o site)
+        env:
+          WEBFLOW_TOKEN: ${{ secrets.WEBFLOW_TOKEN }}
+        run: node webflow-ouro.mjs
