@@ -148,13 +148,13 @@
       "ispBase": 0.49752,
       "csr": 0.087,
       "carbono": 0.15911,
-      "desconto": 0.037630000000000004
+      "desconto": 0.03663
     },
     "gasoleo": {
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.08494
+      "desconto": 0.08394
     }
   },
   "placar": {
