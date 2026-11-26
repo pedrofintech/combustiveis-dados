@@ -1,14 +1,22 @@
 {
-  "atualizado": "2026-11-25",
-  "semanaInicio": "2026-11-23",
-  "semanaFim": "2026-11-29",
+  "atualizado": "2026-11-26",
+  "semanaInicio": "2026-11-30",
+  "semanaFim": "2026-12-06",
   "gasoleo": {
-    "atual": 2.078,
-    "variacao": -0.038
+    "atual": 2.04,
+    "variacao": -0.073,
+    "intervalo": {
+      "min": -9.5,
+      "max": -5
+    }
   },
   "gasolina": {
-    "atual": 1.887,
-    "variacao": -0.031
+    "atual": 1.856,
+    "variacao": -0.016,
+    "intervalo": {
+      "min": -3,
+      "max": 0
+    }
   },
   "isp": {
     "portaria": "Portaria n.º 345-C/2026/1, de 14 de agosto",
@@ -16,11 +24,6 @@
     "gasolina": 49.61
   },
   "historico": [
-    {
-      "semana": "26/10",
-      "gasolina": 2.04,
-      "gasoleo": 2.189
-    },
     {
       "semana": "02/11",
       "gasolina": 2.006,
@@ -40,13 +43,19 @@
       "semana": "23/11",
       "gasolina": 1.856,
       "gasoleo": 2.04
+    },
+    {
+      "semana": "30/11",
+      "gasolina": 1.84,
+      "gasoleo": 1.967,
+      "previsto": true
     }
   ],
-  "fonte": "dgeg-confirmado",
+  "fonte": "modelo-proprio",
   "baseConfirmada": true,
   "modelo": {
-    "janelaCompleta": true,
-    "diasDeCotacoes": 5,
+    "janelaCompleta": false,
+    "diasDeCotacoes": 3,
     "k": {
       "gasoleo": 1.04,
       "gasolina": 1.04
@@ -57,7 +66,7 @@
       "cambio": "frankfurter"
     }
   },
-  "baseData": "2026-11-16",
+  "baseData": "2026-11-23",
   "historicoOficial": [
     {
       "data": "2026-08-10",
@@ -158,7 +167,7 @@
     }
   },
   "placar": {
-    "atualizado": "2026-11-25",
+    "atualizado": "2026-11-26",
     "semanas": 13,
     "semanasComSetor": 12,
     "gasoleo": {
@@ -282,7 +291,7 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-11-25",
+    "lidoEm": "2026-11-26",
     "semanaInicio": "2026-11-23",
     "semanaFim": "2026-11-29",
     "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)",
@@ -294,11 +303,5 @@
       "variacao": -0.045,
       "preco": null
     }
-  },
-  "confirmacao": {
-    "data": "2026-11-23",
-    "gasoleo": 2.04,
-    "gasolina": 1.856,
-    "fonte": "dgeg"
   }
 }
