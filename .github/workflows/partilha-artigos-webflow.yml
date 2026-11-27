@@ -1,0 +1,41 @@
+name: Imagem de partilha dos artigos (Webflow)
+
+# Preenche o campo "Imagem de partilha (URL)" dos artigos do literaciafinanceira.pt com a capa em
+# JPG ou PNG, para o LinkedIn mostrar a imagem (não lê AVIF, e as capas do CMS são comprimidas para
+# AVIF de tempos a tempos). Só mexe em artigos com o campo vazio e publica só esses artigos, nunca
+# o site. Regras em webflow-partilha-artigos.mjs. Não mexe em nada dos combustíveis.
+# Precisa do secret WEBFLOW_TOKEN (o mesmo dos combustíveis: token do site com CMS read e write).
+
+on:
+  schedule:
+    # Duas vezes por dia, para os artigos novos terem o campo antes da compressão das capas.
+    - cron: '41 6 * * *'
+    - cron: '41 14 * * *'
+  push:
+    paths:
+      - 'webflow-partilha-artigos.mjs'
+      - '.github/workflows/partilha-artigos-webflow.yml'
+  workflow_dispatch: # permite correr à mão no separador Actions
+
+permissions:
+  contents: read
+
+concurrency:
+  group: partilha-artigos-webflow
+  cancel-in-progress: false
+
+jobs:
+  preencher:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Preencher a imagem de partilha dos artigos (só os artigos, nunca o site)
+        env:
+          WEBFLOW_TOKEN: ${{ secrets.WEBFLOW_TOKEN }}
+        run: node webflow-partilha-artigos.mjs
