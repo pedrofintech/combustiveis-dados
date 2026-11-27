@@ -80,6 +80,22 @@ export async function existeImagem(url, fetcher = fetch) {
   return false;
 }
 
+// Nomes onde pode estar o ficheiro original de uma capa comprimida. Uma capa copiada de outro
+// artigo tem dois IDs no nome (novo_antigo_nome) e às vezes um "-2" no fim: o original fica no
+// ficheiro de onde foi copiada. Nomes com %25 (codificados duas vezes) também se tentam com %.
+export function nomesDoOriginal(nome) {
+  const nomes = [nome];
+  const interior = nome.replace(/^[0-9a-f]{24}_/i, '');
+  if (/^[0-9a-f]{24}_/i.test(interior)) {
+    nomes.push(interior, interior.replace(/-\d+$/, ''));
+    if (interior.includes('%25')) {
+      const umaVez = interior.replace(/%25/g, '%');
+      nomes.push(umaVez, umaVez.replace(/-\d+$/, ''));
+    }
+  }
+  return [...new Set(nomes)];
+}
+
 // Link a guardar no campo para uma capa, ou null se não houver versão que o LinkedIn leia.
 export async function linkDePartilha(capa, fetcher = fetch) {
   const caminho = String(capa || '').split('?')[0];
@@ -87,9 +103,13 @@ export async function linkDePartilha(capa, fetcher = fetch) {
   if (EXT_PARTILHAVEL.test(caminho)) return capa;
   const m = caminho.match(EXT_COMPRIMIDA);
   if (!m) return null;
-  for (const ext of EXT_ORIGINAIS) {
-    const candidato = `${m[1]}.${ext}`;
-    if (await existeImagem(candidato, fetcher)) return candidato;
+  const pasta = m[1].slice(0, m[1].lastIndexOf('/') + 1);
+  const nome = m[1].slice(m[1].lastIndexOf('/') + 1);
+  for (const n of nomesDoOriginal(nome)) {
+    for (const ext of EXT_ORIGINAIS) {
+      const candidato = `${pasta}${n}.${ext}`;
+      if (await existeImagem(candidato, fetcher)) return candidato;
+    }
   }
   return m[2].toLowerCase() === 'webp' ? capa : null;
 }
