@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-11-26",
+  "atualizado": "2026-11-27",
   "semanaInicio": "2026-11-30",
   "semanaFim": "2026-12-06",
   "gasoleo": {
@@ -151,7 +151,7 @@
   ],
   "fiscalidade": {
     "iva": 0.23,
-    "emVigor": "26 de novembro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
+    "emVigor": "27 de novembro de 2026 (estimativa a partir da decomposicao oficial da ENSE, a aguardar a portaria)",
     "portaria": "Portaria de 11 de setembro de 2026 (em vigor a 14 de setembro)",
     "gasolina": {
       "ispBase": 0.49752,
@@ -167,7 +167,7 @@
     }
   },
   "placar": {
-    "atualizado": "2026-11-26",
+    "atualizado": "2026-11-27",
     "semanas": 13,
     "semanasComSetor": 12,
     "gasoleo": {
