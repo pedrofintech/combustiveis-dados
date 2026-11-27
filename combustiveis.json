@@ -4,7 +4,7 @@
   "semanaFim": "2026-12-06",
   "gasoleo": {
     "atual": 2.04,
-    "variacao": -0.07,
+    "variacao": -0.072,
     "intervalo": {
       "min": -9.5,
       "max": -5
@@ -12,7 +12,7 @@
   },
   "gasolina": {
     "atual": 1.856,
-    "variacao": -0.016,
+    "variacao": -0.015,
     "intervalo": {
       "min": -3,
       "max": 0
@@ -46,8 +46,8 @@
     },
     {
       "semana": "30/11",
-      "gasolina": 1.84,
-      "gasoleo": 1.97,
+      "gasolina": 1.841,
+      "gasoleo": 1.968,
       "previsto": true
     }
   ],
@@ -157,13 +157,13 @@
       "ispBase": 0.49752,
       "csr": 0.087,
       "carbono": 0.15911,
-      "desconto": 0.03463
+      "desconto": 0.03363
     },
     "gasoleo": {
       "ispBase": 0.3616,
       "csr": 0.111,
       "carbono": 0.17334,
-      "desconto": 0.08094
+      "desconto": 0.07894
     }
   },
   "placar": {
@@ -291,16 +291,16 @@
     ]
   },
   "espelho": {
-    "lidoEm": "2026-11-26",
-    "semanaInicio": "2026-11-23",
-    "semanaFim": "2026-11-29",
+    "lidoEm": "2026-11-27",
+    "semanaInicio": "2026-11-30",
+    "semanaFim": "2026-12-06",
     "fonte": "precocombustiveis.pt via r.jina.ai (com ISP)",
     "gasoleo": {
-      "variacao": -0.045,
+      "variacao": -0.085,
       "preco": null
     },
     "gasolina": {
-      "variacao": -0.045,
+      "variacao": -0.05,
       "preco": null
     }
   }
