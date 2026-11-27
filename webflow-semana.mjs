@@ -54,21 +54,32 @@ function estado(variacao) {
   if (decimas(variacao) === 0) return 'estavel';
   return variacao < 0 ? 'desce' : 'sobe';
 }
+function fmtPreco(v) { return v.toFixed(3).replace('.', ',') + '€'; }
+/* Preço atual e preço com a variação já arredondada, como nos cartões da página
+   (2,040€ - 0,070 = 1,970€). Vai no texto do HTML do servidor para os números
+   ficarem legíveis sem JavaScript. */
+function precos(c) {
+  const agora = Math.round(c.atual * 1000) / 1000;
+  if (decimas(c.variacao) === 0) return ` (${fmtPreco(agora)}/L)`;
+  const depois = agora + (c.variacao < 0 ? -1 : 1) * decimas(c.variacao) / 1000;
+  return ` (de ${fmtPreco(agora)} para ${fmtPreco(depois)}/L)`;
+}
 function miolo(D) {
   const st1 = estado(D.gasoleo.variacao), st2 = estado(D.gasolina.variacao);
+  const p1 = precos(D.gasoleo), p2 = precos(D.gasolina);
   if (st1 === 'estavel' && st2 === 'estavel') {
-    return 'estabilidade nos preços do <strong>gasóleo</strong> e da <strong>gasolina 95</strong>';
+    return `estabilidade nos preços do <strong>gasóleo</strong>${p1} e da <strong>gasolina 95</strong>${p2}`;
   }
   if (st1 === st2) {
     return `uma ${st1 === 'desce' ? 'descida' : 'subida'} de cerca de ${fmtCent(D.gasoleo.variacao)}` +
-      ` no <strong>gasóleo</strong> e de ${fmtCent(D.gasolina.variacao)} na <strong>gasolina 95</strong>`;
+      ` no <strong>gasóleo</strong>${p1} e de ${fmtCent(D.gasolina.variacao)} na <strong>gasolina 95</strong>${p2}`;
   }
-  const f = (v, nome, fem) => {
+  const f = (v, nome, fem, p) => {
     const st = estado(v);
-    if (st === 'estavel') return `estabilidade ${fem ? 'na' : 'no'} <strong>${nome}</strong>`;
-    return `uma ${st === 'desce' ? 'descida' : 'subida'} de cerca de ${fmtCent(v)} ${fem ? 'na' : 'no'} <strong>${nome}</strong>`;
+    if (st === 'estavel') return `estabilidade ${fem ? 'na' : 'no'} <strong>${nome}</strong>${p}`;
+    return `uma ${st === 'desce' ? 'descida' : 'subida'} de cerca de ${fmtCent(v)} ${fem ? 'na' : 'no'} <strong>${nome}</strong>${p}`;
   };
-  return `${f(D.gasoleo.variacao, 'gasóleo', false)} e ${f(D.gasolina.variacao, 'gasolina 95', true)}`;
+  return `${f(D.gasoleo.variacao, 'gasóleo', false, p1)} e ${f(D.gasolina.variacao, 'gasolina 95', true, p2)}`;
 }
 
 /* Data de hoje em Lisboa, AAAA-MM-DD (o runner está em UTC) */
@@ -85,16 +96,18 @@ export function camposDoItem(D, hoje = hojeLisboa()) {
   const emCurso = hoje >= D.semanaInicio;              // igual ao emCurso() do embed "fase da semana"
   const m = miolo(D);
 
-  // H1 sempre com a semana: de sexta a domingo é a próxima ("(26 de outubro a 1 de novembro)"),
-  // de segunda a quinta é a que está a decorrer ("(em vigor: 19 a 25 de outubro)"). Só fica sem
-  // data se o JSON tiver mais de 12 dias, para não afirmar uma semana que já passou.
-  const titulo = !fresca ? BASE : emCurso ? `${BASE} (em vigor: ${range})` : `${BASE} (${range})`;
+  // H1 sempre sobre a próxima semana, que é o que as pessoas pesquisam. De sexta a domingo leva
+  // a semana da previsão ("(30 de novembro a 6 de dezembro)"). De segunda a quinta fica sem data,
+  // porque a previsão seguinte só sai à quinta-feira: o "(em vigor: ...)" que esteve aqui desde
+  // 19/10/2026 coincidiu com a queda de cliques no Search Console nas pesquisas "próxima semana".
+  // Sem data também se o JSON tiver mais de 12 dias.
+  const titulo = !fresca || emCurso ? BASE : `${BASE} (${range})`;
   const frase = emCurso
     ? `Esta semana, de <strong>${range}</strong>, os preços em vigor refletem ${m}. A previsão para a próxima semana sai na quinta-feira.`
     : `Nova semana, novos preços: para <strong>${range}</strong>, o nosso modelo aponta para ${m}.`;
 
   let nota;
-  if (!emCurso) nota = 'Confirmação oficial (DGEG) à segunda-feira';
+  if (!emCurso) nota = 'Os preços mudam à segunda-feira e a confirmação oficial (DGEG) chega à terça-feira';
   else if (D.fonte === 'dgeg-confirmado') nota = `Preços em vigor esta semana (${range}), confirmados pela DGEG`;
   else if (D.fonte === 'modelo-proprio') nota = `Preços em vigor esta semana (${range}) - estimativa do nosso modelo até à confirmação oficial da DGEG`;
   else nota = `Preços em vigor esta semana (${range})`;
