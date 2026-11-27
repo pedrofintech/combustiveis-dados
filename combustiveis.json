@@ -4,7 +4,7 @@
   "semanaFim": "2026-12-06",
   "gasoleo": {
     "atual": 2.04,
-    "variacao": -0.072,
+    "variacao": -0.07,
     "intervalo": {
       "min": -9.5,
       "max": -5
@@ -12,7 +12,7 @@
   },
   "gasolina": {
     "atual": 1.856,
-    "variacao": -0.015,
+    "variacao": -0.016,
     "intervalo": {
       "min": -3,
       "max": 0
@@ -46,8 +46,8 @@
     },
     {
       "semana": "30/11",
-      "gasolina": 1.841,
-      "gasoleo": 1.968,
+      "gasolina": 1.84,
+      "gasoleo": 1.97,
       "previsto": true
     }
   ],
