@@ -4,9 +4,9 @@
 // Nunca publica o site: o que estiver por publicar no Designer continua por publicar.
 //
 // A página /combustivel-mais-barato mostra este item no HTML que o servidor entrega (frase-resumo e tabela
-// "Postos mais baratos em cada distrito"). Assim o Google, o Bing e os assistentes de IA leem os preços e os
+// "Postos mais baratos em cada distrito", antes das perguntas frequentes). Assim o Google, o Bing e os assistentes de IA leem os preços e os
 // nomes dos postos mesmo sem correr JavaScript. A ferramenta da página continua a ler os JSON ao vivo.
-// Estilos: classes do LF kit e do embed da ferramenta (lfk-*, lfcmb-*), que já estão na página.
+// Estilos: classes das FAQ da página (heading-style-h2, text-color-secondary, spacer-*) e do LF kit na tabela (lfk-*, lfcmb-*).
 //
 // Uso:
 //   WEBFLOW_TOKEN=... node webflow-postos.mjs     na Action (token do site com cms:read e cms:write)
@@ -88,19 +88,20 @@ export function camposDoItem(top, resumo) {
     return `<tr><td>${esc(d)}</td>${cel}</tr>`;
   }).join('');
 
+  // Secção de texto da página (não é um cartão da calculadora, para não parecer um resultado que abriu sozinho):
+  // fica antes das perguntas frequentes, com as mesmas classes do embed das FAQ. A tabela usa o LF kit.
   const html =
     // No telemóvel (375px) a tabela tem de caber sem scroll: o kit dá largura mínima às células e não deixa quebrar linha.
     `<style>#lf-cmb-resumo .lfk-table th,#lf-cmb-resumo .lfk-table td{min-width:0;white-space:normal}` +
     `#lf-cmb-resumo .lfcmb-posto{min-width:0}#lf-cmb-resumo .lfcmb-posto small{overflow-wrap:anywhere}</style>` +
-    `<div class="lfk" id="lf-cmb-resumo"><div class="lfk-calc"><div class="lfk-calc-results"><div class="lfk-calc-form"><div class="lfk-calc-inner">` +
-    `<h2 class="lfk-h-sm">Postos mais baratos em cada distrito</h2>` +
-    `<p class="lfk-text" style="margin-top:.75rem">${resumoTxt}</p>` +
-    `<div class="lfk-table-wrap" style="margin-top:1.5rem"><table class="lfk-table lfcmb-tabela">` +
+    `<h2 class="heading-style-h2">Postos mais baratos em cada distrito</h2><div class="spacer-1-5"></div>` +
+    `<div class="text-color-secondary"><div>${resumoTxt}</div></div><div class="spacer-1-5"></div>` +
+    `<div class="lfk" id="lf-cmb-resumo"><div class="lfk-table-wrap"><table class="lfk-table lfcmb-tabela">` +
     `<thead><tr><th>Distrito</th>${COMBS.map(([, r]) => `<th>${r}</th>`).join('')}</tr></thead><tbody>${linhas}</tbody></table></div>` +
     `<p class="lfk-foot" style="margin-top:1rem">Leitura de ${quando}. Preços comunicados pelos próprios postos ao ` +
     `<a href="https://precoscombustiveis.dgeg.gov.pt/" target="_blank" rel="noopener">portal Preços dos Combustíveis Online da DGEG</a> ` +
-    `(Direção-Geral de Energia e Geologia). A ordenação e as médias são cálculo do Literacia Financeira, não informação da DGEG.</p>` +
-    `</div></div></div></div></div>`;
+    `(Direção-Geral de Energia e Geologia). A ordenação e as médias são cálculo do Literacia Financeira, não informação da DGEG.</p></div>` +
+    `<div class="spacer-4"></div>`;
 
   return { 'resumo-html': `<div data-rt-embed-type='true'>${html}</div>`, 'lido-em': top.lidoEmLisboa };
 }
