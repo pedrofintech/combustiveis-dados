@@ -704,7 +704,10 @@
       lerEndereco();
       preencherDistritos();
       sincronizarFormulario();
-      aplicar(false);
+      /* Como nas outras calculadoras do LF, a lista só aparece depois de clicar em "Ver os postos mais baratos".
+         Exceção: um link com a vista no endereço (ex.: #gasoleo/porto, partilhado ou guardado) mostra logo essa vista. */
+      if (COMB[hashInicial.replace(/^#/, '').split('/')[0]]) { aplicar(false); return; }
+      $('lfcmb-estado').innerHTML = '<div class="lfk-empty"><p>Escolhe o combustível e a zona e clica em "Ver os postos mais baratos".</p></div>';
     }
     /* Voltar atrás ou avançar no browser (popstate) e endereço mudado à mão (hashchange): mostra a vista dessa entrada do
        histórico, sem criar outra. Só reage a entradas escritas por esta página ou a endereços com um combustível

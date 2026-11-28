@@ -65,3 +65,15 @@ jobs:
         env:
           WEBFLOW_TOKEN: ${{ secrets.WEBFLOW_TOKEN }}
         run: node webflow-semana.mjs
+
+      # Item "Combustível mais barato (hoje)" do CMS do Webflow: frase-resumo e tabela com o posto mais barato de cada
+      # distrito, no HTML que o servidor entrega na página /combustivel-mais-barato. Lê o postos-top.json e o
+      # postos-resumo.json que o "Ler postos DGEG" grava (3 leituras por dia) e só mexe quando há leitura nova.
+      # Corre aqui (de hora a hora) para não alterar o ler-postos-dgeg.yml, cujo agendamento depende de quem o altera.
+      - name: Atualizar item dos postos mais baratos no Webflow (só o item, nunca o site)
+        continue-on-error: true
+        env:
+          WEBFLOW_TOKEN: ${{ secrets.WEBFLOW_TOKEN }}
+        run: |
+          git pull --ff-only -q || true
+          node webflow-postos.mjs
